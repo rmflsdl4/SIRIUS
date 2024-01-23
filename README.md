@@ -1,1 +1,1 @@
-# SINERVA
+[<img src="https://capsule-render.vercel.app/api?type=waving&height=300&color=gradient&text=시리우스&fontAlignY=40" />](https://capsule-render.vercel.app/api?type=waving&height=300&color=gradient&text=시리우스&fontAlignY=40)
