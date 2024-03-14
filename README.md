@@ -35,5 +35,5 @@
 
 # 💡 Links
 
-✔️ [캡스톤 디자인 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8)
+✔️ [캡스톤 디자인 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8)  
 ✔️ [회의록 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%ED%9A%8C%EC%9D%98%EB%A1%9D)
