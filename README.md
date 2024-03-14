@@ -1,6 +1,9 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&height=250&color=gradient&text=시리우스&fontAlignY=40" />
 
 
+# 🖥️ Introduction
+시리우스 프로젝트
+
 # 📚 Environments  
 <div align=left>  
   <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white"> 
@@ -30,5 +33,6 @@
 </div>
 
 
-# 🔗 Links
-[캡스톤 디자인 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8)
+# 💡 Links
+
+✔️ [캡스톤 디자인 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8)
