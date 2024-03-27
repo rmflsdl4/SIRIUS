@@ -2,7 +2,8 @@
 
 
 # 🖥️ Introduction
-SmartHome - CULISO
+
+<img width="35px" src="https://github.com/rmflsdl4/SIRIUS/assets/57540594/b694bdc2-f816-4ab9-97c2-4a45b8632aa2"/> <span style="vertical-align:center">$\bf{\large{\color{#1187cf}SmartHome - CULISO}}$</span>
 
 # 📚 Environments  
 <div align=left>  
