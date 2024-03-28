@@ -1,9 +1,15 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&height=250&color=gradient&text=시리우스&fontAlignY=40" />
 
 
+<p align="left">
+  <img width="82.5%" src="https://github.com/rmflsdl4/SIRIUS/assets/57540594/b0a8e823-144f-41eb-863b-79a77bd4de68"/> <span style="vertical-align:center">
+</p>
+<br>
+  
 # 🖥️ Introduction
+<h4>This is intro<br>이것은 소개입니다.</h4>
 
-<img width="35px" src="https://github.com/rmflsdl4/SIRIUS/assets/57540594/b694bdc2-f816-4ab9-97c2-4a45b8632aa2"/> <span style="vertical-align:center">$\bf{\large{\color{#1187cf}SmartHome - CULISO}}$</span>
+<!--$\bf{\large{\color{#1187cf}SmartHome - CULISO}}$</span>-->
 
 # 📚 Environments  
 <div align=left>  
@@ -38,6 +44,7 @@
 ✔️ [캡스톤 디자인 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8)  
 ✔️ [자료조사 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%9E%90%EB%A3%8C%EC%A1%B0%EC%82%AC)  
 ✔️ [회의록 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%ED%9A%8C%EC%9D%98%EB%A1%9D)  
+✔️ [요구사항 분석 바로가기](https://docs.google.com/spreadsheets/d/1v47r35cq9DgPOi-ee2vHYJ5ycrniBvdQcj3n1LtFNwQ/edit#gid=994503718)  
 
 # 📁 Downloads
 
