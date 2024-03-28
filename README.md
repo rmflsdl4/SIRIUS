@@ -5,9 +5,6 @@
   <img width="82.5%" src="https://github.com/rmflsdl4/SIRIUS/assets/57540594/b0a8e823-144f-41eb-863b-79a77bd4de68"/> <span style="vertical-align:center">
 </p>
 <br>
-  
-# 🖥️ Introduction
-<h4>This is intro<br>이것은 소개입니다.</h4>
 
 <!--$\bf{\large{\color{#1187cf}SmartHome - CULISO}}$</span>-->
 
