@@ -27,7 +27,7 @@
 
   <img src="https://img.shields.io/badge/linux-FCC624?style=for-the-badge&logo=linux&logoColor=black"> 
   <img src="https://img.shields.io/badge/amazonaws-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white"> 
-  <img src="https://img.shields.io/badge/apache tomcat-F8DC75?style=for-the-badge&logo=apachetomcat&logoColor=white">
+  <img src="https://img.shields.io/badge/apache tomcat-F8DC75?style=for-the-badge&logo=apachetomcat&logoColor=black">
   <br>
   
   <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
@@ -45,5 +45,5 @@
 
 # 📁 Downloads
 
-🔽 [제안 발표 PPT](https://github.com/rmflsdl4/SIRIUS/releases/download/%EC%A0%9C%EC%95%88%EB%B0%9C%ED%91%9C/2024-sirius-suggestion-final.pptx)
+🔽 [제안 발표 PPT](https://github.com/rmflsdl4/SIRIUS/releases/download/%EC%A0%9C%EC%95%88%EB%B0%9C%ED%91%9C/2024-sirius-suggestion-final.pptx)  
 🔽 [회의록](https://downgit.github.io/#/home?url=https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%ED%9A%8C%EC%9D%98%EB%A1%9D)
