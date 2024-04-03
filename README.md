@@ -31,7 +31,8 @@
   <br>
   
   <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
-  <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+  <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">  
+  <a href='https://www.notion.so/7b379377aabb4590a867971b7312dae1?v=c60004f26a2542659c6a03cf4b14add1'><img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"></a>
   <br>
 </div>
 
