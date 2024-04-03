@@ -1,0 +1,25 @@
+<mxfile host="app.diagrams.net" modified="2024-04-03T00:11:07.976Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="rXHp1-Gpp879UcsJVanz" version="24.2.0" type="device">
+  <diagram name="페이지-1" id="SPn03I5VUdhCUxH6A8fu">
+    <mxGraphModel dx="2074" dy="830" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YW6be6riu14FDHsjR1MI-1" value="세탁기" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="-397" y="97" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YW6be6riu14FDHsjR1MI-2" value="조명" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="-12" y="157" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YW6be6riu14FDHsjR1MI-3" value="에어컨" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="-18" y="319" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YW6be6riu14FDHsjR1MI-4" value="건조기" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="-213" y="186" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YW6be6riu14FDHsjR1MI-5" value="TV" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="-247" y="64" width="30" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
