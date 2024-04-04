@@ -12,6 +12,10 @@
 ![image](https://github.com/rmflsdl4/SIRIUS/assets/57540594/84b067f6-9ca5-4946-a817-1aa1a861d78b)  
 
 
+## 🧾 Work Flow
 
+
+### Ver 0.3
+![image](https://github.com/rmflsdl4/SIRIUS/assets/142138080/0cb3999d-6aaa-436f-ac54-fde03d01a9d8)
 
 
