@@ -15,7 +15,12 @@
 ## 🧾 Work Flow
 
 
-### Ver 0.3
+### Ver 1.0
 ![image](https://github.com/rmflsdl4/SIRIUS/assets/142138080/0cb3999d-6aaa-436f-ac54-fde03d01a9d8)
 
+
+## 🧾 ERD
+
+### Ver 0.1
+![image](https://github.com/rmflsdl4/SIRIUS/assets/57540594/59b38684-1caa-4f74-a51a-0d1652311100)
 
