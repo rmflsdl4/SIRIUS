@@ -1,5 +1,10 @@
 # 🙋‍♂️ 이미지를 클릭해서 확대하시면 더 선명하게 보실 수 있습니다.
 
+## 목차
+[1. UseCase Diagram](#-usecase-diagram)  
+[2. Work Flow](#-work-flow)  
+[3. ERD](#-erd)  
+
 
 ## 🧾 UseCase Diagram
 
@@ -19,7 +24,7 @@
 ![image](https://github.com/rmflsdl4/SIRIUS/assets/142138080/0cb3999d-6aaa-436f-ac54-fde03d01a9d8)
 
 
-## 🧾 ERD
+## 🧾 ERD  
 
 ### Ver 0.1
 ![image](https://github.com/rmflsdl4/SIRIUS/assets/57540594/59b38684-1caa-4f74-a51a-0d1652311100)
