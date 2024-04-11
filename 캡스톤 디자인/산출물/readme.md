@@ -4,6 +4,7 @@
 [1. UseCase Diagram](#-usecase-diagram)  
 [2. Work Flow](#-work-flow)  
 [3. ERD](#-erd)  
+[4. EER](#-eer)  
 
 
 ## 🧾 UseCase Diagram
@@ -32,3 +33,8 @@
 ### Ver 0.1
 ![image](https://github.com/rmflsdl4/SIRIUS/assets/57540594/59b38684-1caa-4f74-a51a-0d1652311100)
 
+
+## 🧾 EER
+
+### Ver 0.1
+![EER drawio](https://github.com/rmflsdl4/SIRIUS/assets/165611879/cf0af029-95b9-47f0-ad6b-f6a352b8e2f6)
