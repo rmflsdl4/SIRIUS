@@ -21,6 +21,10 @@
 ## 🧾 Work Flow
 
 
+### Ver 1.1
+![업무흐름도v1 1](https://github.com/rmflsdl4/SIRIUS/assets/165611879/cf994fbc-94ef-4e45-988e-0679b2c37cbc)
+
+
 ### Ver 1.0
 ![image](https://github.com/rmflsdl4/SIRIUS/assets/142138080/0cb3999d-6aaa-436f-ac54-fde03d01a9d8)
 
