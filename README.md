@@ -43,8 +43,8 @@
 ✔️ [회의록 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%ED%9A%8C%EC%9D%98%EB%A1%9D)  
 ✔️ [요구사항 분석 바로가기](https://docs.google.com/spreadsheets/d/1ibit_36yB6gkh9TvblKAJu7qrqaDY4AGyYmMfYlXc5g/edit#gid=0)  
 ✔️ [업무흐름도 바로가기](https://docs.google.com/presentation/d/1vUfPAD64L0VA2_pQW62VfM7NanWp2RkU/edit#slide=id.p1)  
-✔️ [산출물 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%82%B0%EC%B6%9C%EB%AC%BC)
-✔️ [피그마 바로가기](https://www.figma.com/file/mYJ407foHgWMugN6n0NZlG/%ED%99%94%EB%A9%B4%EC%84%A4%EA%B3%84?type=design&node-id=0-1&mode=design&t=qfFU10X0ns7Yt0Pj-0)
+✔️ [산출물 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%82%B0%EC%B6%9C%EB%AC%BC)  
+✔️ [피그마 바로가기](https://www.figma.com/file/mYJ407foHgWMugN6n0NZlG/%ED%99%94%EB%A9%B4%EC%84%A4%EA%B3%84?type=design&node-id=0-1&mode=design&t=qfFU10X0ns7Yt0Pj-0)  
 
 # 📁 Downloads
 
