@@ -35,6 +35,9 @@
 
 ## 🧾 ERD  
 
+### Ver 0.3
+![erd](https://github.com/rmflsdl4/SIRIUS/assets/57540594/a3e988f9-c1cd-4f82-802a-f7206afcd1b0)
+
 ### Ver 0.2
 ![ERD drawio](https://github.com/rmflsdl4/SIRIUS/assets/57540594/f8d87f6f-20e4-4068-a8a7-a549e76e1079)
 
@@ -43,6 +46,9 @@
 
 
 ## 🧾 EER
+
+### Ver 0.2
+![eer](https://github.com/rmflsdl4/SIRIUS/assets/57540594/a76ad83f-acfe-4cf7-99e8-ae79a50115ce)
 
 ### Ver 0.1
 ![EER drawio](https://github.com/rmflsdl4/SIRIUS/assets/165611879/cf0af029-95b9-47f0-ad6b-f6a352b8e2f6)
