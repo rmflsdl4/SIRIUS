@@ -9,6 +9,9 @@
 
 ## 🧾 UseCase Diagram
 
+### Ver 1.1
+![UseCase V1 1-페이지-1 drawio](https://github.com/rmflsdl4/SIRIUS/assets/165611879/9fe84ad1-eb93-4167-a266-2513d4d1688b)
+
 
 ### Ver 1.0
 ![UseCase v1 0](https://github.com/rmflsdl4/SIRIUS/assets/165611879/d6625394-f79e-4216-a005-612ed4b06b5a)
