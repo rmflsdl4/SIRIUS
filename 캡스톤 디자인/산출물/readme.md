@@ -29,7 +29,9 @@
 
 
 ### Ver 1.2
-![업무흐름도v1 2 drawio](https://github.com/rmflsdl4/SIRIUS/assets/165611879/13ef2bb3-cad3-4e0a-a570-670bbb2a958c)
+![업무흐름도v1 2(수정) drawio](https://github.com/rmflsdl4/SIRIUS/assets/165611879/ecb0e2fe-aeb3-4a8f-8938-712b91144455)
+
+
 
 
 ### Ver 1.1
