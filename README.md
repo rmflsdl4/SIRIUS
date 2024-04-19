@@ -42,7 +42,6 @@
 ✔️ [자료조사 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%9E%90%EB%A3%8C%EC%A1%B0%EC%82%AC)  
 ✔️ [회의록 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%ED%9A%8C%EC%9D%98%EB%A1%9D)  
 ✔️ [요구사항 분석 바로가기](https://docs.google.com/spreadsheets/d/1ibit_36yB6gkh9TvblKAJu7qrqaDY4AGyYmMfYlXc5g/edit#gid=0)  
-✔️ [업무흐름도 바로가기](https://docs.google.com/presentation/d/1vUfPAD64L0VA2_pQW62VfM7NanWp2RkU/edit#slide=id.p1)  
 ✔️ [산출물 바로가기](https://github.com/rmflsdl4/SIRIUS/tree/main/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%82%B0%EC%B6%9C%EB%AC%BC)  
 ✔️ [피그마 바로가기](https://www.figma.com/file/tUGnx6bOC73A2paaDlBWpO/%ED%99%94%EB%A9%B4%EC%84%A4%EA%B3%84?type=design&mode=design&t=mo176XKI73byT7t6-0)  
 
