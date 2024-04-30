@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2024-04-30T11:35:27.430Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="-7kgMezeg3zWV_Qu8VnO" version="24.3.1" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-30T11:40:09.927Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="L-Z1sXjM-FvOlY69WuUf" version="24.3.1" type="github">
   <diagram id="R2lEEEUBdFMjLlhIrx00" name="Page-1">
-    <mxGraphModel dx="4570" dy="2833" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
+    <mxGraphModel dx="2943" dy="2075" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -545,7 +545,9 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="iXpcpmkXzQgTixo_A_bq-20" value="1" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" parent="1" connectable="0" vertex="1">
-          <mxGeometry x="1290.8909871931417" y="509.9992162022287" as="geometry" />
+          <mxGeometry x="1290.8909871931417" y="509.9992162022287" as="geometry">
+            <mxPoint x="1" y="100" as="offset" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="iXpcpmkXzQgTixo_A_bq-23" value="기기 제어&lt;div&gt;성공 여부&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
           <mxGeometry x="1071.5099999999998" y="360" width="100" height="40" as="geometry" />
