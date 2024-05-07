@@ -31,6 +31,9 @@
 
 
 ## 🧾 EER
+### Ver 0.4
+![EER drawio (1)](https://github.com/rmflsdl4/SIRIUS/assets/142138080/5c0a2317-e17b-4eeb-ae65-c7160dc40491)
+
 ### Ver 0.3(채팅 추가)
 ![EER drawio](https://github.com/rmflsdl4/SIRIUS/assets/142138080/d642bc66-8d87-4517-82b8-de3430d47625)
 
