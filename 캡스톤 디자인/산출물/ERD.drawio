@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2024-05-07T00:51:52.711Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="i0Qc_YdpR4knhvrauj8J" version="24.3.1" type="github">
+<mxfile host="app.diagrams.net" modified="2024-05-07T01:16:42.887Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="WaXyFcTmLCU-INCNOu73" version="24.3.1" type="github">
   <diagram id="R2lEEEUBdFMjLlhIrx00" name="Page-1">
-    <mxGraphModel dx="3457" dy="2504" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
+    <mxGraphModel dx="2359" dy="1913" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -824,13 +824,13 @@
           <mxGeometry x="1" relative="1" as="geometry" />
         </mxCell>
         <mxCell id="ZcqivVLJZ07AfmElbFes-177" value="채팅번호" style="ellipse;whiteSpace=wrap;html=1;align=center;fontStyle=4;" vertex="1" parent="1">
-          <mxGeometry x="1190" y="800" width="100" height="40" as="geometry" />
+          <mxGeometry x="1130" y="800" width="100" height="40" as="geometry" />
         </mxCell>
         <mxCell id="ZcqivVLJZ07AfmElbFes-178" value="채팅 내용" style="ellipse;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="1310" y="800" width="100" height="40" as="geometry" />
+          <mxGeometry x="1250" y="800" width="100" height="40" as="geometry" />
         </mxCell>
         <mxCell id="ZcqivVLJZ07AfmElbFes-179" value="보낸시간" style="ellipse;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="1430" y="800" width="100" height="40" as="geometry" />
+          <mxGeometry x="1370" y="800" width="100" height="40" as="geometry" />
         </mxCell>
         <mxCell id="ZcqivVLJZ07AfmElbFes-180" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1" source="ZcqivVLJZ07AfmElbFes-183" target="ZcqivVLJZ07AfmElbFes-177">
           <mxGeometry relative="1" as="geometry">
@@ -912,6 +912,15 @@
         <mxCell id="ZcqivVLJZ07AfmElbFes-197" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" connectable="0" vertex="1" parent="ZcqivVLJZ07AfmElbFes-196">
           <mxGeometry x="1" relative="1" as="geometry">
             <mxPoint x="-5" y="-4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZcqivVLJZ07AfmElbFes-198" value="보낸사람" style="ellipse;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="800" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ZcqivVLJZ07AfmElbFes-199" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1" source="ZcqivVLJZ07AfmElbFes-183" target="ZcqivVLJZ07AfmElbFes-198">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1394" y="750" as="sourcePoint" />
+            <mxPoint x="1468" y="812" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
