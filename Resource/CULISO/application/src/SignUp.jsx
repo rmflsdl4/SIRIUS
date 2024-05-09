@@ -1,6 +1,7 @@
 import GetIcon from "./modules/GetIcon";
 //import * as SignUpModule from "./modules/SignUp";
 //import * as nav from "./modules/Navigate";
+import Member from "./modules/SignUp"
 import "./style.css";
 
 let signUpDic = {
@@ -15,12 +16,19 @@ let currentTextIdx = 0;
 let signUpFlag = true;
 let idx = 0;
 let batchSize = 3;
+let newMember;
+
+window.onload = function(){
+  newMember = new Member();
+}
 function SignUpGuide() {
+  console.log(newMember);
   SignUpMsg();
-  if (signUpFlag && currentTextIdx > 1) SetForm();
+  //if (signUpFlag && currentTextIdx > 1) SetForm();
   console.log(idx, batchSize);
 }
 function SetForm() {
+  if(!signUpFlag) return;
   const signUpForm = document.getElementById("signUpForm");
   const inputBG = document.getElementsByClassName("inputBG");
   const inputText = document.getElementsByClassName("inputText");
@@ -34,7 +42,7 @@ function SetForm() {
     }
   }
 
-  idx += batchSize;
+  idx = inputBG.length > idx ? idx + batchSize:idx;
 
   if (currentTextIdx === 2 || currentTextIdx === 3 || currentTextIdx === 4) {
     signUpForm.style.display = "block";
@@ -44,25 +52,29 @@ function SetForm() {
 }
 function SetSignUpFlag() {
   signUpFlag = true;
-  SignUpGuide();
-  console.log("왜 안돼 " + signUpFlag);
+  const inputText = document.getElementsByClassName("inputText");
+  for (var i = idx - 3; i < idx + batchSize; i++) {
+    console.log(inputText[i].name);
+    if (newMember.hasOwnProperty(inputText[i].name)) {
+      newMember[inputText[i].name] = inputText[i].value;
+    }
+  }
 }
 function SignUpMsg() {
   let text = document.getElementById("signUpText");
   const cnt = Object.keys(signUpDic).length;
   // 나올 메세지의 다음 거를 기준으로 잡을것
-
+  console.log("현재 플래그 상태: " + signUpFlag);
+  console.log("현재 인덱스: " + currentTextIdx);
   if (currentTextIdx < cnt && signUpFlag) {
-    text.textContent = signUpDic[currentTextIdx];
-    if (currentTextIdx - 1 === cnt) currentTextIdx = 0;
-    else {
-      currentTextIdx++;
-    }
+    text.textContent = signUpDic[currentTextIdx++];
   }
-
-  if (currentTextIdx === 2 || currentTextIdx === 3 || currentTextIdx === 4) {
+  else if(currentTextIdx === cnt - 1){
+    text.textContent = signUpDic[currentTextIdx++];
+  }
+  if (currentTextIdx === 2 || currentTextIdx === 3 || currentTextIdx === 4 || currentTextIdx === 5) {
+    SetForm();
     signUpFlag = false;
-    console.log("플래그 변경, 현재 값 : " + currentTextIdx);
   }
 }
 function SubmitBtnSetActive() {
@@ -77,9 +89,10 @@ function SubmitBtnSetActive() {
       return;
     }
   }
-  // submitBtn.disabled = false;
+  //submitBtn.disabled = false;
   submitBtn.style.opacity = 1;
 }
+// 아래는 회원가입 폼 화면 출력
 export const SignUp = () => {
   return (
     <div className="signUp">
@@ -211,13 +224,12 @@ export const SignUp = () => {
                   value="전화번호 인증하기"
                 ></input>
               </div>
-
-              <div className="inputBG"></div>
             </div>
             <input
               id="submitBtn"
               type="button"
               value="다음으로"
+              //disabled
               onClick={SetSignUpFlag}
             />
           </form>

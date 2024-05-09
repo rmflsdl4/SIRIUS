@@ -241,6 +241,9 @@ input[type="reset"] {
   position: absolute;
   text-align: center;
   white-space: pre-wrap;
+  opacity: 0;
+  animation: fadeIn ease-out 1s forwards;
+  
 }
 
 /* 입력 폼 */
