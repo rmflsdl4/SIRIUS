@@ -5,3 +5,34 @@
   font-weight: normal;
   font-style: normal;
 }
+
+/* 나눔명조 */
+
+@import url("//fonts.googleapis.com/earlyaccess/nanummyeongjo.css");
+
+/* 에스코어드림 */
+@font-face {
+  font-family: "S-CoreDream-3Light";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* 조선굴림체 */
+@font-face {
+  font-family: "ChosunGu";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunGu.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* 조선일보명조체 */
+@font-face {
+  font-family: "Chosunilbo_myungjo";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Chosunilbo_myungjo.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
