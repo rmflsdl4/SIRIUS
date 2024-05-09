@@ -386,6 +386,7 @@
   top: 889px;
   width: 100px;
   cursor: pointer;
+  border : none
 }
 
 .AdminMain .viewDetailsBtn {
@@ -651,15 +652,17 @@
   height: 50px;
   width: 100px;
   cursor: pointer;
+  border : none
 }
 
 .AdminMain .boardCreateButton {
   background-color: #b1dbfa;
-  color: #ffffff;
+  color: black;
   font-family: "Inter-Bold", Helvetica;
   font-size: 25px;
   font-weight: 700;
   height: 50px;
   width: 150px;
   cursor: pointer;
+  border : none
 }

@@ -29,11 +29,11 @@ export const BoardMgr = () => {
                             </li>
                             <li>
                                 <img className="mgrImg" alt="Text" src={GetIcon("iot.png")} />
-                                <div className="mgrText"><span className="selectMgrText">기기 관리</span></div>
+                                <div className="mgrText"><span className="selectMgrText" onClick={()=> goToPage("deviceMgr")}>기기 관리</span></div>
                             </li>
                             <li>    
                                 <img className="mgrImg" alt="User" src={GetIcon("help-call.png")} />
-                                <div className="mgrText"><span className="selectMgrText">요청 관리</span></div>
+                                <div className="mgrText"><span className="selectMgrText" onClick={()=> goToPage("requestMgr")}>요청 관리</span></div>
                             </li>
                         </ul>
                     </div>
