@@ -1,10 +1,6 @@
 import React from "react";
 import "./admin.css";
-
-// 이미지 받아오기
-function GetIcon(iconName) {
-    return process.env.PUBLIC_URL + "/" + iconName;
-}
+import { GetIcon } from "./GetIcon";
 
 export const AdminLogin = () => {
     return (

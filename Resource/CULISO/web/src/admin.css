@@ -1,5 +1,14 @@
-:root {
-  --vh: 100%;
+#root {
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#App {
+  position: relative;
 }
 
 /* 로그인 화면 */
@@ -386,7 +395,12 @@
   top: 889px;
   width: 100px;
   cursor: pointer;
-  border : none
+  border : none;
+  border-radius: 10px;
+}
+
+.AdminMain .deleteButton:hover {
+  background-color: #8d0404;
 }
 
 .AdminMain .viewDetailsBtn {
@@ -652,17 +666,226 @@
   height: 50px;
   width: 100px;
   cursor: pointer;
-  border : none
+  border : none;
+  border-radius: 10px;
+}
+
+.AdminMain .boardDeleteButton:hover {
+  background-color: #8d0404;
 }
 
 .AdminMain .boardCreateButton {
-  background-color: #b1dbfa;
-  color: black;
+  background-color: #007bff;
+  color: white;
   font-family: "Inter-Bold", Helvetica;
   font-size: 25px;
   font-weight: 700;
   height: 50px;
   width: 150px;
   cursor: pointer;
-  border : none
+  border : none;
+  border-radius: 10px;
+}
+
+.AdminMain .boardCreateButton:hover {
+  background-color: #0056b3;
+}
+
+.AdminMain .requestStateDiv {
+  color: #000000;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 17px;
+  font-weight: 400;
+  left: 241px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 192px;
+}
+
+.AdminMain .requestStateDiv .requestNotComplete, .requestComplete {
+  margin-right: 55px;
+  font-weight: bold;
+}
+
+.AdminMain .requestStateDiv .requestNotComplete {
+  margin-right: 55px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+
+
+/* 모달팝업 창 */
+.modalTop {
+  background-color: #30323a;
+  height: 23px;
+  width: 100%;
+  color: white;
+}
+
+.modalTop .modalTopTxt {
+  margin-left: 20px;
+}
+
+.modalMenu {
+  width: 100%;
+  height: 40px;
+  background-color: #f3f3f3;
+  padding-top: 15px;
+}
+
+.modalMenu .boardList, .deviceList {
+  font-size: 20px; /* 텍스트 사이즈 */
+  font-weight: bold; /* 굵기 */
+  margin-right: 60px;
+  cursor: pointer;
+}
+
+.modalMenu .boardList {
+  margin-left: 20px;
+  text-decoration: underline; /* 밑줄 */
+}
+
+.modalMenu .closeBtn {
+  float: right;
+  margin-right: 20px;
+  width: 30px;
+  height: 30px;
+}
+
+.modalContent {
+  width: 100%;
+}
+
+.modalContent .searchRequirementBox {
+  width: 860px;
+  margin: 20px;
+}
+
+.modalContent .searchRequirementTb {
+  width: 100%;
+  border-collapse: collapse; 
+  border: 2px solid #ccc; 
+  border-collapse: collapse;
+}
+
+.modalContent .searchRequirementTb td {
+  padding: 8px; 
+  text-align: center; 
+  border: 2px solid #ccc; 
+}
+
+.modalContent .searchRequirementTb .elementLeft {
+  background-color: #e2e2e2;
+}
+
+.modalContent .searchRequirementTb .elementRight {
+  text-align: left;
+}
+
+.modalContent .searchRequirementTb .elementRight select {
+  width: 160px; /* 선택 상자의 너비를 조절합니다. */
+  padding: 8px; /* 선택 상자의 안쪽 여백을 설정합니다. */
+  font-size: 14px; /* 글꼴 크기를 조절합니다. */
+  border: 1px solid #ccc; /* 테두리를 설정합니다. */
+  border-radius: 5px; /* 선택 상자의 모서리를 둥글게 만듭니다. */
+  background-color: #f8f8f8; /* 배경색을 설정합니다. */
+  appearance: none; /* 기본적인 스타일링을 없애기 위해 appearance 속성을 사용합니다. */
+  background-image: url('data:image/svg+xml;utf8,<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="%23707070" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'); /* 화살표 아이콘을 추가합니다. */
+  background-repeat: no-repeat; /* 배경 이미지 반복을 없앱니다. */
+  background-position: right 10px center; /* 배경 이미지 위치를 설정합니다. */
+  padding-right: 30px; /* 오른쪽에 화살표가 가리지 않게 하기 위해 오른쪽 패딩을 추가합니다. */
+}
+
+.modalContent .searchRequirementTb .elementRight input[type="date"] {
+  width: 120px; 
+  padding: 8px; 
+  font-size: 14px; 
+  border: 1px solid #ccc; 
+  border-radius: 5px; 
+  background-color: #f8f8f8; 
+}
+
+.modalContent .searchRequirementTb .elementRight input[type="date"]:focus {
+  outline: none; /* 포커스 시 기본적으로 나타나는 테두리를 없앱니다. */
+  border-color: #007bff; 
+}
+
+.modalContent .searchRequirementTb #searchRequirement {
+  width: 200px; /* 입력 필드의 너비를 조절합니다. */
+  padding: 8px; /* 입력 필드의 안쪽 여백을 설정합니다. */
+  font-size: 14px; /* 글꼴 크기를 조절합니다. */
+  border: 1px solid #ccc; /* 테두리를 설정합니다. */
+  border-radius: 5px; /* 입력 필드의 모서리를 둥글게 만듭니다. */
+  background-color: #f8f8f8; /* 배경색을 설정합니다. */
+}
+
+#searchRequirement:focus {
+  outline: none; /* 포커스 시 기본적으로 나타나는 테두리를 없앱니다. */
+  border-color: #007bff; /* 포커스 시 테두리 색상을 변경합니다. */
+}
+
+.searchRequirementBtnDiv {
+  margin-top: 10px;
+  text-align: center; /* 버튼을 가운데 정렬합니다. */
+}
+
+.searchRequirementBtn, .blockingBtn {
+  padding: 10px 20px; 
+  font-size: 16px; 
+  border: none; 
+  border-radius: 5px; 
+  background-color: #007bff; 
+  color: white; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
+}
+
+.searchRequirementBtn:hover, .blockingBtn:hover {
+  background-color: #0056b3; 
+}
+
+.modalContent .modalSerchResultBox {
+  width: 860px;
+  margin: 20px;
+}
+
+.modalContent .modalUserBoardListTb {
+  width: 100%;
+  border-collapse: collapse; 
+}
+
+.modalContent .modalUserBoardListTb th,
+.modalContent .modalUserBoardListTb td {
+  padding: 8px; 
+  text-align: center; 
+  border: 1px solid #ccc; 
+}
+
+.modalContent .modalUserBoardListTb th {
+  background-color: #f3f3f3; 
+  font-weight: bold; 
+}
+
+.modalContent .checkBox {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  border-radius: 5px;
+  height: 20px;
+  width: 20px;
+}
+
+.modalContent .blockingBox {
+  text-align: right;
+}
+
+.modalContent .blockingBtn {
+  margin-right: 20px;
+}
+
+.modalSerchResult {
+  margin-left: 20px;
 }

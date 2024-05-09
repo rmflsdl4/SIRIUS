@@ -1,17 +1,17 @@
 import React from "react";
 import "./admin.css";
 import { useNavigate } from "react-router-dom";
+import { GetIcon } from "./GetIcon";
 
-// 이미지 받아오기
-function GetIcon(iconName) {
-    return process.env.PUBLIC_URL + "/" + iconName;
-}
-
-function goToPage(name) {
-    window.location.href = "/" + name;
-}
 
 export const BoardMgr = () => {
+    const navigate = useNavigate();
+
+    function goToPage(name) {
+        let url = "/" + name;
+        navigate(url);
+    }
+
     return (
         <div className="AdminMain">
             <div className="main-overlap-wrapper">

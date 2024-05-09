@@ -1,27 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import "./admin.css";
 import { useNavigate } from "react-router-dom";
-import Modal from "react-modal"
-import customStyles from "./ModalComponent";
 import { GetIcon } from "./GetIcon";
-import { modalUserBoardList, modalUserDeviceRequestList } from "./modalPopUp";
 
-export const AdminMain = () => {
+export const RequestMgr = () => {
     const navigate = useNavigate();
 
     function goToPage(name) {
         let url = "/" + name;
         navigate(url);
-    }
-
-    const [isOpen, setIsOpen] = useState(false);
-
-    const openModal = () => {
-        setIsOpen(true);
-    }
-    
-    const closeModal = () => {
-        setIsOpen(false);
     }
 
     return (
@@ -33,7 +20,6 @@ export const AdminMain = () => {
                             <li>
                                 <img className="mgrImg" alt="Help call" src={GetIcon("profile-gray.png")} />
                                 <div className="mgrText"><span className="selectMgrText" onClick={()=> goToPage("")}>회원 관리</span></div>
-                                <img className="selectArrow" alt="Polygon" src={GetIcon("Polygon1.png")} />
                             </li>
                             <li>
                                 <img className="mgrImg" alt="Iot" src={GetIcon("text.png")} />
@@ -46,6 +32,7 @@ export const AdminMain = () => {
                             <li>    
                                 <img className="mgrImg" alt="User" src={GetIcon("help-call.png")} />
                                 <div className="mgrText"><span className="selectMgrText" onClick={()=> goToPage("requestMgr")}>요청 관리</span></div>
+                                <img className="selectArrow" alt="Polygon" src={GetIcon("Polygon1.png")} />
                             </li>
                         </ul>
                     </div>
@@ -55,7 +42,7 @@ export const AdminMain = () => {
                     
                     <div className="contents" />
                     
-                    <div className="selectMenuTitle">회원 관리</div>
+                    <div className="selectMenuTitle">요청 관리</div>
                     
                     <div className="serchInput">
                         <img className="serchInputImage" alt="Image" src={GetIcon("serchUser.png")} />
@@ -63,7 +50,10 @@ export const AdminMain = () => {
                     </div>
                     <button className="serchBtn">검색</button>
 
-                    <div className="serchResult">검색결과 : 총 <span className="userNum">1명</span></div>
+                    <div className="requestStateDiv">
+                        <span className="requestNotComplete">요청 미완료</span>
+                        <span className="requestComplete">요청 완료</span>
+                    </div>
                     
                     <div className="userListBox" >
                         <table className="userListTable">
@@ -73,27 +63,24 @@ export const AdminMain = () => {
                                 <th>번호</th>
                                 <th>아이디</th>
                                 <th>닉네임</th>
+                                <th>재목</th>
                                 <th>상태</th>
-                                <th>가입일</th>
-                                <th>관리</th>
+                                <th>요청시간</th>
+                                <th>상세보기</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                 <td className="checkBox"><input type="checkbox" /></td>
                                 <td>1</td>
-                                <td>gildong01</td>
-                                <td>홍길동</td>
-                                <td>정상</td>
-                                <td>2024.04.29</td>
-                                <td className="userListMgr">
-                                    <button className="viewDetailsBtn" onClick={openModal}>
-                                        <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
-                                        <span className="viewDetails">상세보기</span>
-                                    </button>
-                                    <button className="viewDetailsBtn">
-                                        <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
-                                        <span className="viewDetails">프로필카드</span>
+                                <td>test1</td>
+                                <td>에어컨좋아용</td>
+                                <td>기기 등록 요청합니다.</td>
+                                <td>미완료</td>
+                                <td>2024.04.29 10:10</td>
+                                <td className="mgr">
+                                    <button className="mgrModifyBtn">
+                                        <span className="mgrModify">상세보기</span>
                                     </button>
                                 </td>
                                 </tr>
@@ -101,7 +88,6 @@ export const AdminMain = () => {
                         </table>
                     </div>
 
-                    {/* 삭제 버튼 */}
                     <button className="deleteButton">삭제</button>
 
                     {/* 페이징 버튼 */}
@@ -120,11 +106,6 @@ export const AdminMain = () => {
                     
                 </div>
             </div>
-
-            {/* 모달팝업 창 */}
-            <Modal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
-                
-            </Modal>
         </div>
     );
 };
