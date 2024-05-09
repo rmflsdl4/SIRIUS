@@ -1,0 +1,300 @@
+@import "./fonts.css";
+:root {
+  --vh: 100%;
+}
+* {
+  font-family: "KCC-Hanbit";
+  letter-spacing: 1.5px;
+}
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer;
+}
+.div,
+.idiv {
+  position: relative;
+  background: linear-gradient(
+      33deg,
+      rgba(55, 219, 255, 0) 48.63%,
+      rgba(124, 154, 204, 0.2) 56.31%,
+      rgba(85, 112, 205, 0.19) 62.04%,
+      rgba(24, 46, 242, 0.2) 69.1%
+    ),
+    linear-gradient(200deg, #a9d7f1 59.9%, #9ed4f2 66.52%, #55aee0 86.36%);
+
+  border: 1px solid;
+  border-color: #cacaca;
+  height: 50rem;
+  position: relative;
+  width: 22.5rem;
+}
+.div {
+  opacity: 0;
+  animation: fadeIn ease-out 1s forwards;
+}
+.intro,
+.main,
+.signUp {
+  background-color: rgba(255, 255, 255, 1);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+/* 애니메이션 */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.LogoAni {
+  opacity: 0;
+  animation: fadeIn ease-in-out 2s forwards;
+}
+/* 인트로 */
+.intro .LogoAni {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12.5rem;
+}
+/*메인화면*/
+
+.main .view {
+  background-color: #4b93ff;
+  border-radius: 10px;
+  height: 44px;
+  left: 66px;
+  position: absolute;
+  top: 508px;
+  width: 229px;
+}
+
+.main .group {
+  height: 26px;
+  left: 64px;
+  position: relative;
+  top: 9px;
+  width: 98px;
+}
+
+.main .text-wrapper {
+  color: #ffffff;
+  font-size: 16px;
+  left: 37px;
+  line-height: normal;
+  position: absolute;
+  top: 4px;
+  white-space: nowrap;
+}
+
+.main .member-card {
+  height: 26px;
+  left: 0;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  width: 26px;
+}
+
+.main .overlap {
+  background-color: #67acff;
+  border-radius: 10px;
+  height: 44px;
+  left: 66px;
+  position: absolute;
+  top: 446px;
+  width: 229px;
+}
+
+.main .group-2 {
+  height: 22px;
+  left: 45px;
+  position: relative;
+  top: 11px;
+  width: 141px;
+}
+
+.main .text-wrapper-2 {
+  color: #ffffff;
+  font-size: 16px;
+  left: 31px;
+  position: absolute;
+  top: 2px;
+  white-space: nowrap;
+}
+
+.main .closed-padlock {
+  height: 22px;
+  left: 0;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  width: 22px;
+}
+
+.main .robot {
+  height: 51px;
+  left: 155px;
+  object-fit: cover;
+  position: absolute;
+  top: 262px;
+  width: 50px;
+}
+
+.main .overlap-group {
+  height: 66px;
+  left: 43px;
+  position: absolute;
+  top: 313px;
+  width: 276px;
+}
+
+.main .overlap-group-wrapper {
+  height: 66px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 276px;
+}
+
+.main .overlap-group-2 {
+  height: 66px;
+  position: relative;
+}
+
+.main .rectangle {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0px 4px 4px #5f5f5f40;
+  height: 51px;
+  left: 0;
+  position: absolute;
+  top: 15px;
+  width: 276px;
+  display: flex;
+  justify-content: center; /* 수평 가운데 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+}
+
+.main .polygon {
+  height: 22px;
+  left: 125px;
+  position: absolute;
+  top: 0;
+  width: 26px;
+}
+
+.main .p {
+  color: #8abfff;
+  font-size: 16px;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+}
+
+/* 회원가입 */
+.signUp:not(#signUpForm) {
+}
+.signUp .overlap-group {
+  height: 66px;
+  left: 0;
+  position: absolute;
+  top: 1.875rem;
+  width: 100%;
+  display: flex;
+  justify-content: center; /* 수평 가운데 정렬 */
+  align-items: center;
+}
+.signUp .polygon {
+  height: 22px;
+  position: absolute;
+  top: -20px;
+  width: 26px;
+}
+.signUp .robot {
+  height: 51px;
+  object-fit: cover;
+  position: absolute;
+  top: 2.75rem;
+  width: 50px;
+}
+.signUp .rectangle {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0px 4px 4px #5f5f5f40;
+  height: 51px;
+  position: absolute;
+  top: 120px;
+  width: 276px;
+  display: flex;
+  justify-content: center; /* 수평 가운데 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+}
+.signUp #signUpText {
+  color: #8abfff;
+  font-size: 16px;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+/* 입력 폼 */
+.box {
+  height: auto;
+  margin-top: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.inputBoxBG1 {
+  width: 331px;
+  height: 224px;
+  flex-shrink: 0;
+  border-radius: 20px;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.inputBG {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 285px;
+  height: 47px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: #eae8e8;
+  margin: 8px;
+}
+.inputImg {
+  width: 22px;
+}
+.inputText {
+  color: #939393;
+  font-size: 16px;
+  border: none;
+  background-color: #eae8e8;
+  outline: none;
+  margin-left: 15px;
+}
+.submitBtn {
+  width: 331px;
+  height: 44px;
+  margin-top: 20px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #359eff;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+}

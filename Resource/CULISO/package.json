@@ -1,6 +1,15 @@
 {
   "dependencies": {
+    "concurrently": "^8.2.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.0",
+    "react-scripts": "^5.0.1"
+  },
+  "scripts": {
+    "app": "cd application && npm run start",
+    "web": "cd web && npm run start",
+    "appServer": "cd application && nodemon server.js",
+    "dev": "concurrently \"cd application && npm run start\" \"cd web && npm run start\""
   }
 }

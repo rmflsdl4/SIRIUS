@@ -1,0 +1,665 @@
+:root {
+  --vh: 100%;
+}
+
+/* 로그인 화면 */
+.AdminLogin {
+  background-color: rgba(255, 255, 255, 1);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.AdminLogin .div {
+  background: linear-gradient(
+      180deg,
+      rgba(55.25, 219.04, 255, 0) 0%,
+      rgba(124.1, 154.29, 204, 0.2) 37.5%,
+      rgba(85.44, 112.24, 205.06, 0.19) 65.5%,
+      rgba(24.22, 46.03, 242.25, 0.2) 100%
+  );
+  background-color: rgba(255, 255, 255, 1);
+  border: 1px solid;
+  border-color: #cacaca;
+  height: 1080px;
+  position: relative;
+  width: 1910px;
+}
+
+.AdminLogin .removebg-preview {
+  height: 344px;
+  left: 814px;
+  object-fit: cover;
+  position: absolute;
+  top: 84px;
+  width: 292px;
+}
+
+.AdminLogin .removebg-preview img {
+  width: 100%;
+  height: 100%;
+}
+
+.AdminLogin .overlap {
+  background-color: #ffffff;
+  border-radius: 20px;
+  height: 424px;
+  left: 678px;
+  position: absolute;
+  top: 558px;
+  width: 565px;
+}
+
+.AdminLogin .group {
+  height: 269px;
+  left: 77px;
+  position: relative;
+  top: 67px;
+  width: 415px;
+}
+
+.AdminLogin .overlap-group {
+  background-color: #b1dbfa;
+  border-radius: 10px;
+  height: 63px;
+  left: 0;
+  position: absolute;
+  top: 206px;
+  width: 409px;
+  border: none; /* 테두리 제거 */
+  font-size: 21px; /* 텍스트 크기 지정 */
+  cursor: pointer; /* 마우스 커서 스타일 변경 */
+}
+
+.AdminLogin .overlap-group:hover {
+  background-color: #74c1f8; /* 마우스 오버 시 배경색 변경 */
+}
+
+.AdminLogin .text-wrapper {
+  color: #5a5a5a;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 25px;
+  font-weight: 400;
+  left: 164px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 19px;
+  white-space: nowrap;
+  width: 82px;
+}
+
+.AdminLogin .overlap-group-2 {
+  background-color: #e9e7e7;
+  border-radius: 6px;
+  height: 67px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 409px;
+}
+
+/* input 태그 입력란 스타일 */
+.AdminLogin .text-wrapper-2, .text-wrapper-3 {
+  background-color: transparent;
+  border: none;
+  width: calc(100% - 79px);
+  height: 100%;
+  padding-left: 79px; /* 아이콘과 텍스트 사이의 간격을 조정 */
+  color: #929292;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  outline: none; /* 입력란 클릭 시 기본 테두리 제거 */
+}
+
+.AdminLogin .image {
+  height: 40px;
+  left: 26px;
+  object-fit: cover;
+  position: absolute;
+  top: 13px;
+  width: 40px;
+}
+
+.AdminLogin .overlap-2 {
+  background-color: #e9e7e7;
+  border-radius: 6px;
+  height: 67px;
+  left: 0;
+  position: absolute;
+  top: 93px;
+  width: 409px;
+}
+
+.AdminLogin .padlock {
+  height: 32px;
+  left: 32px;
+  object-fit: cover;
+  position: absolute;
+  top: 17px;
+  width: 32px;
+}
+
+.AdminLogin .text-wrapper-4 {
+  color: #1c84c6;
+  font-family: "Inter-SemiBold", Helvetica;
+  font-size: 45px;
+  font-weight: 600;
+  height: 54px;
+  left: 890px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 458px;
+  white-space: nowrap;
+}
+
+
+/* 메인화면 */
+.AdminMain {
+  background-color: rgba(255, 255, 255, 1);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.AdminMain .main-overlap-wrapper {
+  background: linear-gradient(
+      180deg,
+      rgba(55.25, 219.04, 255, 0) 0%,
+      rgba(124.1, 154.29, 204, 0.2) 37.5%,
+      rgba(85.44, 112.24, 205.06, 0.19) 65.5%,
+      rgba(24.22, 46.03, 242.25, 0.2) 100%
+  );
+  background-color: rgba(255, 255, 255, 1);
+  border: 1px solid;
+  border-color: #cacaca;
+  height: 1080px;
+  width: 1920px;
+}
+
+.AdminMain .main-overlap {
+  height: 1080px;
+  position: relative;
+}
+
+.AdminMain .adminMgrList {
+  background-color: #30323a;
+  height: 1050px;
+  left: 0;
+  position: absolute;
+  top: 30px;
+  width: 187px;
+}
+
+.AdminMain .adminMgrList ul {
+  list-style-type: none; /* 리스트 스타일 제거 */
+  padding: 0; /* 리스트의 내부 여백 제거 */
+  margin: 0; /* 리스트의 외부 여백 제거 */
+  margin-left: 12px;
+}
+
+.AdminMain .adminMgrList ul li {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.AdminMain .topDiv {
+  background-color: #30323a;
+  height: 30px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 1920px;
+}
+
+.AdminMain .topDivText {
+  color: #ffffff;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 18px;
+  font-weight: 400;
+  left: 940px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: right;
+  top: 3px;
+  width: 950px;
+}
+
+.AdminMain .contents {
+  background-color: #e6e6e6;
+  height: 1050px;
+  left: 187px;
+  position: absolute;
+  top: 30px;
+  width: 1733px;
+}
+
+.AdminMain .selectArrow {
+  height: 26px;
+  float: right;
+  top: 53px;
+  width: 23px;
+}
+
+.AdminMain .selectMenuTitle {
+  color: #000000;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 30px;
+  font-weight: 400;
+  left: 241px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 50px;
+  white-space: nowrap;
+}
+
+.AdminMain .serchBtn {
+  background-color: #b1dbfa;
+  border-radius: 7px;
+  height: 67px;
+  left: 696px;
+  position: absolute;
+  top: 108px;
+  width: 144px;
+  border: none; /* 테두리 제거 */
+  color: #000000;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 25px;
+  font-weight: 400;
+  cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 상태로 만듦 */
+}
+
+.AdminMain .serchBtn:hover {
+  background-color: #74c1f8; /* 마우스 오버 시 배경색 변경 */
+}
+
+.AdminMain .serchInput {
+  background-color: #f3f3f3;
+  border-radius: 6px;
+  height: 67px;
+  left: 241px;
+  position: absolute;
+  top: 108px;
+  width: 416px;
+  text-align: right;
+}
+
+.AdminMain .serchInputImage {
+  position: absolute; /* 절대 위치 설정 */
+  top: 50%; /* 상위 요소의 중앙에 위치시키기 위해 */
+  transform: translateY(-50%); /* 상위 요소의 중앙에 위치시키기 위해 */
+  height: 80%; /* 부모 요소의 높이에 맞게 조절 */
+  width: auto; /* 너비를 자동으로 조절하여 비율 유지 */
+  left: 0;
+}
+
+.AdminMain .serchText {
+  display: inline-block;
+  color: #929292;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  width: calc(100% - 60px); /* 부모 요소의 크기에 맞게 조절 */
+  height: 100%;
+  border: none; /* 테두리 제거 */
+  background-color: inherit; /* 부모의 배경색을 상속 */
+  padding: 0; /* 내부 여백 제거 */
+  outline: none; /* 기본 포커스 효과 제거 */
+}
+
+.AdminMain .userListBox {
+  background-color: #f9f9f9;
+  height: 639px;
+  left: 241px;
+  position: absolute;
+  top: 232px;
+  width: 1619px;
+  max-width: 100%; 
+  overflow-x: auto; 
+}
+
+.AdminMain .userListTable {
+  width: 100%;
+  border-collapse: collapse; 
+}
+
+.AdminMain .userListTable th,
+.AdminMain .userListTable td {
+  padding: 8px; 
+  text-align: center; 
+  border: 1px solid #ccc; 
+}
+
+.AdminMain .userListTable th {
+  background-color: #f3f3f3; 
+  font-weight: bold; 
+}
+
+.AdminMain .checkBox {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  border-radius: 5px;
+  height: 20px;
+  width: 20px;
+}
+
+.AdminMain .mgr {
+  white-space: nowrap; 
+}
+
+.AdminMain .serchResult {
+  color: #000000;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 17px;
+  font-weight: 400;
+  left: 241px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 201px;
+}
+
+.AdminMain .deleteButton {
+  background-color: #b40505;
+  color: #ffffff;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 25px;
+  font-weight: 700;
+  height: 50px;
+  left: 1760px;
+  position: absolute;
+  top: 889px;
+  width: 100px;
+  cursor: pointer;
+}
+
+.AdminMain .viewDetailsBtn {
+  display: inline-block;
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  border-radius: 5px;
+  height: 31px;
+  position: relative;
+  width: 127px;
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+.AdminMain .viewDetailsBtn:hover {
+  background-color: #dddddd;
+}
+
+.AdminMain .viewDetailsImage {
+  height: 28px;
+  left: 11px;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  width: 28px;
+}
+
+.AdminMain .overlap-group-wrapper {
+  height: 31px;
+  left: 1473px;
+  position: absolute;
+  top: 317px;
+  width: 129px;
+}
+
+.AdminMain .viewDetails {
+  color: #000000;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 17px;
+  font-weight: 400;
+  left: 36px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 4px;
+}
+
+.AdminMain .mgrText {
+  display: inline-block;
+  color: #ffffff;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  text-align: left;
+  width: 115px;
+  margin-left: 8px;
+}
+
+.AdminMain .mgrImg {
+  height: 27px;
+  left: 0;
+  object-fit: cover;
+  top: 0;
+  width: 27px;
+}
+
+.AdminMain .selectMgrText {
+  cursor: pointer;
+}
+
+
+.AdminMain .rectangle-12 {
+  background-color: #2e446f;
+  height: 35px;
+  left: 1010px;
+  position: absolute;
+  top: 951px;
+  width: 35px;
+}
+
+.AdminMain .rectangle-13 {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  height: 35px;
+  left: 1054px;
+  position: absolute;
+  top: 951px;
+  width: 35px;
+}
+
+.AdminMain .rectangle-14 {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  height: 35px;
+  left: 922px;
+  position: absolute;
+  top: 951px;
+  width: 35px;
+}
+
+.AdminMain .rectangle-15 {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  height: 35px;
+  left: 1098px;
+  position: absolute;
+  top: 951px;
+  width: 35px;
+}
+
+.AdminMain .rectangle-16 {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  height: 35px;
+  left: 966px;
+  position: absolute;
+  top: 951px;
+  width: 35px;
+}
+
+.AdminMain .rectangle-17 {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  height: 35px;
+  left: 1142px;
+  position: absolute;
+  top: 951px;
+  width: 35px;
+}
+
+.AdminMain .text-wrapper-36 {
+  color: #ffffff;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  left: 1022px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 955px;
+  white-space: nowrap;
+}
+
+.AdminMain .text-wrapper-37 {
+  color: #000000;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  left: 1065px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 955px;
+  white-space: nowrap;
+}
+
+.AdminMain .text-wrapper-38 {
+  color: #000000;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  left: 925px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 955px;
+  white-space: nowrap;
+}
+
+.AdminMain .text-wrapper-39 {
+  color: #000000;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  left: 1108px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 955px;
+  white-space: nowrap;
+}
+
+.AdminMain .text-wrapper-40 {
+  color: #000000;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  left: 976px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 955px;
+  white-space: nowrap;
+}
+
+.AdminMain .text-wrapper-41 {
+  color: #000000;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  left: 1145px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 955px;
+  white-space: nowrap;
+}
+
+
+
+/* 게시판 관리 */
+.AdminMain .mgrModifyBtn {
+  display: inline-block;
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  border-radius: 5px;
+  height: 31px;
+  position: relative;
+  width: 100px;
+  cursor: pointer;
+}
+
+.AdminMain .mgrModifyBtn:hover {
+  background-color: #dddddd;
+}
+
+.AdminMain .deleteButtonDiv {
+  display: flex; /* 부모 요소를 플렉스 박스로 설정 */
+  justify-content: space-between; /* 자식 요소들을 좌우로 간격을 벌려 나란히 정렬 */
+  height: 50px;
+  left: 1590px;
+  position: absolute;
+  top: 889px;
+  width: 270px;
+}
+
+.AdminMain .deleteButtonDiv button {
+  display: inline-block; /* 버튼을 인라인 블록 요소로 설정 */
+}
+
+.AdminMain .boardDeleteButton {
+  background-color: #b40505;
+  color: #ffffff;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 25px;
+  font-weight: 700;
+  height: 50px;
+  width: 100px;
+  cursor: pointer;
+}
+
+.AdminMain .boardCreateButton {
+  background-color: #b1dbfa;
+  color: #ffffff;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 25px;
+  font-weight: 700;
+  height: 50px;
+  width: 150px;
+  cursor: pointer;
+}
