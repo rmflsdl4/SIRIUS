@@ -1,109 +1,153 @@
+import React, { useState } from "react";
 import GetIcon from "./modules/GetIcon";
-//import * as SignUpModule from "./modules/SignUp";
-//import * as nav from "./modules/Navigate";
-import Member from "./modules/SignUp";
+import Timer from "./modules/Timer";
+import { Navigate } from "./modules/Navigate";
 import "./style.css";
 
-let signUpDic = {
-  0: "지금부터 회원가입을 도와드릴게요!",
+
+let culiMsg = {
+  0: "지금부터 회원가입을\n도와드릴게요!",
   1: "먼저 아이디와 비밀번호를\n입력해 주세요!",
   2: "이번에는 이름과 별명,\n그리고 주소를 입력해 주세요!",
   3: "마지막으로 전화번호를\n입력하고 인증을 받아주세요!",
   4: "회원가입이 완료되었습니다!\n다시 한 번 환영합니다!",
   5: "로그인 화면으로 안내해 드릴게요!\n잠시만 기다려주세요",
 };
-let currentTextIdx = 0;
-let signUpFlag = true;
-let idx = 0;
-let batchSize = 3;
-let newMember;
-let idx2 = 0;
-
-window.onload = function () {
-  newMember = new Member();
-  const submitBtn = document.getElementById("submitBtn");
-  submitBtn.disabled = true;
-};
-function SignUpGuide() {
-  console.log(newMember);
-  SignUpMsg();
-  //if (signUpFlag && currentTextIdx > 1) SetForm();
-  console.log(idx, batchSize);
-}
-function SetForm() {
-  if (!signUpFlag) return;
-  const signUpForm = document.getElementById("signUpForm");
-  const inputBG = document.getElementsByClassName("inputBG");
-  const inputText = document.getElementsByClassName("inputText");
-  for (var i = 0; i < inputBG.length; i++) {
-    inputBG[i].style.display = "none";
-  }
-  for (i = idx; i < idx + batchSize; i++) {
-    if (i < inputBG.length) {
-      inputBG[i].style.display = "flex";
-      inputText[i].value = "";
-    }
-  }
-
-  idx = inputBG.length > idx ? idx + batchSize : idx;
-
-  if (currentTextIdx === 2 || currentTextIdx === 3 || currentTextIdx === 4) {
-    signUpForm.style.display = "block";
-  } else {
-    signUpForm.style.display = "none";
-  }
-}
-function SetSignUpFlag() {
-  signUpFlag = true;
-  const inputText = document.getElementsByClassName("inputText");
-  for (var i = idx - 3; i < idx + batchSize && i < inputText.length; i++) {
-    if (newMember.hasOwnProperty(inputText[i].name)) {
-      newMember[inputText[i].name] = inputText[i].value;
-    }
-  }
-  idx2 += batchSize;
-  SubmitBtnSetActive();
-}
-function SignUpMsg() {
-  let text = document.getElementById("signUpText");
-  const cnt = Object.keys(signUpDic).length;
-  // 나올 메세지의 다음 거를 기준으로 잡을것
-  console.log("현재 플래그 상태: " + signUpFlag);
-  console.log("현재 인덱스: " + currentTextIdx);
-  if (currentTextIdx < cnt && signUpFlag) {
-    text.textContent = signUpDic[currentTextIdx++];
-  } else if (currentTextIdx === cnt - 1) {
-    text.textContent = signUpDic[currentTextIdx++];
-  }
-  if (
-    currentTextIdx === 2 ||
-    currentTextIdx === 3 ||
-    currentTextIdx === 4 ||
-    currentTextIdx === 5
-  ) {
-    SetForm();
-    signUpFlag = false;
-  }
-}
-function SubmitBtnSetActive() {
-  const input = document.getElementsByClassName("inputText");
-  const submitBtn = document.getElementById("submitBtn");
-
-  for (var i = idx2; i < idx2 + batchSize; i++) {
-    if (input[i].value === "") {
-      submitBtn.style.opacity = 0.5;
-      submitBtn.disabled = true;
-      return;
-    }
-  }
-  submitBtn.disabled = false;
-  submitBtn.style.opacity = 1;
-}
-// 아래는 회원가입 폼 화면 출력
+// 회원가입
 export const SignUp = () => {
+  const [msg, setMsg] = useState("안녕하세요!\n저는 당신을 도와드릴 큐리에요");
+  const [currentMsgIdx, setcurrentMsgIdx] = useState(0);
+  const [isForm, setIsForm] = useState(false);
+  const [isInputCheck, setInputCheck] = useState(false);
+  const [pageIdx, setPageIdx] = useState(0);
+  const [formValues, setFormValues] = useState({
+    id: "",
+    pw: "",
+    name: "",
+    nickName: "",
+    location: "",
+    phoneNum: ""
+  });
+  const inputBGData = [
+    { iconSrc: GetIcon("profile-gray.png"), placeholder: "아이디", name: "id" },
+    { iconSrc: GetIcon("padlock-web-gray.png"), placeholder: "비밀번호", name: "pw" },
+    { iconSrc: GetIcon("padlock-web-gray.png"), placeholder: "비밀번호 확인", name: "cpw" },
+    { iconSrc: GetIcon("N-gray.png"), placeholder: "이름", name: "name" },
+    { iconSrc: GetIcon("N-gray.png"), placeholder: "별명", name: "nickName" },
+    { iconSrc: GetIcon("location-gray.png"), placeholder: "주소", name: "location" },
+    { iconSrc: GetIcon("phone-gray.png"), placeholder: "전화번호", name: "phoneNum" },
+    { iconSrc: GetIcon("confirm-white.png"), placeholder: "전화번호 인증하기", name: "phoneID", button: true },
+  ];
+
+  
+  const InputNullCheck = () => {
+    const inputText = document.getElementsByClassName("inputText");
+    for(let i = 0; i < inputText.length; i++){
+      if(inputText[i].value === "") return;
+    }
+    UpdateFormValues();
+    
+    SetInputCheck(true);
+  }
+  // 매니저
+  const SignUpManager = () => {
+    console.log(currentMsgIdx);
+    if(currentMsgIdx >= culiMsg.length-1){
+      console.log("로그인 이동");
+      // 이 부분 수정할 것 로ㅓ그인 페이지 이동 안됨
+      Timer(2, Navigate("login"));
+    }
+    if(!isForm){
+      SignUpMsg();
+    }
+  };
+  const SetInputCheck = (state) => {
+    
+    setInputCheck(state);
+  }
+  const SetPage = () => {
+    setPageIdx(pageIdx + 3);
+  }
+  const SetFormDisplay = (state) => {
+    setIsForm(state);
+  }
+  const SignUpMsg = () => {
+    const cnt = Object.keys(culiMsg).length;
+    if (currentMsgIdx < cnt) {
+      setMsg(culiMsg[currentMsgIdx]);
+      setcurrentMsgIdx(currentMsgIdx + 1);
+    }
+    if ([1,2,3].includes(currentMsgIdx)) {
+      SetFormDisplay(true);
+    } else {
+      SetFormDisplay(false);
+    }
+  };
+  const RenderInputs = () => {
+    const inputGroups = [];
+    for (let i = pageIdx; i < pageIdx + 3 &&  i < inputBGData.length; i++) {
+      if(i < inputBGData.length - 1){
+        inputGroups.push(
+          <div className="inputBG" key={i}>
+            <img 
+              className="inputImg" 
+              src={inputBGData[i].iconSrc} 
+              alt=""
+            />
+            <input
+                className="inputText"
+                type={i === 1 || i === 2 ? "password" : "text"}
+                name={inputBGData[i].name}
+                placeholder={inputBGData[i].placeholder}
+                onChange={InputNullCheck}
+            />
+          </div>
+        );
+      }
+      else{
+        inputGroups.push(
+          <div className="inputBGBtn" key={i}>
+            <img 
+              className="inputImg" 
+              src={inputBGData[i].iconSrc} 
+              alt=""
+            />
+            <input
+                className="inputBtn"
+                type="button"
+                name="phone"
+                style={{backgroundColor:"#b1dbfa"}}
+                value={inputBGData[i].placeholder}
+            />
+          </div>
+        );
+      }
+    }
+    return inputGroups;
+  };
+  const UpdateFormValues = () => {
+    const inputText = document.getElementsByClassName("inputText");
+    
+    for(let i = 0; i < inputText.length; i++){
+      if(formValues.hasOwnProperty(inputText[i].name)){
+        setFormValues(prevState => ({
+          ...prevState,
+          [inputText[i].name]: inputText[i].value
+        }));
+      }
+    }
+  }
+  const NextPage = () => {
+    SignUpMsg();
+    SetPage();
+    SetInputCheck(false);
+    //UpdateFormValues();
+    console.log(formValues);
+  }
+
   return (
     <div className="signUp">
-      <div className="div" onClick={() => SignUpGuide()}>
+      <div className="div" onClick={() => SignUpManager()}>
         <div className="overlap-group">
           <div className="rectangle">
             <img
@@ -111,135 +155,26 @@ export const SignUp = () => {
               alt="Polygon"
               src={GetIcon("polygon.png")}
             />
-            <span id="signUpText">
-              안녕하세요!<br></br>저는 당신을 도와드릴 큐리에요
-            </span>
+            <span id="signUpText">{msg}</span>
           </div>
           <img className="robot" alt="Robot" src={GetIcon("robot-white.png")} />
         </div>
         <div className="box">
+        {isForm && (
           <form className="signUpForm" id="signUpForm">
             <div className="inputBoxBG1">
-              <div className="inputBG">
-                <img
-                  className="inputImg"
-                  src={GetIcon("profile-gray.png")}
-                  alt=""
-                ></img>
-                <input
-                  className="inputText"
-                  type="text"
-                  name="id"
-                  placeholder="아이디"
-                  onChange={() => SubmitBtnSetActive()}
-                ></input>
-              </div>
-              <div className="inputBG">
-                <img
-                  className="inputImg"
-                  src={GetIcon("padlock-web-gray.png")}
-                  alt=""
-                ></img>
-                <input
-                  className="inputText"
-                  type="password"
-                  name="pw"
-                  onChange={() => SubmitBtnSetActive()}
-                  placeholder="비밀번호"
-                ></input>
-              </div>
-              <div className="inputBG">
-                <img
-                  className="inputImg"
-                  src={GetIcon("padlock-web-gray.png")}
-                  alt=""
-                ></img>
-                <input
-                  className="inputText"
-                  type="password"
-                  name="cpw"
-                  onChange={() => SubmitBtnSetActive()}
-                  placeholder="비밀번호 확인"
-                ></input>
-              </div>
-              <div className="inputBG">
-                <img
-                  className="inputImg"
-                  src={GetIcon("N-gray.png")}
-                  alt=""
-                ></img>
-                <input
-                  className="inputText"
-                  type="text"
-                  name="name"
-                  onChange={() => SubmitBtnSetActive()}
-                  placeholder="이름"
-                ></input>
-              </div>
-              <div className="inputBG">
-                <img
-                  className="inputImg"
-                  src={GetIcon("N-gray.png")}
-                  alt=""
-                ></img>
-                <input
-                  className="inputText"
-                  type="text"
-                  name="nickName"
-                  onChange={() => SubmitBtnSetActive()}
-                  placeholder="별명"
-                ></input>
-              </div>
-              <div className="inputBG">
-                <img
-                  className="inputImg"
-                  src={GetIcon("location-gray.png")}
-                  alt=""
-                ></img>
-                <input
-                  className="inputText"
-                  type="text"
-                  name="location"
-                  onChange={() => SubmitBtnSetActive()}
-                  placeholder="주소"
-                ></input>
-              </div>
-              <div className="inputBG">
-                <img
-                  className="inputImg"
-                  src={GetIcon("phone-gray.png")}
-                  alt=""
-                ></img>
-                <input
-                  className="inputText"
-                  type="text"
-                  name="phoneNum"
-                  onChange={() => SubmitBtnSetActive()}
-                  placeholder="전화번호"
-                ></input>
-              </div>
-              <div className="inputBG" id="phone">
-                <img
-                  className="inputImg"
-                  src={GetIcon("confirm-white.png")}
-                  alt=""
-                ></img>
-                <input
-                  className="inputText"
-                  id="phoneID"
-                  type="button"
-                  onClick={() => ""}
-                  value="전화번호 인증하기"
-                ></input>
-              </div>
+              {<RenderInputs/>}
             </div>
             <input
               id="submitBtn"
               type="button"
               value="다음으로"
-              onClick={SetSignUpFlag}
+              style={{ opacity: isInputCheck ? 1.0 : 0.5 }}
+              disabled={isInputCheck ? false : true}
+              onClick={NextPage}
             />
           </form>
+        )} 
         </div>
       </div>
     </div>

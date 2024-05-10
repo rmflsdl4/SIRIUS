@@ -266,7 +266,7 @@ input[type="reset"] {
   flex-direction: column;
 }
 .inputBG {
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: center;
   width: 285px;
@@ -274,6 +274,17 @@ input[type="reset"] {
   flex-shrink: 0;
   border-radius: 6px;
   background: #eae8e8;
+  margin: 8px;
+}
+.inputBGBtn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 285px;
+  height: 47px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: #b1dbfa;
   margin: 8px;
 }
 .inputImg {
@@ -289,7 +300,6 @@ input[type="reset"] {
   margin-left: 10px;
 }
 #submitBtn {
-  opacity: 0.5;
   width: 331px;
   height: 44px;
   margin-top: 20px;
@@ -300,9 +310,11 @@ input[type="reset"] {
   font-size: 16px;
   border: none;
 }
-#signUpForm {
-  display: none;
-}
-#phone {
-  background-color: #b1dbfa;
+.inputBtn {
+  margin-left: 10px;
+  font-size: 16px;
+  color: #ffffff;
+  border-radius: 6px;
+  background: none;
+  border: none;
 }

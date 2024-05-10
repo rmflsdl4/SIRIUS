@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Intro } from "./Intro";
 import { Main } from "./Main";
 import { SignUp } from "./SignUp";
+import { Login } from "./Login";
 
 // 스타일 파일 가져오기
 import "./style.css";
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/" element={<Intro />} />
         <Route path="/main" element={<Main />} />
         <Route path="/signUp" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
