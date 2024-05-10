@@ -1,7 +1,7 @@
 import GetIcon from "./modules/GetIcon";
 //import * as SignUpModule from "./modules/SignUp";
 //import * as nav from "./modules/Navigate";
-import Member from "./modules/SignUp"
+import Member from "./modules/SignUp";
 import "./style.css";
 
 let signUpDic = {
@@ -17,10 +17,13 @@ let signUpFlag = true;
 let idx = 0;
 let batchSize = 3;
 let newMember;
+let idx2 = 0;
 
-window.onload = function(){
+window.onload = function () {
   newMember = new Member();
-}
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+};
 function SignUpGuide() {
   console.log(newMember);
   SignUpMsg();
@@ -28,21 +31,21 @@ function SignUpGuide() {
   console.log(idx, batchSize);
 }
 function SetForm() {
-  if(!signUpFlag) return;
+  if (!signUpFlag) return;
   const signUpForm = document.getElementById("signUpForm");
   const inputBG = document.getElementsByClassName("inputBG");
   const inputText = document.getElementsByClassName("inputText");
   for (var i = 0; i < inputBG.length; i++) {
     inputBG[i].style.display = "none";
   }
-  for (var i = idx; i < idx + batchSize; i++) {
+  for (i = idx; i < idx + batchSize; i++) {
     if (i < inputBG.length) {
       inputBG[i].style.display = "flex";
       inputText[i].value = "";
     }
   }
 
-  idx = inputBG.length > idx ? idx + batchSize:idx;
+  idx = inputBG.length > idx ? idx + batchSize : idx;
 
   if (currentTextIdx === 2 || currentTextIdx === 3 || currentTextIdx === 4) {
     signUpForm.style.display = "block";
@@ -53,12 +56,13 @@ function SetForm() {
 function SetSignUpFlag() {
   signUpFlag = true;
   const inputText = document.getElementsByClassName("inputText");
-  for (var i = idx - 3; i < idx + batchSize; i++) {
-    console.log(inputText[i].name);
+  for (var i = idx - 3; i < idx + batchSize && i < inputText.length; i++) {
     if (newMember.hasOwnProperty(inputText[i].name)) {
       newMember[inputText[i].name] = inputText[i].value;
     }
   }
+  idx2 += batchSize;
+  SubmitBtnSetActive();
 }
 function SignUpMsg() {
   let text = document.getElementById("signUpText");
@@ -68,11 +72,15 @@ function SignUpMsg() {
   console.log("현재 인덱스: " + currentTextIdx);
   if (currentTextIdx < cnt && signUpFlag) {
     text.textContent = signUpDic[currentTextIdx++];
-  }
-  else if(currentTextIdx === cnt - 1){
+  } else if (currentTextIdx === cnt - 1) {
     text.textContent = signUpDic[currentTextIdx++];
   }
-  if (currentTextIdx === 2 || currentTextIdx === 3 || currentTextIdx === 4 || currentTextIdx === 5) {
+  if (
+    currentTextIdx === 2 ||
+    currentTextIdx === 3 ||
+    currentTextIdx === 4 ||
+    currentTextIdx === 5
+  ) {
     SetForm();
     signUpFlag = false;
   }
@@ -80,16 +88,15 @@ function SignUpMsg() {
 function SubmitBtnSetActive() {
   const input = document.getElementsByClassName("inputText");
   const submitBtn = document.getElementById("submitBtn");
-  const batchSize = 3;
-  let idx = 0;
-  for (var i = idx; i < idx + batchSize; i++) {
+
+  for (var i = idx2; i < idx2 + batchSize; i++) {
     if (input[i].value === "") {
       submitBtn.style.opacity = 0.5;
-      //submitBtn.disabled = true;
+      submitBtn.disabled = true;
       return;
     }
   }
-  //submitBtn.disabled = false;
+  submitBtn.disabled = false;
   submitBtn.style.opacity = 1;
 }
 // 아래는 회원가입 폼 화면 출력
@@ -211,7 +218,7 @@ export const SignUp = () => {
                   placeholder="전화번호"
                 ></input>
               </div>
-              <div className="inputBG">
+              <div className="inputBG" id="phone">
                 <img
                   className="inputImg"
                   src={GetIcon("confirm-white.png")}
@@ -219,6 +226,7 @@ export const SignUp = () => {
                 ></img>
                 <input
                   className="inputText"
+                  id="phoneID"
                   type="button"
                   onClick={() => ""}
                   value="전화번호 인증하기"
@@ -229,7 +237,6 @@ export const SignUp = () => {
               id="submitBtn"
               type="button"
               value="다음으로"
-              //disabled
               onClick={SetSignUpFlag}
             />
           </form>

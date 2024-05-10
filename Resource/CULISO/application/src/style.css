@@ -243,7 +243,6 @@ input[type="reset"] {
   white-space: pre-wrap;
   opacity: 0;
   animation: fadeIn ease-out 1s forwards;
-  
 }
 
 /* 입력 폼 */
@@ -303,4 +302,7 @@ input[type="reset"] {
 }
 #signUpForm {
   display: none;
+}
+#phone {
+  background-color: #b1dbfa;
 }
