@@ -114,7 +114,7 @@ input[type="reset"] {
 
 .main .group-2 {
   height: 22px;
-  left: 45px;
+  left: 38px;
   position: relative;
   top: 11px;
   width: 141px;
@@ -178,8 +178,8 @@ input[type="reset"] {
   top: 15px;
   width: 276px;
   display: flex;
-  justify-content: center; /* 수평 가운데 정렬 */
-  align-items: center; /* 수직 가운데 정렬 */
+  justify-content: center;
+  align-items: center;
 }
 
 .main .polygon {
@@ -256,7 +256,6 @@ input[type="reset"] {
 }
 .inputBoxBG1 {
   width: 331px;
-  height: 224px;
   flex-shrink: 0;
   border-radius: 20px;
   background-color: #fff;
@@ -276,6 +275,7 @@ input[type="reset"] {
   background: #eae8e8;
   margin: 8px;
 }
+
 .inputBGBtn{
   display: flex;
   justify-content: center;
@@ -289,15 +289,16 @@ input[type="reset"] {
 }
 .inputImg {
   width: 22px;
-  margin-right: 15px;
+  margin-left: 2px;
+  margin-right: 8px;
 }
 .inputText {
   color: #939393;
-  font-size: 16px;
+  font-size: 13px;
   border: none;
   background-color: #eae8e8;
+  width: 200px;
   outline: none;
-  margin-left: 10px;
 }
 #submitBtn {
   width: 331px;
@@ -317,4 +318,9 @@ input[type="reset"] {
   border-radius: 6px;
   background: none;
   border: none;
+}
+.addExplan{
+  margin-left: 12px;
+  color: #a5a5a5;
+  font-size: 12px;
 }

@@ -1,23 +1,31 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Navigate(name) {
+export const Navigate = (name) => {
+  // const navigate = useNavigate();
+  // const nav = () =>{
+  //   navigate('/' + name);
+  // };
+
   window.location.href = "/" + name;
 
-  return null;
+  
+  return null;//(<div><button onClick={nav}>Navigate</button></div>);
 }
-function TimerNavigate(ms, name) {
-  const nav = useNavigate();
+
+export const TimerNavigate = (ms, name) => {
+  //const nav = useNavigate();
   const time = ms * 1000;
-  let timer = useEffect(() => {
-    setTimeout(() => {
-      nav("/" + name);
-    }, time);
-  }, [nav, name, time]);
+  // let timer = useEffect(() => {
+  //   setTimeout(() => {
+  //     nav("/" + name);
+  //   }, time);
+  // }, [nav, name, time]);
+  let timer = setTimeout(()=>{
+    window.location.href = "/" + name;
+  }, time)
 
   return () => {
     clearTimeout(timer);
   };
 }
-
-export { Navigate, TimerNavigate };
