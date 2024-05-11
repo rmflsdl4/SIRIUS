@@ -745,7 +745,6 @@
 
 .modalMenu .boardList {
   margin-left: 20px;
-  text-decoration: underline; /* 밑줄 */
 }
 
 .modalMenu .closeBtn {
@@ -888,4 +887,8 @@
 
 .modalSerchResult {
   margin-left: 20px;
+}
+
+.modalMenu .active {
+  text-decoration: underline;
 }
