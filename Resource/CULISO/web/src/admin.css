@@ -960,7 +960,7 @@
 
 
 /* 게시판 관리 */
-#boardMgrComment {
+#boardMgrComment, #requestComment {
     width: 100%;
     padding: 10px;
     box-sizing: border-box; /* 패딩을 포함한 전체 크기를 지정 */
@@ -1018,4 +1018,49 @@
 .postMgrBtnBox {
   float: right;
   margin-right: 20px;
+}
+
+/* 요청 관리 */
+.modalRequestMgrBox, .requestInformation, .requestCommentBox {
+  width: 100%;
+  text-align: center;
+}
+
+.requestCommentBox {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.modalRequestMgrBox img {
+  width: 350px;
+  height: 350px;
+}
+
+.requestInformation ul {
+  list-style-type: none; 
+  padding: 0; 
+}
+
+.requestInformation li {
+  display: inline-block;
+  margin-right: 50px;
+  margin-left: 50px;
+  font-weight: bold;
+}
+
+#requestComment {
+  width: 650px;
+  padding: 10px;
+  box-sizing: border-box; /* 패딩을 포함한 전체 크기를 지정 */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  resize: none; /* 크기 조절 비활성화 */
+}
+
+.requestCommentBox textarea {
+  pointer-events: none; /* 사용자의 입력을 막습니다. */
+  background-color: #f2f2f2; /* 비활성화된 모습을 나타내기 위해 배경색을 변경합니다. */
+  color: #666666; 
 }

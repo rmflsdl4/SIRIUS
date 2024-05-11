@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import "./admin.css";
 import { useNavigate } from "react-router-dom";
 import { GetIcon } from "./GetIcon";
+import Modal from "react-modal"
+import { CustomStyles } from "./ModalComponent";
 
 export const RequestMgr = () => {
     const navigate = useNavigate();
@@ -9,6 +11,16 @@ export const RequestMgr = () => {
     function goToPage(name) {
         let url = "/" + name;
         navigate(url);
+    }
+
+    const [isOpen, setIsOpen] = useState(false); // 상세보기 팝업 상태
+
+    const openModal = () => {
+        setIsOpen(true);
+    }
+    
+    const closeModal = () => {
+        setIsOpen(false);
     }
 
     return (
@@ -79,7 +91,7 @@ export const RequestMgr = () => {
                                 <td>미완료</td>
                                 <td>2024.04.29 10:10</td>
                                 <td className="mgr">
-                                    <button className="mgrModifyBtn">
+                                    <button className="mgrModifyBtn" onClick={openModal}>
                                         <span className="mgrModify">상세보기</span>
                                     </button>
                                 </td>
@@ -106,6 +118,40 @@ export const RequestMgr = () => {
                     
                 </div>
             </div>
+
+            {/* 요청 관리 상세보기 모달팝업 창 */}
+            <Modal isOpen={isOpen} onRequestClose={closeModal} style={CustomStyles}>
+                <div className="modalTop">
+                    <span className="modalTopTxt">admin Msg</span>
+                </div>
+
+                {/* 게시판 생성 내용 */}
+                <section className="modalContent">
+                    <div className="modalBoardMgrRoot">
+                        <div className="modalRequestMgrBox">
+                            <div className="requestImgBox">
+                                <img className="requestImg" alt="Image" src={GetIcon("air-conditioner.png")} />
+                            </div>
+                        </div>
+
+                        <div className="requestInformation">
+                            <ul>
+                                <li>제조사 : <span className="requestManufacturer">LG</span></li>
+                                <li>모델명 : <span className="requestModelName">AS191DK1</span></li>
+                                <li>기기 타입 : <span className="requestDeviceType">에어컨</span></li>
+                            </ul>
+                        </div>
+
+                        <div className="requestCommentBox">
+                            <textarea id="requestComment" rows="13" cols="80"></textarea>
+                        </div>
+
+                        <div className="boardMgrCompleteBox">
+                            <button className="boardMgrCompleteBtn" onClick={closeModal}>돌아가기</button>
+                        </div>
+                    </div>
+                </section>
+            </Modal>
         </div>
     );
 };
