@@ -717,7 +717,7 @@
 
 
 
-/* 모달팝업 창 */
+/* 상세보기 팝업 창 */
 .modalTop {
   background-color: #30323a;
   height: 23px;
@@ -736,14 +736,14 @@
   padding-top: 15px;
 }
 
-.modalMenu .boardList, .deviceList {
+.modalMenu .boardList, .deviceList, .boardMgr, .postMgr {
   font-size: 20px; /* 텍스트 사이즈 */
   font-weight: bold; /* 굵기 */
   margin-right: 60px;
   cursor: pointer;
 }
 
-.modalMenu .boardList {
+.modalMenu .boardList, .boardMgr {
   margin-left: 20px;
 }
 
@@ -758,33 +758,33 @@
   width: 100%;
 }
 
-.modalContent .searchRequirementBox {
+.modalContent .searchRequirementBox, .modalBoardMgrBox {
   width: 860px;
   margin: 20px;
 }
 
-.modalContent .searchRequirementTb {
+.modalContent .searchRequirementTb, .modalBoardMgrTb {
   width: 100%;
   border-collapse: collapse; 
   border: 2px solid #ccc; 
   border-collapse: collapse;
 }
 
-.modalContent .searchRequirementTb td {
+.modalContent .searchRequirementTb td, .modalBoardMgrTb td {
   padding: 8px; 
   text-align: center; 
   border: 2px solid #ccc; 
 }
 
-.modalContent .searchRequirementTb .elementLeft {
+.modalContent .searchRequirementTb .elementLeft, .modalBoardMgrTb .elementLeft {
   background-color: #e2e2e2;
 }
 
-.modalContent .searchRequirementTb .elementRight {
+.modalContent .searchRequirementTb .elementRight, .modalBoardMgrTb .elementRight {
   text-align: left;
 }
 
-.modalContent .searchRequirementTb .elementRight select {
+.modalContent .searchRequirementTb .elementRight select, .modalBoardMgrTb .elementRight select {
   width: 160px; /* 선택 상자의 너비를 조절합니다. */
   padding: 8px; /* 선택 상자의 안쪽 여백을 설정합니다. */
   font-size: 14px; /* 글꼴 크기를 조절합니다. */
@@ -812,7 +812,7 @@
   border-color: #007bff; 
 }
 
-.modalContent .searchRequirementTb #searchRequirement {
+.modalContent .searchRequirementTb #searchRequirement, .modalBoardMgrTb #boardMgrTitle {
   width: 200px; /* 입력 필드의 너비를 조절합니다. */
   padding: 8px; /* 입력 필드의 안쪽 여백을 설정합니다. */
   font-size: 14px; /* 글꼴 크기를 조절합니다. */
@@ -831,7 +831,7 @@
   text-align: center; /* 버튼을 가운데 정렬합니다. */
 }
 
-.searchRequirementBtn, .blockingBtn {
+.searchRequirementBtn, .blockingBtn, .boardMgrCompleteBtn {
   padding: 10px 20px; 
   font-size: 16px; 
   border: none; 
@@ -842,7 +842,7 @@
   transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
 }
 
-.searchRequirementBtn:hover, .blockingBtn:hover {
+.searchRequirementBtn:hover, .blockingBtn:hover, .boardMgrCompleteBtn:hover {
   background-color: #0056b3; 
 }
 
@@ -891,4 +891,131 @@
 
 .modalMenu .active {
   text-decoration: underline;
+}
+
+
+/* 프로필카드 팝업 창 */
+.profileCard {
+  width: 100%;
+  height: 100%;
+}
+
+.profileCard .profileCardTop {
+  width: 100%;
+  height: 50px;
+  background-color: #939393;
+  text-align: center;
+  padding-top: 20px;
+}
+
+.profileCard .profileCardTop .profileCardState {
+  color: white;
+  font-size: 23px;
+  font-weight: bold;
+}
+
+.profileCard .profileCardContent {
+  width: 91%;
+  margin: 30px;
+  
+}
+
+.profileCard .profileCardContent span {
+  display: block;
+}
+
+.profileCardContentRow {
+  height: 120px; 
+}
+
+/* 이미지 테두리 스타일 */
+.profileCardUserImg img,
+.profileCardHubImg img,
+.profileCardLocationImg img,
+.profileCardPhoneImg img {
+    border: 1px solid #939393; /* 테두리 스타일 및 색상 */
+    border-radius: 5px; /* 모서리를 둥글게 만듦 */
+    padding: 5px; /* 내부 여백 설정 */
+    width: 60px;
+    height: 60px;
+}
+
+.profileCardUserName,
+.profileCardLocationName,
+.profileCardLocationNum {
+  width: 200px;
+  font-size: 20px;
+}
+
+.profileCardUserNickName, .profileCardLocationNum {
+  font-size: 13px;
+  color: #939393;
+}
+
+.profileCardBottom {
+  text-align: center;
+  font-size: 30px;
+  color: #939393;
+}
+
+
+/* 게시판 관리 */
+#boardMgrComment {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box; /* 패딩을 포함한 전체 크기를 지정 */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    resize: none; /* 크기 조절 비활성화 */
+}
+
+.boardMgrCompleteBox {
+  text-align: center;
+}
+
+.modalMenuTitle {
+  text-align: center;
+  font-size: 25px;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.postMgrDeleteBtn {
+  padding: 10px 20px; 
+  font-size: 16px; 
+  border: none; 
+  border-radius: 5px; 
+  background-color: #ff0000; 
+  color: white; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
+  margin-right: 15px;
+}
+
+.postMgrDeleteBtn:hover {
+  background-color: #cc0000; 
+}
+
+.postMgrPrivateBtn {
+  padding: 10px 20px; 
+  font-size: 16px; 
+  border: none; 
+  border-radius: 5px; 
+  background-color: #007bff; 
+  color: white; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
+}
+
+.postMgrPrivateBtn:hover {
+  background-color: #0056b3; 
+}
+
+.postMgrBtnBox {
+  float: right;
+  margin-right: 20px;
 }

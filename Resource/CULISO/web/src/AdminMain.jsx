@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./admin.css";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal"
-import customStyles from "./ModalComponent";
+import { CustomStyles, ProfileCardStyles } from "./ModalComponent";
 import { GetIcon } from "./GetIcon";
 
 export const AdminMain = () => {
@@ -13,7 +13,8 @@ export const AdminMain = () => {
         navigate(url);
     }
 
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false); // 상세보기 팝업 상태
+    const [isOpenProfileCard, setIsOpenProfileCard] = useState(false); // 프로필카드 팝업 상태
     const [selectedMenu, setSelectedMenu] = useState("boardList"); // 기본값은 "게시글 목록"
 
     const openModal = () => {
@@ -27,6 +28,14 @@ export const AdminMain = () => {
     // 메뉴를 변경하는 함수
     const handleMenuChange = (menu) => {
         setSelectedMenu(menu);
+    }
+
+    const openProfileCard = () => {
+        setIsOpenProfileCard(true);
+    }
+
+    const closeProfileCard = () => {
+        setIsOpenProfileCard(false);
     }
 
     return (
@@ -96,7 +105,7 @@ export const AdminMain = () => {
                                         <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
                                         <span className="viewDetails">상세보기</span>
                                     </button>
-                                    <button className="viewDetailsBtn">
+                                    <button className="viewDetailsBtn" onClick={openProfileCard}>
                                         <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
                                         <span className="viewDetails">프로필카드</span>
                                     </button>
@@ -126,8 +135,8 @@ export const AdminMain = () => {
                 </div>
             </div>
 
-            {/* 모달팝업 창 */}
-            <Modal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
+            {/* 상세보기 모달팝업 창 */}
+            <Modal isOpen={isOpen} onRequestClose={closeModal} style={CustomStyles}>
                 <div className="modalTop">
                     <span className="modalTopTxt">admin Msg</span>
                 </div>
@@ -136,13 +145,13 @@ export const AdminMain = () => {
                 <div className="modalMenu">
                     <span className={selectedMenu === "boardList" ? "boardList active" : "boardList"} onClick={() => handleMenuChange("boardList")}>게시글 목록</span>
                     <span className={selectedMenu === "deviceList" ? "deviceList active" : "deviceList"} onClick={() => handleMenuChange("deviceList")}>기기 요청 목록</span>
-                    <span><img className="closeBtn" alt="Image" src={GetIcon("close.png")} /></span>
+                    <span onClick={closeModal}><img className="closeBtn" alt="Image" src={GetIcon("close.png")} /></span>
                 </div>
 
                 {/* 게시글 목록 내용 */}
                 <section className="modalContent">
                     {selectedMenu === "boardList" && (
-                        /* 게시글 검색 조건들 */
+                        // 게시글 검색 조건들
                         <div className="modalBoardListRoot">
                             <div className="searchRequirementBox">
                                 <table className="searchRequirementTb">
@@ -243,7 +252,6 @@ export const AdminMain = () => {
                                 <table className="modalUserBoardListTb">
                                     <thead>
                                         <tr>
-                                            <th className="modalCheckBox"><input type="checkbox" /></th>
                                             <th>번호</th>
                                             <th>모델명</th>
                                             <th>기기 타입</th>
@@ -255,7 +263,6 @@ export const AdminMain = () => {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td className="modalCheckBox"><input type="checkbox" /></td>
                                             <td>1</td>
                                             <td>AS191DK1</td>
                                             <td>에어컨</td>
@@ -269,6 +276,55 @@ export const AdminMain = () => {
                             </div>
                         </div>
                     )}
+                </section>
+            </Modal>
+
+            {/* 프로필카드 팝업 창 */}
+            <Modal isOpen={isOpenProfileCard} onRequestClose={closeProfileCard} style={ProfileCardStyles}>
+                <section className="profileCard">
+                    <div className="profileCardTop">
+                        <span className="profileCardState">정상</span>
+                    </div>
+                    
+                    <table className="profileCardContent">
+                        <tr className="profileCardContentRow">
+                            <td className="profileCardUserImg">
+                                <img className="profileCardUser" alt="User" src={GetIcon("user.png")} />
+                            </td>
+                            <td className="profileCardUserInformation">
+                                <span className="profileCardUserName">홍길동</span>
+                                <span className="profileCardUserNickName">gildong01</span>
+                            </td>
+
+                            <td className="profileCardHubImg">
+                                <img className="profileCardUserHub" alt="Zigbee Hub" src={GetIcon("zigbee.png")} />
+                            </td>
+                            <td className="profileCardHubInformation">
+                                <span className="profileCardHubNum">ZB-3920XJ</span>
+                            </td>
+                        </tr>
+
+                        <tr className="profileCardContentRow">
+                            <td className="profileCardLocationImg">
+                                <img className="profileCardLocation" alt="location" src={GetIcon("location-pin.png")} />
+                            </td>
+                            <td className="profileCardLocationInformation">
+                                <span className="profileCardLocationName">광주대학교 남구 효덕로 277, 전산관 320호</span>
+                                <span className="profileCardLocationNum">503-703</span>
+                            </td>
+
+                            <td className="profileCardPhoneImg">
+                                <img className="profileCardPhoneImg" alt="phone" src={GetIcon("telephone.png")} />
+                            </td>
+                            <td className="profileCardPhoneInformation">
+                                <span className="profileCardPhoneNum">010-1234-1234</span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div className="profileCardBottom">
+                        <span className="profileCardDate">2024.04.29</span>
+                    </div>
                 </section>
             </Modal>
         </div>
