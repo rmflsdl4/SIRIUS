@@ -6,7 +6,7 @@ export const Main = () => {
   return (
     <div className="main">
       <div className="div">
-        <div className="view" onClick={() => Navigate("signUp")}>
+        <div className="view" onClick={() => Navigate("signUp")} style={{cursor:"pointer"}}>
           <div className="group">
             <div className="text-wrapper">회원가입</div>
             <img
@@ -16,7 +16,7 @@ export const Main = () => {
             />
           </div>
         </div>
-        <div className="overlap">
+        <div className="overlap" onClick={() => Navigate("login")} style={{cursor:"pointer"}}>
           <div className="group-2">
             <div className="text-wrapper-2">CULISO 로그인</div>
             <img

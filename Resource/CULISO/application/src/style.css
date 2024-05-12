@@ -321,6 +321,12 @@ input[type="reset"] {
 }
 .addExplan{
   margin-left: 12px;
-  color: #a5a5a5;
-  font-size: 12px;
+  font-size: 11px;
+}
+.loginBG{
+  border-radius: 20px;
+  background: #FAFAFA;
+  width: 331px;
+  height: 427px;
+  flex-shrink: 0;
 }
