@@ -5,6 +5,8 @@ import Modal from "react-modal"
 import { CustomStyles, ProfileCardStyles } from "./ModalComponent";
 import { GetIcon } from "./GetIcon";
 import { handleViewDetailsClick } from "./sendData";
+import { AdminMainMgrInitData } from "./InitTableData";
+
 
 // 모달이 열릴 때 사용할 DOM 요소를 지정합니다.
 Modal.setAppElement('#root');
@@ -20,6 +22,33 @@ export const AdminMain = () => {
     const [isOpen, setIsOpen] = useState(false); // 상세보기 팝업 상태
     const [isOpenProfileCard, setIsOpenProfileCard] = useState(false); // 프로필카드 팝업 상태
     const [selectedMenu, setSelectedMenu] = useState("boardList"); // 기본값은 "게시글 목록"
+
+
+    // 입력된 검색어 상태
+    const [searchTerm, setSearchTerm] = useState('');
+    // 테이블 데이터 상태
+    const [tableData, setTableData] = useState(AdminMainMgrInitData);
+
+    // 검색어 입력 시 상태 업데이트
+    const handleInputChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    // 검색 버튼 클릭 시 필터링된 데이터 보여주기
+    const handleSearch = () => {
+        // 검색어가 비어있으면 전체 테이블 데이터를 사용
+        const filteredData = searchTerm ? tableData.filter(item =>
+                item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.registrationDate.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            : AdminMainMgrInitData;
+
+        // 필터링된 데이터로 테이블 데이터 업데이트
+        setTableData(filteredData);
+    };
+
 
     const openModal = () => {
         setIsOpen(true);
@@ -75,13 +104,19 @@ export const AdminMain = () => {
                     
                     <div className="selectMenuTitle">회원 관리</div>
                     
-                    <div className="serchInput">
-                        <img className="serchInputImage" alt="Image" src={GetIcon("serchUser.png")} />
-                        <input className="serchText" type="text" placeholder="회원명" />
+                    <div className="searchInput">
+                        <img className="searchInputImage" alt="Image" src={GetIcon("iot.png")} />
+                        <input
+                            className="searchText"
+                            type="text"
+                            placeholder="기기명"
+                            value={searchTerm}
+                            onChange={handleInputChange}
+                        />
                     </div>
-                    <button className="serchBtn">검색</button>
+                    <button className="searchBtn" onClick={handleSearch}>검색</button>
 
-                    <div className="serchResult">검색결과 : 총 <span className="userNum">1명</span></div>
+                    <div className="serchResult">검색결과 : 총 <span className="userNum">{tableData.length}명</span></div>
                     
                     <div className="userListBox" >
                         <table className="userListTable">
@@ -97,24 +132,26 @@ export const AdminMain = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                <td className="checkBox"><input type="checkbox" /></td>
-                                <td>1</td>
-                                <td className="modalSendData">gildong01</td>
-                                <td>홍길동</td>
-                                <td>정상</td>
-                                <td>2024.04.29</td>
-                                <td className="userListMgr">
-                                    <button className="viewDetailsBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
-                                        <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
-                                        <span className="viewDetails">상세보기</span>
-                                    </button>
-                                    <button className="viewDetailsBtn" onClick={(event) => { openProfileCard(); handleViewDetailsClick(event); }}>
-                                        <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
-                                        <span className="viewDetails">프로필카드</span>
-                                    </button>
-                                </td>
+                            {tableData.map((user, index) => (
+                                <tr key={index}>
+                                    <td className="checkBox"><input type="checkbox" /></td>
+                                    <td>{index + 1}</td>
+                                    <td className="modalSendData">{user.id}</td>
+                                    <td>{user.username}</td>
+                                    <td>{user.status}</td>
+                                    <td>{user.registrationDate}</td>
+                                    <td className="userListMgr">
+                                        <button className="viewDetailsBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
+                                            <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
+                                            <span className="viewDetails">상세보기</span>
+                                        </button>
+                                        <button className="viewDetailsBtn" onClick={(event) => { openProfileCard(); handleViewDetailsClick(event); }}>
+                                            <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
+                                            <span className="viewDetails">프로필카드</span>
+                                        </button>
+                                    </td>
                                 </tr>
+                            ))}
                             </tbody>
                         </table>
                     </div>

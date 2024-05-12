@@ -274,7 +274,7 @@
   white-space: nowrap;
 }
 
-.AdminMain .serchBtn {
+.AdminMain .searchBtn {
   background-color: #b1dbfa;
   border-radius: 7px;
   height: 67px;
@@ -290,11 +290,11 @@
   cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 상태로 만듦 */
 }
 
-.AdminMain .serchBtn:hover {
+.AdminMain .searchBtn:hover {
   background-color: #74c1f8; /* 마우스 오버 시 배경색 변경 */
 }
 
-.AdminMain .serchInput {
+.AdminMain .searchInput {
   background-color: #f3f3f3;
   border-radius: 6px;
   height: 67px;
@@ -305,7 +305,7 @@
   text-align: right;
 }
 
-.AdminMain .serchInputImage {
+.AdminMain .searchInputImage {
   position: absolute; /* 절대 위치 설정 */
   top: 50%; /* 상위 요소의 중앙에 위치시키기 위해 */
   transform: translateY(-50%); /* 상위 요소의 중앙에 위치시키기 위해 */
@@ -314,7 +314,7 @@
   left: 0;
 }
 
-.AdminMain .serchText {
+.AdminMain .searchText {
   display: inline-block;
   color: #929292;
   font-family: "Inter-Regular", Helvetica;

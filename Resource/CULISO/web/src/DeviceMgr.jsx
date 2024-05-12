@@ -1,15 +1,51 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./admin.css";
 import { useNavigate } from "react-router-dom";
 import { GetIcon } from "./GetIcon";
+import { DeviceMgrInitData } from "./InitTableData";
 
 export const DeviceMgr = () => {
     const navigate = useNavigate();
+    const [page, setPage] =  useState(1);
+    const [limit, setLimit] = useState(5);
+    // 입력된 검색어 상태
+    const [searchTerm, setSearchTerm] = useState('');
+    // 테이블 데이터 상태
+    const [tableData, setTableData] = useState(DeviceMgrInitData);
+
+    // 검색어 입력 시 상태 업데이트
+    const handleInputChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    // 검색 버튼 클릭 시 필터링된 데이터 보여주기
+    const handleSearch = () => {
+        // 검색어가 비어있으면 전체 테이블 데이터를 사용
+        const filteredData = searchTerm ? tableData.filter(item =>
+                item.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.manufacturer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.date.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            : DeviceMgrInitData;
+
+        // 필터링된 데이터로 테이블 데이터 업데이트
+        setTableData(filteredData);
+    };
 
     function goToPage(name) {
         let url = "/" + name;
         navigate(url);
     }
+
+    // 페이지 변경 시 현재 페이지 데이터 업데이트
+    // useEffect(() => {
+    //     const startIndex = (page - 1) * limit;
+    //     const endIndex = startIndex + limit;
+    //     const slicedData = tableData.slice(startIndex, endIndex);
+    //     setTableData(slicedData);
+    // }, [page, limit, tableData]);
+
 
     return (
         <div className="AdminMain">
@@ -44,35 +80,43 @@ export const DeviceMgr = () => {
                     
                     <div className="selectMenuTitle">기기 관리</div>
                     
-                    <div className="serchInput">
-                        <img className="serchInputImage" alt="Image" src={GetIcon("iot.png")} />
-                        <input className="serchText" type="text" placeholder="기기명" />
+                    <div className="searchInput">
+                        <img className="searchInputImage" alt="Image" src={GetIcon("iot.png")} />
+                        <input
+                            className="searchText"
+                            type="text"
+                            placeholder="기기명"
+                            value={searchTerm}
+                            onChange={handleInputChange}
+                        />
                     </div>
-                    <button className="serchBtn">검색</button>
+                    <button className="searchBtn" onClick={handleSearch}>검색</button>
 
-                    <div className="serchResult">검색결과 : 총 <span className="userNum">1개</span></div>
+                    <div className="serchResult">검색결과 : 총 <span className="userNum">{tableData.length}개</span></div>
                     
                     <div className="userListBox" >
                         <table className="userListTable">
                             <thead>
                                 <tr>
-                                <th className="checkBox"><input type="checkbox" /></th>
-                                <th>번호</th>
-                                <th>모델명</th>
-                                <th>기기 타입</th>
-                                <th>제조사</th>
-                                <th>등록일</th>
+                                    <th className="checkBox"><input type="checkbox" /></th>
+                                    <th>번호</th>
+                                    <th>모델명</th>
+                                    <th>기기 타입</th>
+                                    <th>제조사</th>
+                                    <th>등록일</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                <td className="checkBox"><input type="checkbox" /></td>
-                                <td>1</td>
-                                <td>AS191DK1</td>
-                                <td>에어컨</td>
-                                <td>LG</td>
-                                <td>2024.04.29</td>
-                                </tr>
+                                {tableData.map((item, index) => (
+                                    <tr key={index}>
+                                        <td className="checkBox"><input type="checkbox" /></td>
+                                        <td>{item.id}</td>
+                                        <td>{item.model}</td>
+                                        <td>{item.type}</td>
+                                        <td>{item.manufacturer}</td>
+                                        <td>{item.date}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -84,18 +128,8 @@ export const DeviceMgr = () => {
                     </div>
 
                     {/* 페이징 버튼 */}
-                    <div className="rectangle-12" />
-                    <div className="rectangle-13" />
-                    <div className="rectangle-14" />
-                    <div className="rectangle-15" />
-                    <div className="rectangle-16" />
-                    <div className="rectangle-17" />
-                    <div className="text-wrapper-36">1</div>
-                    <div className="text-wrapper-37">2</div>
-                    <div className="text-wrapper-38">&lt;&lt;</div>
-                    <div className="text-wrapper-39">&gt;</div>
-                    <div className="text-wrapper-40">&lt;</div>
-                    <div className="text-wrapper-41">&gt;&gt;</div>
+                    
+                    
                     
                 </div>
             </div>

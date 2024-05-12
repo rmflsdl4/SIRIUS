@@ -5,6 +5,7 @@ import Modal from "react-modal"
 import { CustomStyles } from "./ModalComponent";
 import { GetIcon } from "./GetIcon";
 import { handleViewDetailsClick } from "./sendData";
+import { BoardMgrInitData } from "./InitTableData";
 
 // 모달이 열릴 때 사용할 DOM 요소를 지정합니다.
 Modal.setAppElement('#root');
@@ -20,6 +21,31 @@ export const BoardMgr = () => {
     const [isOpen, setIsOpen] = useState(false); // 상세보기 팝업 상태
     const [isOpenBoardCreate, setIsOpenBoardCreate] = useState(false); // 게시판 생성 팝업 상태
     const [selectedMenu, setSelectedMenu] = useState("boardMgr"); // 기본값은 "게시판 수정"
+
+
+    // 입력된 검색어 상태
+    const [searchTerm, setSearchTerm] = useState('');
+    // 테이블 데이터 상태
+    const [tableData, setTableData] = useState(BoardMgrInitData);
+
+    // 검색어 입력 시 상태 업데이트
+    const handleInputChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    // 검색 버튼 클릭 시 필터링된 데이터 보여주기
+    const handleSearch = () => {
+        // 검색어가 비어있으면 전체 테이블 데이터를 사용
+        const filteredData = searchTerm ? tableData.filter(item =>
+                item.boardName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.creationDate.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            : BoardMgrInitData;
+
+        // 필터링된 데이터로 테이블 데이터 업데이트
+        setTableData(filteredData);
+    };
+
 
     const openModal = () => {
         setIsOpen(true);
@@ -75,13 +101,19 @@ export const BoardMgr = () => {
                     
                     <div className="selectMenuTitle">게시판 관리</div>
                     
-                    <div className="serchInput">
-                        <img className="serchInputImage" alt="Image" src={GetIcon("speech-bubble.png")} />
-                        <input className="serchText" type="text" placeholder="게시판명" />
+                    <div className="searchInput">
+                        <img className="searchInputImage" alt="Image" src={GetIcon("iot.png")} />
+                        <input
+                            className="searchText"
+                            type="text"
+                            placeholder="기기명"
+                            value={searchTerm}
+                            onChange={handleInputChange}
+                        />
                     </div>
-                    <button className="serchBtn">검색</button>
+                    <button className="searchBtn" onClick={handleSearch}>검색</button>
 
-                    <div className="serchResult">검색결과 : 총 <span className="userNum">1개</span></div>
+                    <div className="serchResult">검색결과 : 총 <span className="userNum">{tableData.length}개</span></div>
                     
                     <div className="userListBox" >
                         <table className="userListTable">
@@ -96,18 +128,21 @@ export const BoardMgr = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                <td className="checkBox"><input type="checkbox" /></td>
-                                <td>1</td>
-                                <td className="modalSendData">정보 공유 게시판</td>
-                                <td>3</td>
-                                <td>2024.04.29</td>
-                                <td className="mgr">
-                                    <button className="mgrModifyBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
-                                        <span className="mgrModify">수정</span>
-                                    </button>
-                                </td>
-                                </tr>
+                                {tableData.map((board, index) => (
+                                    <tr key={index}>
+                                        <td className="checkBox"><input type="checkbox" /></td>
+                                        <td>{index + 1}</td>
+                                        <td className="modalSendData">{board.boardName}</td>
+                                        <td>{board.numberOfPosts}</td>
+                                        <td>{board.creationDate}</td>
+                                        <td className="userListMgr">
+                                            <button className="viewDetailsBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
+                                                <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
+                                                <span className="viewDetails">상세보기</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

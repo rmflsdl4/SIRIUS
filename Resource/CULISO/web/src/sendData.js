@@ -10,7 +10,7 @@ export function handleViewDetailsClick (event) {
             console.log("id : " + modalSendData);
 
             // 가져온 아이디 값을 서버로 전송합니다.
-            viewDetails(modalSendData);
+            // viewDetails(modalSendData);
         } else {
             console.error('아이디를 찾을 수 없습니다.');
         }

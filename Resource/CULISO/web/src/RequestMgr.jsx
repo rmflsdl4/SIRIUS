@@ -5,6 +5,7 @@ import { GetIcon } from "./GetIcon";
 import Modal from "react-modal"
 import { CustomStyles } from "./ModalComponent";
 import { handleViewDetailsClick } from "./sendData";
+import { RequestMgrInitData } from "./InitTableData";
 
 // 모달이 열릴 때 사용할 DOM 요소를 지정합니다.
 Modal.setAppElement('#root');
@@ -18,6 +19,34 @@ export const RequestMgr = () => {
     }
 
     const [isOpen, setIsOpen] = useState(false); // 상세보기 팝업 상태
+
+
+    // 입력된 검색어 상태
+    const [searchTerm, setSearchTerm] = useState('');
+    // 테이블 데이터 상태
+    const [tableData, setTableData] = useState(RequestMgrInitData);
+
+    // 검색어 입력 시 상태 업데이트
+    const handleInputChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    // 검색 버튼 클릭 시 필터링된 데이터 보여주기
+    const handleSearch = () => {
+        // 검색어가 비어있으면 전체 테이블 데이터를 사용
+        const filteredData = searchTerm ? tableData.filter(item =>
+                item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.requestTime.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            : RequestMgrInitData;
+
+        // 필터링된 데이터로 테이블 데이터 업데이트
+        setTableData(filteredData);
+    };
+
 
     const openModal = () => {
         setIsOpen(true);
@@ -60,11 +89,17 @@ export const RequestMgr = () => {
                     
                     <div className="selectMenuTitle">요청 관리</div>
                     
-                    <div className="serchInput">
-                        <img className="serchInputImage" alt="Image" src={GetIcon("serchUser.png")} />
-                        <input className="serchText" type="text" placeholder="회원명" />
+                    <div className="searchInput">
+                        <img className="searchInputImage" alt="Image" src={GetIcon("iot.png")} />
+                        <input
+                            className="searchText"
+                            type="text"
+                            placeholder="기기명"
+                            value={searchTerm}
+                            onChange={handleInputChange}
+                        />
                     </div>
-                    <button className="serchBtn">검색</button>
+                    <button className="searchBtn" onClick={handleSearch}>검색</button>
 
                     <div className="requestStateDiv">
                         <span className="requestNotComplete">요청 미완료</span>
@@ -79,27 +114,29 @@ export const RequestMgr = () => {
                                 <th>번호</th>
                                 <th>아이디</th>
                                 <th>닉네임</th>
-                                <th>재목</th>
+                                <th>제목</th>
                                 <th>상태</th>
                                 <th>요청시간</th>
                                 <th>상세보기</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                <td className="checkBox"><input type="checkbox" /></td>
-                                <td>1</td>
-                                <td className="modalSendData">test1</td>
-                                <td>에어컨좋아용</td>
-                                <td>기기 등록 요청합니다.</td>
-                                <td>미완료</td>
-                                <td>2024.04.29 10:10</td>
-                                <td className="mgr">
-                                    <button className="mgrModifyBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
-                                        <span className="mgrModify">상세보기</span>
-                                    </button>
-                                </td>
-                                </tr>
+                                {tableData.map((item, index) => (
+                                    <tr key={index}>
+                                        <td className="checkBox"><input type="checkbox" /></td>
+                                        <td>{index + 1}</td>
+                                        <td className="modalSendData">{item.id}</td>
+                                        <td>{item.username}</td>
+                                        <td>{item.title}</td>
+                                        <td>{item.status}</td>
+                                        <td>{item.requestTime}</td>
+                                        <td className="mgr">
+                                            <button className="mgrModifyBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
+                                                <span className="mgrModify">상세보기</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
