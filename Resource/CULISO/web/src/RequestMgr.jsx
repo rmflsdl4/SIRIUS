@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { GetIcon } from "./GetIcon";
 import Modal from "react-modal"
 import { CustomStyles } from "./ModalComponent";
+import { handleViewDetailsClick } from "./sendData";
+
+// 모달이 열릴 때 사용할 DOM 요소를 지정합니다.
+Modal.setAppElement('#root');
 
 export const RequestMgr = () => {
     const navigate = useNavigate();
@@ -85,13 +89,13 @@ export const RequestMgr = () => {
                                 <tr>
                                 <td className="checkBox"><input type="checkbox" /></td>
                                 <td>1</td>
-                                <td>test1</td>
+                                <td className="modalSendData">test1</td>
                                 <td>에어컨좋아용</td>
                                 <td>기기 등록 요청합니다.</td>
                                 <td>미완료</td>
                                 <td>2024.04.29 10:10</td>
                                 <td className="mgr">
-                                    <button className="mgrModifyBtn" onClick={openModal}>
+                                    <button className="mgrModifyBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
                                         <span className="mgrModify">상세보기</span>
                                     </button>
                                 </td>

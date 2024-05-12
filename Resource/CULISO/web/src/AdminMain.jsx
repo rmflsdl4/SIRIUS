@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 import Modal from "react-modal"
 import { CustomStyles, ProfileCardStyles } from "./ModalComponent";
 import { GetIcon } from "./GetIcon";
+import { handleViewDetailsClick } from "./sendData";
+
+// 모달이 열릴 때 사용할 DOM 요소를 지정합니다.
+Modal.setAppElement('#root');
 
 export const AdminMain = () => {
     const navigate = useNavigate();
@@ -96,16 +100,16 @@ export const AdminMain = () => {
                                 <tr>
                                 <td className="checkBox"><input type="checkbox" /></td>
                                 <td>1</td>
-                                <td>gildong01</td>
+                                <td className="modalSendData">gildong01</td>
                                 <td>홍길동</td>
                                 <td>정상</td>
                                 <td>2024.04.29</td>
                                 <td className="userListMgr">
-                                    <button className="viewDetailsBtn" onClick={openModal}>
+                                    <button className="viewDetailsBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
                                         <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
                                         <span className="viewDetails">상세보기</span>
                                     </button>
-                                    <button className="viewDetailsBtn" onClick={openProfileCard}>
+                                    <button className="viewDetailsBtn" onClick={(event) => { openProfileCard(); handleViewDetailsClick(event); }}>
                                         <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
                                         <span className="viewDetails">프로필카드</span>
                                     </button>
@@ -155,27 +159,29 @@ export const AdminMain = () => {
                         <div className="modalBoardListRoot">
                             <div className="searchRequirementBox">
                                 <table className="searchRequirementTb">
-                                    <tr>
-                                        <td className="elementLeft">게시판 선택</td>
-                                        <td className="elementRight">
-                                            <select>
-                                                <option value="information">정보 공유 게시판</option>
-                                                <option value="Communication">소통마당</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className="elementLeft">등록일</td>
-                                        <td className="elementRight">
-                                            <input type="date" id="dateFrom"></input> ~ <input type="date" id="dateTo"></input>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className="elementLeft">검색조건</td>
-                                        <td className="elementRight">
-                                        <input type="text" id="searchRequirement"></input>
-                                        </td>
-                                    </tr>
+                                    <tbody>
+                                        <tr>
+                                            <td className="elementLeft">게시판 선택</td>
+                                            <td className="elementRight">
+                                                <select>
+                                                    <option value="information">정보 공유 게시판</option>
+                                                    <option value="Communication">소통마당</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="elementLeft">등록일</td>
+                                            <td className="elementRight">
+                                                <input type="date" id="dateFrom"></input> ~ <input type="date" id="dateTo"></input>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="elementLeft">검색조건</td>
+                                            <td className="elementRight">
+                                            <input type="text" id="searchRequirement"></input>
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                                 <div className="searchRequirementBtnDiv">
                                     <button className="searchRequirementBtn">검색</button>
@@ -225,18 +231,20 @@ export const AdminMain = () => {
                             {/* 기기 요청 검색 조건들 */}
                             <div className="searchRequirementBox">
                                 <table className="searchRequirementTb">
-                                    <tr>
-                                        <td className="elementLeft">등록일</td>
-                                        <td className="elementRight">
-                                            <input type="date" id="dateFrom"></input> ~ <input type="date" id="dateTo"></input>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className="elementLeft">검색조건</td>
-                                        <td className="elementRight">
-                                        <input type="text" id="searchRequirement"></input>
-                                        </td>
-                                    </tr>
+                                    <tbody>
+                                        <tr>
+                                            <td className="elementLeft">등록일</td>
+                                            <td className="elementRight">
+                                                <input type="date" id="dateFrom"></input> ~ <input type="date" id="dateTo"></input>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="elementLeft">검색조건</td>
+                                            <td className="elementRight">
+                                            <input type="text" id="searchRequirement"></input>
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                                 <div className="searchRequirementBtnDiv">
                                     <button className="searchRequirementBtn">검색</button>
@@ -287,39 +295,41 @@ export const AdminMain = () => {
                     </div>
                     
                     <table className="profileCardContent">
-                        <tr className="profileCardContentRow">
-                            <td className="profileCardUserImg">
-                                <img className="profileCardUser" alt="User" src={GetIcon("user.png")} />
-                            </td>
-                            <td className="profileCardUserInformation">
-                                <span className="profileCardUserName">홍길동</span>
-                                <span className="profileCardUserNickName">gildong01</span>
-                            </td>
+                        <tbody>
+                            <tr className="profileCardContentRow">
+                                <td className="profileCardUserImg">
+                                    <img className="profileCardUser" alt="User" src={GetIcon("user.png")} />
+                                </td>
+                                <td className="profileCardUserInformation">
+                                    <span className="profileCardUserName">홍길동</span>
+                                    <span className="profileCardUserNickName">gildong01</span>
+                                </td>
 
-                            <td className="profileCardHubImg">
-                                <img className="profileCardUserHub" alt="Zigbee Hub" src={GetIcon("zigbee.png")} />
-                            </td>
-                            <td className="profileCardHubInformation">
-                                <span className="profileCardHubNum">ZB-3920XJ</span>
-                            </td>
-                        </tr>
+                                <td className="profileCardHubImg">
+                                    <img className="profileCardUserHub" alt="Zigbee Hub" src={GetIcon("zigbee.png")} />
+                                </td>
+                                <td className="profileCardHubInformation">
+                                    <span className="profileCardHubNum">ZB-3920XJ</span>
+                                </td>
+                            </tr>
 
-                        <tr className="profileCardContentRow">
-                            <td className="profileCardLocationImg">
-                                <img className="profileCardLocation" alt="location" src={GetIcon("location-pin.png")} />
-                            </td>
-                            <td className="profileCardLocationInformation">
-                                <span className="profileCardLocationName">광주대학교 남구 효덕로 277, 전산관 320호</span>
-                                <span className="profileCardLocationNum">503-703</span>
-                            </td>
+                            <tr className="profileCardContentRow">
+                                <td className="profileCardLocationImg">
+                                    <img className="profileCardLocation" alt="location" src={GetIcon("location-pin.png")} />
+                                </td>
+                                <td className="profileCardLocationInformation">
+                                    <span className="profileCardLocationName">광주대학교 남구 효덕로 277, 전산관 320호</span>
+                                    <span className="profileCardLocationNum">503-703</span>
+                                </td>
 
-                            <td className="profileCardPhoneImg">
-                                <img className="profileCardPhoneImg" alt="phone" src={GetIcon("telephone.png")} />
-                            </td>
-                            <td className="profileCardPhoneInformation">
-                                <span className="profileCardPhoneNum">010-1234-1234</span>
-                            </td>
-                        </tr>
+                                <td className="profileCardPhoneImg">
+                                    <img className="profileCardPhoneImg" alt="phone" src={GetIcon("telephone.png")} />
+                                </td>
+                                <td className="profileCardPhoneInformation">
+                                    <span className="profileCardPhoneNum">010-1234-1234</span>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
 
                     <div className="profileCardBottom">

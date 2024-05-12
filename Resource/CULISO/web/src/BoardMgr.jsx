@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import "./admin.css";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal"
-import { boardMgrStyles } from "./ModalComponent";
+import { CustomStyles } from "./ModalComponent";
 import { GetIcon } from "./GetIcon";
+import { handleViewDetailsClick } from "./sendData";
 
+// 모달이 열릴 때 사용할 DOM 요소를 지정합니다.
+Modal.setAppElement('#root');
 
 export const BoardMgr = () => {
     const navigate = useNavigate();
@@ -96,11 +99,11 @@ export const BoardMgr = () => {
                                 <tr>
                                 <td className="checkBox"><input type="checkbox" /></td>
                                 <td>1</td>
-                                <td>정보 공유 게시판</td>
+                                <td className="modalSendData">정보 공유 게시판</td>
                                 <td>3</td>
                                 <td>2024.04.29</td>
                                 <td className="mgr">
-                                    <button className="mgrModifyBtn" onClick={openModal}>
+                                    <button className="mgrModifyBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
                                         <span className="mgrModify">수정</span>
                                     </button>
                                 </td>
@@ -132,7 +135,7 @@ export const BoardMgr = () => {
             </div>
 
             {/* 수정 모달팝업 창 */}
-            <Modal isOpen={isOpen} onRequestClose={closeModal} style={boardMgrStyles}>
+            <Modal isOpen={isOpen} onRequestClose={closeModal} style={CustomStyles}>
                 <div className="modalTop">
                     <span className="modalTopTxt">admin Msg</span>
                 </div>
@@ -272,7 +275,7 @@ export const BoardMgr = () => {
             </Modal>
             
             {/* 게시판 생성 모달팝업 창 */}
-            <Modal isOpen={isOpenBoardCreate} onRequestClose={closeBoardCreate} style={boardMgrStyles}>
+            <Modal isOpen={isOpenBoardCreate} onRequestClose={closeBoardCreate} style={CustomStyles}>
                 <div className="modalTop">
                     <span className="modalTopTxt">admin Msg</span>
                 </div>
