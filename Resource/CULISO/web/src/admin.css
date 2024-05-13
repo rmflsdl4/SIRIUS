@@ -347,7 +347,7 @@
 
 .AdminMain .userListTable th,
 .AdminMain .userListTable td {
-  padding: 15px; 
+  padding: 13px; 
   text-align: center; 
   border: 1px solid #ccc; 
 }
@@ -627,7 +627,7 @@
 
 
 /* 게시판 관리 */
-.AdminMain .mgrModifyBtn {
+.AdminMain .mgrDetailBtn {
   display: inline-block;
   background-color: #ffffff;
   border: 1px solid;
@@ -639,7 +639,7 @@
   cursor: pointer;
 }
 
-.AdminMain .mgrModifyBtn:hover {
+.AdminMain .mgrDetailBtn:hover {
   background-color: #dddddd;
 }
 

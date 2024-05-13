@@ -131,7 +131,7 @@ export const RequestMgr = () => {
                                         <td>{item.status}</td>
                                         <td>{item.requestTime}</td>
                                         <td className="mgr">
-                                            <button className="mgrModifyBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
+                                            <button className="mgrDetailBtn" id="requestMgrDetail" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
                                                 <span className="mgrModify">상세보기</span>
                                             </button>
                                         </td>

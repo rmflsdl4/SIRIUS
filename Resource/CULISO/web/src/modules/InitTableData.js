@@ -1,3 +1,7 @@
+const host = 'http://localhost'; // 추후에 Let's Encrypt 와 같은 사이트에서 SSL 발급받아서 https로 접근해서 보안을 강화해야 함
+const port = '5000';
+const url = host + ":" + port + "/";
+
 export const DeviceMgrInitData = () => {
     const initialData = [
         { id: 1, model: 'AS191DK1', type: '에어컨', manufacturer: 'LG', date: '2024.04.29' },
@@ -17,27 +21,58 @@ export const DeviceMgrInitData = () => {
 
 
 export const AdminMainMgrInitData = () => {
-    const initialData = [
-        { id: 'gildong1', username: '홍길동', status: '정상', registrationDate: '2024.04.29' },
-        { id: 'gildong2', username: 'text1', status: '정상', registrationDate: '2024.04.29' },
-        { id: 'gildong3', username: 'text2', status: '정상', registrationDate: '2024.04.29' },
-        { id: 'gildong4', username: 'text3', status: '정상', registrationDate: '2024.04.29' },
-        { id: 'gildong5', username: 'text4', status: '정상', registrationDate: '2024.04.29' },
-        { id: 'gildong6', username: 'text5', status: '정상', registrationDate: '2024.04.29' },
-        { id: 'gildong7', username: 'text6', status: '정상', registrationDate: '2024.04.29' },
-        { id: 'gildong8', username: 'text7', status: '정상', registrationDate: '2024.04.29' },
-        { id: 'gildong9', username: 'text8', status: '정상', registrationDate: '2024.04.29' },
-        { id: 'gildong10', username: 'text9홍길동', status: '정상', registrationDate: '2024.04.29' },
-    ];
-
-    return initialData;
+    return new  Promise((resolve, reject) => {
+        fetch(url + "adminMainMgrInitData", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // JSON 데이터로 응답을 파싱
+        })
+        .then(data => {
+            resolve(data);
+            // console.log(data); // 파싱된 JSON 데이터 출력
+            
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
 }
 
 
 export const BoardMgrInitData = () => {
+    // return new  Promise((resolve, reject) => {
+    //     fetch(url + "boardMgrInitData", {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //     })
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error('Network response was not ok');
+    //         }
+    //         return response.json(); // JSON 데이터로 응답을 파싱
+    //     })
+    //     .then(data => {
+    //         resolve(data);
+    //         // console.log(data); // 파싱된 JSON 데이터 출력
+            
+    //     })
+    //     .catch(error => {
+    //         reject(error);
+    //     });
+    // });
+
     const initialData = [
         { boardName: '정보 공유 게시판', numberOfPosts: 3, creationDate: '2024.04.29' },
-        { boardName: '자유 게시판', numberOfPosts: 5, creationDate: '2024.04.29' },
+        { boardName: '소통 게시판', numberOfPosts: 5, creationDate: '2024.04.29' },
     ];
 
     return initialData;

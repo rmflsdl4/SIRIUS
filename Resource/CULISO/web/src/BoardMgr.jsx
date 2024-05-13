@@ -136,7 +136,7 @@ export const BoardMgr = () => {
                                         <td>{board.numberOfPosts}</td>
                                         <td>{board.creationDate}</td>
                                         <td className="userListMgr">
-                                            <button className="viewDetailsBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
+                                            <button className="viewDetailsBtn" id="boardMgrDetail" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
                                                 <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
                                                 <span className="viewDetails">상세보기</span>
                                             </button>
@@ -216,8 +216,9 @@ export const BoardMgr = () => {
                                                 <td className="elementLeft">글쓰기 권한</td>
                                                 <td className="elementRight">
                                                 <select className="writePermission">
-                                                    <option value="information">정보 공유 게시판</option>
-                                                    <option value="Communication">소통마당</option>
+                                                    <option value="allUser">모두</option>
+                                                    <option value="generalUser">일반사용자</option>
+                                                    <option value="adminUser">관리자</option>
                                                 </select>
                                                 </td>
                                             </tr>
@@ -225,8 +226,9 @@ export const BoardMgr = () => {
                                                 <td className="elementLeft">댓글쓰기 권한</td>
                                                 <td className="elementRight">
                                                 <select className="commentsWritePermission">
-                                                    <option value="information">정보 공유 게시판</option>
-                                                    <option value="Communication">소통마당</option>
+                                                    <option value="allUser">모두</option>
+                                                    <option value="generalUser">일반사용자</option>
+                                                    <option value="adminUser">관리자</option>
                                                 </select>
                                                 </td>
                                             </tr>

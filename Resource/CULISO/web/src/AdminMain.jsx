@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./admin.css";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal"
@@ -6,6 +6,7 @@ import { CustomStyles, ProfileCardStyles } from "./modules/ModalComponent";
 import { GetIcon } from "./modules/GetIcon";
 import { handleViewDetailsClick } from "./modules/sendData";
 import { AdminMainMgrInitData } from "./modules/InitTableData";
+import { useCheckboxFunctions } from "./modules/checkBox";
 
 
 // 모달이 열릴 때 사용할 DOM 요소를 지정합니다.
@@ -26,8 +27,23 @@ export const AdminMain = () => {
 
     // 입력된 검색어 상태
     const [searchTerm, setSearchTerm] = useState('');
-    // 테이블 데이터 상태
-    const [tableData, setTableData] = useState(AdminMainMgrInitData);
+    // 메인 테이블 데이터 상태
+    const [tableData, setTableData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await AdminMainMgrInitData();
+                setTableData(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const { selectAll, checkedItems, handleSelectAll, handleCheckboxChange } = useCheckboxFunctions(tableData);
 
     // 검색어 입력 시 상태 업데이트
     const handleInputChange = (event) => {
@@ -40,7 +56,7 @@ export const AdminMain = () => {
         const filteredData = searchTerm ? tableData.filter(item =>
                 item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 item.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.usernickname.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 item.registrationDate.toLowerCase().includes(searchTerm.toLowerCase())
             )
             : AdminMainMgrInitData;
@@ -122,36 +138,42 @@ export const AdminMain = () => {
                         <table className="userListTable">
                             <thead>
                                 <tr>
-                                <th className="checkBox"><input type="checkbox" /></th>
+                                <th className="checkBox"><input type="checkbox" checked={selectAll} onChange={handleSelectAll} /></th>
                                 <th>번호</th>
                                 <th>아이디</th>
+                                <th>이름</th>
                                 <th>닉네임</th>
-                                <th>상태</th>
                                 <th>가입일</th>
                                 <th>관리</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            {tableData.map((user, index) => (
-                                <tr key={index}>
-                                    <td className="checkBox"><input type="checkbox" /></td>
-                                    <td>{index + 1}</td>
-                                    <td className="modalSendData">{user.id}</td>
-                                    <td>{user.username}</td>
-                                    <td>{user.status}</td>
-                                    <td>{user.registrationDate}</td>
-                                    <td className="userListMgr">
-                                        <button className="viewDetailsBtn" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
-                                            <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
-                                            <span className="viewDetails">상세보기</span>
-                                        </button>
-                                        <button className="viewDetailsBtn" onClick={(event) => { openProfileCard(); handleViewDetailsClick(event); }}>
-                                            <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
-                                            <span className="viewDetails">프로필카드</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                {tableData.map((user, index) => (
+                                    <tr key={index}>
+                                        <td className="checkBox">
+                                        <input
+                                            type="checkbox"
+                                            checked={checkedItems[index]}
+                                            onChange={() => handleCheckboxChange(index)}
+                                        />
+                                        </td>
+                                        <td>{index + 1}</td>
+                                        <td className="modalSendData">{user.userID}</td>
+                                        <td>{user.userName}</td>
+                                        <td>{user.userNickName}</td>
+                                        <td>{user.createDate}</td>
+                                        <td className="userListMgr">
+                                            <button className="viewDetailsBtn" id="adminMainDetail" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
+                                                <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
+                                                <span className="viewDetails">상세보기</span>
+                                            </button>
+                                            <button className="viewDetailsBtn" id="adminMainProfile" onClick={(event) => { openProfileCard(); handleViewDetailsClick(event); }}>
+                                                <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
+                                                <span className="viewDetails">프로필카드</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
