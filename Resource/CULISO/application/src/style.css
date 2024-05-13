@@ -324,9 +324,32 @@ input[type="reset"] {
   font-size: 11px;
 }
 .loginBG{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
   border-radius: 20px;
   background: #FAFAFA;
   width: 331px;
   height: 427px;
-  flex-shrink: 0;
+}
+.loginSubmit{
+  width: 285px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background-color: #B1DBFA;
+  color: #474747;
+  margin-top: 30px;
+}
+.aDiv{
+  width: 285px;
+  margin-top: 6px;
+  display: inline-block;
+  text-align: left;
+}
+.aDiv > a{
+  margin-right: 10px;
+  font-size: 10px;
+  color: #a1a1a1;
+  text-decoration-line: none;
 }

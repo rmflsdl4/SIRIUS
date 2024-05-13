@@ -8,6 +8,7 @@ import { Intro } from "./Intro";
 import { Main } from "./Main";
 import { SignUp } from "./SignUp";
 import { Login } from "./Login";
+import { AfterMain } from "./AfterMain";
 
 // 스타일 파일 가져오기
 import "./style.css";
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/main" element={<Main />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/afterMain" element={<AfterMain />} />
       </Routes>
     </BrowserRouter>
   );
