@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import "./admin.css";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal"
-import { CustomStyles } from "./ModalComponent";
-import { GetIcon } from "./GetIcon";
-import { handleViewDetailsClick } from "./sendData";
-import { BoardMgrInitData } from "./InitTableData";
+import { CustomStyles } from "./modules/ModalComponent";
+import { GetIcon } from "./modules/GetIcon";
+import { handleViewDetailsClick } from "./modules/sendData";
+import { BoardMgrInitData } from "./modules/InitTableData";
 
 // 모달이 열릴 때 사용할 DOM 요소를 지정합니다.
 Modal.setAppElement('#root');

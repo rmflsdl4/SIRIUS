@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./admin.css";
 import { useNavigate } from "react-router-dom";
-import { GetIcon } from "./GetIcon";
-import { DeviceMgrInitData } from "./InitTableData";
+import { GetIcon } from "./modules/GetIcon";
+import { DeviceMgrInitData } from "./modules/InitTableData";
 
 export const DeviceMgr = () => {
     const navigate = useNavigate();
