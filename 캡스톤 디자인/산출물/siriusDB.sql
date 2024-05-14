@@ -22,9 +22,12 @@ create table user (
     address varchar(30) not null,
     sex char(1) not null check(sex in('M', 'F')),
     userNickName varchar(30) not null unique,
+    createDate datetime not null default current_timestamp,
     adminID varchar(15) not null,
     FOREIGN KEY (adminID) REFERENCES admin(adminID)
 );
+alter table user add createDate datetime not null default current_timestamp after userNickName;
+desc user;
 
 create table deviceRequest (
 	ID int not null primary key,
@@ -140,3 +143,4 @@ create table productFunction (
 
 
 -- **********************************************************************************************************
+
