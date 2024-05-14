@@ -8,6 +8,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 const database = require("./database.js");
+const { Add_NewUser } = require("./SignUp.js");
 
 // 데이터베이스 연결
 database.Connect();
@@ -18,7 +19,8 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 app.post("/signUp", (req) => {
   const data = req.body;
   console.log("유저에게 받은 회원가입 데이터");
-  console.log(data["id"]);
+  console.log(data);
+  //Add_NewUser(data.id, data.pw, data.name, data.nick_name, data.phone_num, data.sex, data.address, data.em
 });
 
 // Web 영역

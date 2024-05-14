@@ -8,7 +8,9 @@ export function SignUpDataSend(data){
         pw: data.pw,
         name: data.name,
         nickName: data.nickName,
-        location: data.location,
+        sex: data.sex,
+        address: data.location,
+        postNum: data.postNum,
         phoneNum: data.phoneNum
     };
 

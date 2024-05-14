@@ -1,28 +1,17 @@
-const database = require("../database.js");
+const database = require("./database.js");
 
 async function User_Insert(id, pw, name, nick_name, address, phone_num) {
   let query;
   let values;
   let result;
 
-  if (userType == "user") {
-    query = `INSERT INTO user(id, password, nick_name, phone_num, email, address, admin_id) VALUES (?, ?, ?, ?, ?, ?, 'admin')`;
-    values = [id, pw, nick_name, phone_num, email, address];
+  query = `INSERT INTO user(userID, userPW, userName, userNickName, sex, userPhoneNum, address, postNum, adminID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  values = [id, pw, name, nick_name, sex, phone_num, address, postNum, 'admin'];
 
-    result = await database.Query(query, values);
+  result = await database.Query(query, values);
 
-    if (result instanceof Error) {
-      return;
-    }
-  } else {
-    query = `INSERT INTO expert(id, password, name, phone_num, email, waitOk, address, admin_id) VALUES (?, ?, ?, ?, ?, 0, ?, 'admin')`;
-    values = [id, pw, nick_name, phone_num, email, address];
-
-    result = await database.Query(query, values);
-
-    if (result instanceof Error) {
-      return;
-    }
+  if (result instanceof Error) {
+    return;
   }
 }
 

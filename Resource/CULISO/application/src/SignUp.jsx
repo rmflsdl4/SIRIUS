@@ -88,8 +88,7 @@ export const SignUp = () => {
     },
     { iconSrc: GetIcon("N-gray.png"), placeholder: "이름", name: "name" },
     { iconSrc: GetIcon("N-gray.png"), placeholder: "별명", name: "nickName" },
-    { iconSrc: GetIcon("man.png"), placeholder: "남자", name: "man" },
-    { iconSrc: GetIcon("woman.png"), placeholder: "여자", name: "woman" },
+    { iconSrc: GetIcon("man.png"), placeholder: "남자", name: "sex", id: "man" },
     {
       iconSrc: GetIcon("location-gray.png"),
       placeholder: "주소",
@@ -356,24 +355,25 @@ export const SignUp = () => {
     BoxStyleChangeOff(e);
     ValidationManager(e);
   };
+
+  const add = 3;
   const RenderInputs = () => {
     const inputGroups = [];
-    for (let i = pageIdx; i < pageIdx + 3 && i < inputBGData.length; i++) {
+    for (let i = pageIdx; i < pageIdx + 3 && i < inputBGData.length + add; i++) {
       const name = inputBGData[i].name;
 
-      if (name === "man") {
+      if (inputBGData[i].id === "man") {
         inputGroups.push(
           <div className="parentBox" style={{ display: "flex" }}>
-            <label className="labelBG" for="man">
+            <label className="labelBG" htmlFor="man">
               <img className="inputImg" src={inputBGData[i].iconSrc} alt="" />
               <input
                 className="inputRadio"
                 type="radio"
-                name="man"
+                name="sex"
                 id="man"
-                value="man"
+                value="M"
                 placeholder="남자"
-                checked
                 onChange={OnChangeHandler}
                 onFocus={(e) => BoxStyleChangeOn(e, "2px solid #bebebe")}
                 onBlur={OnBlurHandler} // 여기에 유효성 검사하는 함수도 추가해야함. 입력이 끝나면 판단 가능하게
@@ -382,7 +382,7 @@ export const SignUp = () => {
             </label>
             <label
               className="labelBG"
-              for="woman"
+              htmlFor="woman"
               style={{ marginLeft: "14px" }}
             >
               <img
@@ -393,9 +393,10 @@ export const SignUp = () => {
               <input
                 className="inputRadio"
                 type="radio"
-                name="woman"
+                name="sex"
+                src={GetIcon("woman.png")}
                 id="woman"
-                value="woman"
+                value="F"
                 placeholder="여자"
                 onChange={OnChangeHandler}
                 onFocus={(e) => BoxStyleChangeOn(e, "2px solid #bebebe")}
@@ -403,20 +404,11 @@ export const SignUp = () => {
               />
               여자
             </label>
-            {i < inputBGData.length - 2 && (
-              <p
-                className="addExplan"
-                style={{ color: addExplanArr[name]?.color }}
-              >
-                {addExplanArr[name]?.msg}
-              </p>
-            )}
           </div>
         );
-        i++;
         continue;
       }
-      if (i < inputBGData.length - 1) {
+      if (i < (inputBGData.length+add)) {
         inputGroups.push(
           <div className="parentBox">
             <div className="inputBG" key={i}>
