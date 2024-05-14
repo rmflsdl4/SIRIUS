@@ -1,6 +1,6 @@
 show databases;
 create database siriusDB;
-use sirius;
+use siriusDB;
 show databases;
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin';
@@ -20,7 +20,7 @@ create table user (
     userPhoneNum char(13) not null,
     postNum char(5) not null,
     address varchar(30) not null,
-    sex int not null check(sex in('M', 'F')),
+    sex char(1) not null check(sex in('M', 'F')),
     userNickName varchar(30) not null unique,
     adminID varchar(15) not null,
     FOREIGN KEY (adminID) REFERENCES admin(adminID)
@@ -94,12 +94,11 @@ create table contentsRecommend (
 );
 
 create table chat (
-	userID varchar(15) not null,
-    chatID int not null auto_increment,
+	chatID int not null primary key auto_increment,
+	userID varchar(15) not null unique,
     userChatContext text not null,
     sendTime datetime not null default current_timestamp,
-    senderType char(1) not null check(senderType in('U', 'A')),
-    primary key(userID, chatID)
+    senderType char(1) not null check(senderType in('U', 'A'))
 );
 
 create table zigbeeHub (
