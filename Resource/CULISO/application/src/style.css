@@ -276,7 +276,7 @@ input[type="reset"] {
   margin: 8px;
 }
 
-.inputBGBtn{
+.inputBGBtn {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -319,37 +319,55 @@ input[type="reset"] {
   background: none;
   border: none;
 }
-.addExplan{
+
+.labelBG {
+  width: 135px;
+  height: 47px;
+  border-radius: 6px;
+  background: #eae8e8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.inputRadio {
+  opacity: 0;
+}
+.addExplan {
   margin-left: 12px;
   font-size: 11px;
 }
-.loginBG{
+.loginBG {
   display: flex;
   align-items: center;
   flex-direction: column;
   border-radius: 20px;
-  background: #FAFAFA;
+  background: #fafafa;
   width: 331px;
   height: 427px;
 }
-.loginSubmit{
+.loginSubmit {
   width: 285px;
   height: 44px;
   border: none;
   border-radius: 10px;
-  background-color: #B1DBFA;
+  background-color: #b1dbfa;
   color: #474747;
   margin-top: 30px;
 }
-.aDiv{
+.aDiv {
   width: 285px;
   margin-top: 6px;
   display: inline-block;
   text-align: left;
 }
-.aDiv > a{
+.aDiv > a {
   margin-right: 10px;
   font-size: 10px;
   color: #a1a1a1;
   text-decoration-line: none;
+}
+
+#man:checked + label {
+  accent-color: #359eff;
+  filter: opacity(0.5) drop-shadow(0 0 0 #359eff);
 }
