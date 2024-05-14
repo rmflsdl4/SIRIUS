@@ -32,7 +32,7 @@
 
 ## 🧾 EER
 ### Ver 0.4
-![EER drawio (3)](https://github.com/rmflsdl4/SIRIUS/assets/142138080/ab260920-28e5-4dbd-b5e5-9a89e632be8e)
+![EER drawio](https://github.com/rmflsdl4/SIRIUS/assets/142138080/cd5cd7e9-c4db-4844-a6f5-336a044c5b3e)
 
 ### Ver 0.3(채팅 추가)
 ![EER drawio](https://github.com/rmflsdl4/SIRIUS/assets/142138080/d642bc66-8d87-4517-82b8-de3430d47625)
