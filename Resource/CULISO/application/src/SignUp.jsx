@@ -2,7 +2,9 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import GetIcon from "./modules/GetIcon";
 import { TimerNavigate } from "./modules/Navigate";
 import { SignUpDataSend } from "./modules/DataRouter";
+import DaumPostcode from 'react-daum-postcode'; 
 import "./style.css";
+
 
 const culiMsg = {
   0: "지금부터 회원가입을\n도와드릴게요!",
@@ -15,6 +17,8 @@ const culiMsg = {
 
 // 회원가입
 export const SignUp = () => {
+  const [selectedGender, setSelectedGender] = useState(null);
+  const [openPostcode, setOpenPostcode] = useState(false);
   const [msg, setMsg] = useState("안녕하세요!\n저는 당신을 도와드릴 큐리에요");
   const [currentMsgIdx, setcurrentMsgIdx] = useState(0);
   const [isForm, setIsForm] = useState(false);
@@ -99,14 +103,16 @@ export const SignUp = () => {
     {
       iconSrc: GetIcon("location-gray.png"),
       placeholder: "주소",
+      id: "iAddress",
       name: "address",
       maxLength: 30
     },
     {
       iconSrc: GetIcon("location-gray.png"),
       placeholder: "우편번호",
+      id: "iPostNum",
       name: "postNum",
-      maxLength: 5
+      maxLength: 5,
     },
     {
       iconSrc: GetIcon("phone-gray.png"),
@@ -128,11 +134,44 @@ export const SignUp = () => {
     InputNullCheck();
   }, [addExplanArr]);
 
+  const handleGenderSelect = (gender) => {
+    setSelectedGender(gender);
+  };
+
+  // 카카오 우편번호 메소드
+  const kakaoHandler = {
+    // 버튼 클릭
+    clickButton: () => {
+      setOpenPostcode(true);
+    },
+    // 주소 선택
+    selectAddress: (data) => {
+      var addr = '';
+     
+      
+      if(data.userSelectedType === 'R'){
+        addr = data.roadAddress;
+      }
+      else{
+        addr = data.jibunAddress;
+      }
+      setOpenPostcode(false);
+      ValidationStateChange(null, "올바른 주소 형식입니다.", "#5BBCFF", true, "address");
+      ValidationStateChange(null, "올바른 우편번호 형식입니다.", "#5BBCFF", true, "postNum");
+
+      formValues["address"] = addr;
+      formValues["postNum"] = data.zonecode;
+      console.log("주소: " + addr);
+      console.log("우편번호: " + data.zonecode);
+      console.log(formValues);
+    }
+  }
+
   // 유효성 텍스트 및 상태 변경
-  const ValidationStateChange = (e, msg, color, flag) => {
+  const ValidationStateChange = (e, msg, color, flag, name=null) => {
     setAddExplanArr((prev) => ({
       ...prev,
-      [e.target.name]: { msg, color, flag },
+      [e !== null ? e.target.name:name]: { msg, color, flag },
     }));
   };
 
@@ -395,8 +434,21 @@ export const SignUp = () => {
       if (inputBGData[i].id === "man") {
         inputGroups.push(
           <div className="parentBox" style={{ display: "flex" }}>
-            <label className="labelBG" htmlFor="man">
-              <img className="inputImg" src={inputBGData[i].iconSrc} alt="" />
+            <label 
+              className="labelBG" 
+              htmlFor="man" 
+              style={{
+                color: selectedGender === "M" ? '#359eff' : '#939393',
+                border: selectedGender === "M" ?  "1px solid #359eff" : "none"
+              }} 
+              onClick={() => handleGenderSelect("M")}>
+              <img
+                className="inputImg" 
+                src={inputBGData[i].iconSrc} 
+                style={{
+                  filter: selectedGender === "M" ?  "opacity(0.5) drop-shadow(0 0 0 #359eff)" : "opacity(0.5) drop-shadow(0 0 0 #939393)",
+                }}
+                alt="" />
               <input
                 className="inputRadio"
                 type="radio"
@@ -413,12 +465,19 @@ export const SignUp = () => {
             <label
               className="labelBG"
               htmlFor="woman"
-              style={{ marginLeft: "14px" }}
-            >
+              style={{ 
+                marginLeft: "14px",
+                color: selectedGender === "F" ? '#ff4b93' : '#939393',
+                border: selectedGender === "F" ?  "1px solid #ff4b93" : "none"
+              }}
+              onClick={() => handleGenderSelect("F")}>
               <img
                 className="inputImg"
                 src={GetIcon("woman.png")}
                 alt=""
+                style={{
+                  filter: selectedGender === "F" ?  "opacity(0.5) drop-shadow(0 0 0 #ff4b93)" : "opacity(0.5) drop-shadow(0 0 0 #939393)"
+                }}
               />
               <input
                 className="inputRadio"
@@ -434,6 +493,51 @@ export const SignUp = () => {
               여자
             </label>
           </div>
+        );
+        continue;
+      }
+      else if(inputBGData[i].name === "postNum"){
+        inputGroups.push(
+          <div className="parentBox" style={{ display: "flex", flexDirection: "column"}}>
+            <div className="inputBG" key={i}>
+              <img className="inputImg" src={inputBGData[i].iconSrc} style={{marginLeft: "30px"}} alt="" />
+              <input
+                className="inputText"
+                type={i === 1 || i === 2 ? "password" : "text"}
+                name={name}
+                defaultValue={formValues[name]}
+                placeholder={inputBGData[i].placeholder}
+                onChange={OnChangeHandler}
+                onFocus={(e) => BoxStyleChangeOn(e, "2px solid #bebebe")}
+                onBlur={OnBlurHandler}
+                maxLength={inputBGData[i].maxLength}
+                id="iPostNum"
+              />
+              <input className="postBG" type="button" onClick={kakaoHandler.clickButton} value={"우편번호 찾기"}/>
+              {openPostcode && (
+              <DaumPostcode 
+                style={{
+                  width: "100%", // 팝업이 화면 너비에 맞추어지도록 설정
+                  height: "100%", // 팝업이 화면 높이에 맞추어지도록 설정
+                  position: "fixed", // 팝업이 고정 위치에 나타나도록 설정
+                  top: 0, // 화면 맨 위에 팝업이 나타나도록 설정
+                  left: 0, // 화면 왼쪽에 팝업이 나타나도록 설정
+                  zIndex: 9999, // 다른 요소 위에 팝업이 나타나도록 설정
+                }}
+                onComplete={kakaoHandler.selectAddress}  // 값을 선택할 경우 실행되는 이벤트
+                autoClose={false}
+                defaultQuery=""/>
+              )}
+            </div>
+              <p
+                className="addExplan"
+                style={{ color: addExplanArr[name]?.color, marginTop: "0px" }}
+              >
+                {addExplanArr[name]?.msg}
+              </p>
+          </div>
+
+          
         );
         continue;
       }
@@ -453,6 +557,7 @@ export const SignUp = () => {
                 onFocus={(e) => BoxStyleChangeOn(e, "2px solid #bebebe")}
                 onBlur={OnBlurHandler}
                 maxLength={inputBGData[i].maxLength}
+                id={inputBGData[i].id === "iAddress" ? "iAddress" : null}
               />
             </div>
             {i < inputBGData.length - 2 && (
