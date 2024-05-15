@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "react-modal"
 import { CustomStyles } from "./modules/ModalComponent";
 import { GetIcon } from "./modules/GetIcon";
-import { handleViewDetailsClick } from "./modules/sendData";
+import { AdminMainViewDetails, ProfileViewDetails, BoardMgrViewDetails, RequestMgrViewDetails } from "./modules/sendData";        // 모달 팝업창 데이터 전송
 import { BoardMgrInitData } from "./modules/InitTableData";
 
 // 모달이 열릴 때 사용할 DOM 요소를 지정합니다.
@@ -102,11 +102,11 @@ export const BoardMgr = () => {
                     <div className="selectMenuTitle">게시판 관리</div>
                     
                     <div className="searchInput">
-                        <img className="searchInputImage" alt="Image" src={GetIcon("iot.png")} />
+                        <img className="searchInputImage" alt="Image" src={GetIcon("speech-bubble.png")} />
                         <input
                             className="searchText"
                             type="text"
-                            placeholder="기기명"
+                            placeholder="게시판명"
                             value={searchTerm}
                             onChange={handleInputChange}
                         />
@@ -136,7 +136,7 @@ export const BoardMgr = () => {
                                         <td>{board.numberOfPosts}</td>
                                         <td>{board.creationDate}</td>
                                         <td className="userListMgr">
-                                            <button className="viewDetailsBtn" id="boardMgrDetail" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
+                                            <button className="viewDetailsBtn" id="boardMgrDetail" onClick={(event) => { openModal();  }}>
                                                 <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
                                                 <span className="viewDetails">상세보기</span>
                                             </button>

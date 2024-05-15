@@ -3,7 +3,7 @@ import "./admin.css";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal"
 import { CustomStyles } from "./modules/ModalComponent";
-import { handleViewDetailsClick } from "./modules/sendData";
+import { AdminMainViewDetails, ProfileViewDetails, BoardMgrViewDetails, RequestMgrViewDetails } from "./modules/sendData";        // 모달 팝업창 데이터 전송
 import { RequestMgrInitData } from "./modules/InitTableData";
 import { GetIcon } from "./modules/GetIcon";
 
@@ -90,11 +90,11 @@ export const RequestMgr = () => {
                     <div className="selectMenuTitle">요청 관리</div>
                     
                     <div className="searchInput">
-                        <img className="searchInputImage" alt="Image" src={GetIcon("iot.png")} />
+                        <img className="searchInputImage" alt="Image" src={GetIcon("profile-gray.png")} />
                         <input
                             className="searchText"
                             type="text"
-                            placeholder="기기명"
+                            placeholder="회원명"
                             value={searchTerm}
                             onChange={handleInputChange}
                         />
@@ -131,7 +131,7 @@ export const RequestMgr = () => {
                                         <td>{item.status}</td>
                                         <td>{item.requestTime}</td>
                                         <td className="mgr">
-                                            <button className="mgrDetailBtn" id="requestMgrDetail" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
+                                            <button className="mgrDetailBtn" id="requestMgrDetail" onClick={(event) => { openModal();  }}>
                                                 <span className="mgrModify">상세보기</span>
                                             </button>
                                         </td>

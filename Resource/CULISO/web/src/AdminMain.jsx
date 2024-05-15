@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Modal from "react-modal"
 import { CustomStyles, ProfileCardStyles } from "./modules/ModalComponent";
 import { GetIcon } from "./modules/GetIcon";
-import { handleViewDetailsClick } from "./modules/sendData";
-import { AdminMainMgrInitData } from "./modules/InitTableData";
-import { useCheckboxFunctions } from "./modules/checkBox";
+import { ViewDetails } from "./modules/sendData";        // 모달 팝업창 데이터 전송
+import { AdminMainMgrInitData } from "./modules/InitTableData";     // 메인 화면들 초기 데이터
+import { useCheckboxFunctions } from "./modules/checkBox";          // 체크 박스 선택 모듈
 
 
 // 모달이 열릴 때 사용할 DOM 요소를 지정합니다.
@@ -23,13 +23,9 @@ export const AdminMain = () => {
     const [isOpen, setIsOpen] = useState(false); // 상세보기 팝업 상태
     const [isOpenProfileCard, setIsOpenProfileCard] = useState(false); // 프로필카드 팝업 상태
     const [selectedMenu, setSelectedMenu] = useState("boardList"); // 기본값은 "게시글 목록"
-
-
-    // 입력된 검색어 상태
-    const [searchTerm, setSearchTerm] = useState('');
-    // 메인 테이블 데이터 상태
-    const [tableData, setTableData] = useState([]);
-
+    const [searchTerm, setSearchTerm] = useState('');       // 입력된 검색어 상태
+    const [tableData, setTableData] = useState([]);         // 메인 테이블 데이터 상태
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -65,26 +61,79 @@ export const AdminMain = () => {
         setTableData(filteredData);
     };
 
-
+    // 모달 팝업 창 설정 함수들
     const openModal = () => {
         setIsOpen(true);
     }
-    
     const closeModal = () => {
         setIsOpen(false);
     }
-
     // 메뉴를 변경하는 함수
     const handleMenuChange = (menu) => {
         setSelectedMenu(menu);
     }
-
     const openProfileCard = () => {
         setIsOpenProfileCard(true);
     }
-
     const closeProfileCard = () => {
         setIsOpenProfileCard(false);
+    }
+
+    // 모달 팝업 창 버튼 클릭시 해당 데이터 DB에서 받아오기
+    function handleViewDetailsClick (event) {
+        // 클릭된 버튼의 id를 가져옵니다.
+        const button = event.target.closest('button');
+        const buttonId = button.id;
+        console.log("Clicked button id:", buttonId);
+    
+        // 클릭된 버튼의 부모 요소인 <td> 태그를 찾습니다.
+        const tdElement = event.target.closest('td');
+        if (tdElement) {
+            // tdElement의 부모인 tr 요소에서 'modalSendData' 클래스를 가진 td 태그를 선택합니다.
+            const idElement = tdElement.parentNode.querySelector('td.modalSendData');
+            if (idElement) {
+                // 선택된 td 태그의 텍스트 콘텐츠를 가져옵니다.
+                const modalSendData = idElement.textContent.trim();
+                console.log("id : " + modalSendData);
+                
+                let path = "";
+                // 가져온 아이디 값을 서버로 전송합니다.
+                switch (buttonId) {
+                    case "adminMainDetail" :
+                        console.log("AdminMainViewDetails");
+                        path = "adminMainViewDetails";
+                        ViewDetails(modalSendData, path);
+                        break;
+                    case "adminMainDetail" :
+                        console.log("AdminMainViewDetails");
+                        path = "adminMainViewDetails";
+                        ViewDetails(modalSendData, path);
+                        break;
+                    case "adminMainProfile" :
+                        console.log("ProfileViewDetails");
+                        path = "profileViewDetails";
+                        ViewDetails(modalSendData, path);
+                        break;
+                    // case "boardMgrDetail" :
+                    //     console.log("BoardMgrViewDetails");
+                    //     path = "boardMgrViewDetails";
+                    //     ViewDetails(modalSendData, path);
+                    //     break;
+                    // case "requestMgrDetail" :
+                    //     console.log("RequestMgrViewDetails");
+                    //     path = "requestMgrViewDetails";
+                    //     ViewDetails(modalSendData, path);
+                    //     break;
+                    default:
+                        console.error("Unhandled button id:", buttonId);
+                }
+                
+            } else {
+                console.error('아이디를 찾을 수 없습니다.');
+            }
+        } else {
+            console.error('버튼의 부모 요소를 찾을 수 없습니다.');
+        }
     }
 
     return (
@@ -121,11 +170,11 @@ export const AdminMain = () => {
                     <div className="selectMenuTitle">회원 관리</div>
                     
                     <div className="searchInput">
-                        <img className="searchInputImage" alt="Image" src={GetIcon("iot.png")} />
+                        <img className="searchInputImage" alt="Image" src={GetIcon("profile-gray.png")} />
                         <input
                             className="searchText"
                             type="text"
-                            placeholder="기기명"
+                            placeholder="회원명"
                             value={searchTerm}
                             onChange={handleInputChange}
                         />
@@ -206,8 +255,8 @@ export const AdminMain = () => {
 
                 {/* 메뉴바 */}
                 <div className="modalMenu">
-                    <span className={selectedMenu === "boardList" ? "boardList active" : "boardList"} onClick={() => handleMenuChange("boardList")}>게시글 목록</span>
-                    <span className={selectedMenu === "deviceList" ? "deviceList active" : "deviceList"} onClick={() => handleMenuChange("deviceList")}>기기 요청 목록</span>
+                    <span className={selectedMenu === "boardList" ? "boardList active" : "boardList"} id="adminMainDetailBoardList" onClick={() => handleMenuChange("boardList")}>게시글 목록</span>
+                    <span className={selectedMenu === "deviceList" ? "deviceList active" : "deviceList"} id="adminMainDetailDeviceList" onClick={() => handleMenuChange("deviceList")}>기기 요청 목록</span>
                     <span onClick={closeModal}><img className="closeBtn" alt="Image" src={GetIcon("close.png")} /></span>
                 </div>
 
@@ -256,7 +305,7 @@ export const AdminMain = () => {
                                 <table className="modalUserBoardListTb">
                                     <thead>
                                         <tr>
-                                            <th className="modalCheckBox"><input type="checkbox" /></th>
+                                            <th className="modalCheckBox"><input type="checkbox" checked={selectAll} onChange={handleSelectAll}/></th>
                                             <th>번호</th>
                                             <th>게시판명</th>
                                             <th>제목</th>
@@ -267,7 +316,13 @@ export const AdminMain = () => {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td className="modalCheckBox"><input type="checkbox" /></td>
+                                            <td className="modalCheckBox">
+                                            <input
+                                                type="checkbox"
+                                                // checked={checkedItems[index]}
+                                                // onChange={() => handleCheckboxChange(index)}
+                                            />
+                                            </td>
                                             <td>1</td>
                                             <td>정보 공유 게시판</td>
                                             <td>Iot 기기 뭐 사야해요?</td>
@@ -280,7 +335,7 @@ export const AdminMain = () => {
                             </div>
 
                             <div className="blockingBox">
-                                <button className="blockingBtn">차단</button>
+                                <button className="blockingBtn">삭제</button>
                             </div>
                         </div>
                     )}
