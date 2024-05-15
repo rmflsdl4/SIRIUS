@@ -367,6 +367,10 @@ input[type="reset"] {
   text-decoration-line: none;
 }
 
+.labelBG{
+  
+  color: #939393;
+}
 #man:checked + label {
   accent-color: #359eff;
   filter: opacity(0.5) drop-shadow(0 0 0 #359eff);

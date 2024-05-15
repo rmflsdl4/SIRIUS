@@ -9,7 +9,7 @@ export function SignUpDataSend(data){
         name: data.name,
         nickName: data.nickName,
         sex: data.sex,
-        address: data.location,
+        address: data.address,
         postNum: data.postNum,
         phoneNum: data.phoneNum
     };
@@ -21,4 +21,31 @@ export function SignUpDataSend(data){
         },
         body: JSON.stringify(sendData),
     })
+}
+export function LoginDataSend(event){
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const id = formData.get('id');
+    const pw = formData.get('pw');
+
+    const data = { id, pw };
+    fetch(url+"login",{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.success) {
+            alert(data.message);
+            window.location.href = "/afterMain";
+        }
+        else{
+            alert(data.message);
+        }
+    });
 }

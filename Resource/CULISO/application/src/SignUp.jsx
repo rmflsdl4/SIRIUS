@@ -21,6 +21,8 @@ export const SignUp = () => {
   const [isInputCheck, setIsInputCheck] = useState(false);
   const btn = useRef();
   const [pageIdx, setPageIdx] = useState(0);
+  const [pBtnColor, setPBtnColor] = useState();
+  const [pBtnMsg, setPBtnMsg]  = useState("전화번호 인증");
   const formValues = useRef({
     id: null,
     pw: null,
@@ -33,7 +35,7 @@ export const SignUp = () => {
   });
   const [addExplanArr, setAddExplanArr] = useState({
     id: {
-      msg: "6-30자 이내, 영문/숫자 사용 가능",
+      msg: "6-15자 이내, 영문/숫자 사용 가능",
       color: "#a5a5a5",
       flag: false,
     },
@@ -75,34 +77,42 @@ export const SignUp = () => {
     phoneNum: { msg: "", color: "#a5a5a5", flag: false },
   });
   const inputBGData = [
-    { iconSrc: GetIcon("profile-gray.png"), placeholder: "아이디", name: "id" },
+    { iconSrc: GetIcon("profile-gray.png"), placeholder: "아이디", name: "id",
+    maxLength: 15},
     {
       iconSrc: GetIcon("padlock-web-gray.png"),
       placeholder: "비밀번호",
       name: "pw",
+      maxLength: 30
     },
     {
       iconSrc: GetIcon("padlock-web-gray.png"),
       placeholder: "비밀번호 확인",
       name: "cpw",
+      maxLength: 30
     },
-    { iconSrc: GetIcon("N-gray.png"), placeholder: "이름", name: "name" },
-    { iconSrc: GetIcon("N-gray.png"), placeholder: "별명", name: "nickName" },
+    { iconSrc: GetIcon("N-gray.png"), placeholder: "이름", name: "name",
+    maxLength: 20},
+    { iconSrc: GetIcon("N-gray.png"), placeholder: "별명", name: "nickName",
+    maxLength: 30 },
     { iconSrc: GetIcon("man.png"), placeholder: "남자", name: "sex", id: "man" },
     {
       iconSrc: GetIcon("location-gray.png"),
       placeholder: "주소",
       name: "address",
+      maxLength: 30
     },
     {
       iconSrc: GetIcon("location-gray.png"),
       placeholder: "우편번호",
       name: "postNum",
+      maxLength: 5
     },
     {
       iconSrc: GetIcon("phone-gray.png"),
       placeholder: "전화번호 (- 없이 숫자만 입력)",
       name: "phoneNum",
+      maxLength: 13
     },
     {
       iconSrc: GetIcon("confirm-white.png"),
@@ -136,7 +146,7 @@ export const SignUp = () => {
     else if (e.target.name === "sex") SexValidation(e);
     else if (e.target.name === "address") AddressValidation(e);
     else if (e.target.name === "postNum") PostNumValidation(e);
-    else if (e.target.name === "phoneNum") PhoneNumValidation(e);
+    //else if (e.target.name === "phoneNum") PhoneNumValidation(e);
   };
   // 유효성 모듈
   const IDValidation = useCallback((e) => {
@@ -277,17 +287,35 @@ export const SignUp = () => {
     if (e.target.value === "")
       ValidationStateChange(e, "5글자", "#a5a5a5", false);
   }, []);
-  const PhoneNumValidation = useCallback((e) => {
-    const phonePattern = /^[0-9]{11}$/;
+  const PhoneNumValidation = useCallback(() => {
+    const phonePattern = /^010[0-9]{8}$/;
 
-    if (!phonePattern.test(e.target.value))
-      ValidationStateChange(e, "- 없이 숫자만 입력 가능", "#a5a5a5", false);
-    else
-      ValidationStateChange(e, "올바른 전화번호 형식입니다.", "#5BBCFF", true);
-
-    if (e.target.value === "") ValidationStateChange(e, "", "#a5a5a5", false);
+    if (phonePattern.test(formValues.phoneNum)){
+      setAddExplanArr((prev) => ({
+        ...prev,
+        ["phoneNum"]: { msg:"", color:"", flag:true },
+      }));
+      setPBtnColor("#359eff");
+      setPBtnMsg("전화번호 인증 완료");
+      alert("휴대폰 인증이 완료되었습니다.");
+    }
+    else{
+      setAddExplanArr((prev) => ({
+        ...prev,
+        ["phoneNum"]: { msg:"", color:"", flag:false },
+      }));
+      setPBtnColor("#b1dbfa"); 
+      setPBtnMsg("전화번호 인증");
+      alert("휴대폰 번호를 다시 확인해주세요");
+    }
   }, []);
-
+  const PhoneNumFormat = useCallback((e) => {
+    if(e.target.value.length === 11) {
+      e.target.value = e.target.value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+    }
+    else
+      e.target.value = e.target.value.replace(/-/g, '');
+  }, []);
   const InputNullCheck = () => {
     console.log("널체크");
     console.log(addExplanArr);
@@ -303,6 +331,7 @@ export const SignUp = () => {
 
   const OnChangeHandler = (e) => {
     const { name, value } = e.target;
+    if(name==="phoneNum") PhoneNumFormat(e);
     formValues[name] = value;
     console.log(formValues);
   };
@@ -354,12 +383,13 @@ export const SignUp = () => {
   const OnBlurHandler = (e) => {
     BoxStyleChangeOff(e);
     ValidationManager(e);
+    console.log(formValues);
   };
 
-  const add = 3;
+  let add = 3;
   const RenderInputs = () => {
     const inputGroups = [];
-    for (let i = pageIdx; i < pageIdx + 3 && i < inputBGData.length + add; i++) {
+    for (let i = pageIdx; i < pageIdx + add && i < inputBGData.length; i++) {
       const name = inputBGData[i].name;
 
       if (inputBGData[i].id === "man") {
@@ -387,14 +417,13 @@ export const SignUp = () => {
             >
               <img
                 className="inputImg"
-                src={inputBGData[i + 1].iconSrc}
+                src={GetIcon("woman.png")}
                 alt=""
               />
               <input
                 className="inputRadio"
                 type="radio"
                 name="sex"
-                src={GetIcon("woman.png")}
                 id="woman"
                 value="F"
                 placeholder="여자"
@@ -408,7 +437,8 @@ export const SignUp = () => {
         );
         continue;
       }
-      if (i < (inputBGData.length+add)) {
+      if(pageIdx >= 6) add = 4;
+      if (i < inputBGData.length - 1) {
         inputGroups.push(
           <div className="parentBox">
             <div className="inputBG" key={i}>
@@ -421,7 +451,8 @@ export const SignUp = () => {
                 placeholder={inputBGData[i].placeholder}
                 onChange={OnChangeHandler}
                 onFocus={(e) => BoxStyleChangeOn(e, "2px solid #bebebe")}
-                onBlur={OnBlurHandler} // 여기에 유효성 검사하는 함수도 추가해야함. 입력이 끝나면 판단 가능하게
+                onBlur={OnBlurHandler}
+                maxLength={inputBGData[i].maxLength}
               />
             </div>
             {i < inputBGData.length - 2 && (
@@ -436,14 +467,14 @@ export const SignUp = () => {
         );
       } else {
         inputGroups.push(
-          <div className="inputBGBtn" key={i}>
+          <div className="inputBGBtn" key={i} style={{ backgroundColor: pBtnColor }}>
             <img className="inputImg" src={inputBGData[i].iconSrc} alt="" />
             <input
               className="inputBtn"
               type="button"
               name="phone"
-              style={{ backgroundColor: "#b1dbfa" }}
-              value={inputBGData[i].placeholder}
+              value={pBtnMsg}
+              onClick={PhoneNumValidation}
             />
           </div>
         );

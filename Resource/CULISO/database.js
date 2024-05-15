@@ -1,14 +1,14 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
 let pool = null;
 
 function DB_Connect() {
   pool = mysql.createPool({
     connectionLimit: 200,
-    host: "sinervadb.caujbsdernjk.ap-northeast-2.rds.amazonaws.com",
-    user: "sinerva",
-    password: "sinerva1234",
-    database: "sinervaDB",
+    host: "localhost",
+    user: "root",
+    password: "tkfkdgo3",
+    database: "siriusDB",
     port: "3306",
     charset: "UTF8MB4",
   });

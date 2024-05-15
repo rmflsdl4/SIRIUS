@@ -1,6 +1,6 @@
 import GetIcon from "./modules/GetIcon";
-import { Navigate } from "./modules/Navigate";
 import styled from 'styled-components';
+import { LoginDataSend } from "./modules/DataRouter";
 import "./style.css";
 
 // css
@@ -62,14 +62,16 @@ export const Login = () => {
               간편하게 관리하기 !<br/>
               지금 큐리소 계정으로 로그인하세요.
             </Text>
-            <Input icon={"profile-gray.png"} t={"text"} n={"id"} ph={"아이디"}/>
-            <Input icon={"closed-padlock-gray.png"} t={"password"} n={"pw"} ph={"비밀번호"}/>
-            <label style={{width:"285px", display: "flex", alignItems: "center"}}>
-              <input type="checkbox" className="checkBox"/><span style={{color: "#8a8a8a", fontSize: "12px", marginLeft: "8px",}}>아이디 기억하기</span>
-            </label>
-            <input className="loginSubmit" type="submit" value={"로그인"}/>
+            <form onSubmit={LoginDataSend} method="post">
+              <Input icon={"profile-gray.png"} t={"text"} n={"id"} ph={"아이디"}/>
+              <Input icon={"closed-padlock-gray.png"} t={"password"} n={"pw"} ph={"비밀번호"}/>
+              <label style={{width:"285px", display: "flex", alignItems: "center"}}>
+                <input type="checkbox" className="checkBox"/><span style={{color: "#8a8a8a", fontSize: "12px", marginLeft: "8px",}}>아이디 기억하기</span>
+              </label>
+              <input className="loginSubmit" type="submit" value={"로그인"}/>
+            </form>
             <div className="aDiv">
-              <a href="#">계정 생성</a>
+              <a href="/signUp">계정 생성</a>
               <a href="#">아이디 찾기</a>
               <a href="#">비밀번호 찾기</a>
             </div>

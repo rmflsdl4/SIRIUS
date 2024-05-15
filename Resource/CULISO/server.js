@@ -8,18 +8,34 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 const database = require('./database.js');
-
+const signUp = require('./SignUp.js');
+const login = require('./Login.js');
 // 데이터베이스 연결
 database.Connect();
+
+
+// App 영역
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 app.post("/signUp", (req) => {
   const data = req.body;
   console.log("유저에게 받은 회원가입 데이터");
-  console.log(data['id']);
+  console.log(data);
+  signUp.Add_NewUser(data.id, data.pw, data.name, data.nickName, data.sex, data.phoneNum, data.address, data.postNum);
 });
-
+app.post("/login", async (req, res) => {
+    const data = req.body;
+    console.log(data);
+    const result = await login.Check(data.id, data.pw);
+    console.log(result);
+    if(result){
+        res.status(200).json({ success: true, message: "큐리소에 오신 것을 환영합니다 !" });
+    }
+    else{
+        res.status(401).json({ success: false, message: "아이디 또는 비밀번호가 올바르지 않습니다." });
+    }
+})
 
 // Web 영역
 // 회원 관리 초기 데이터
