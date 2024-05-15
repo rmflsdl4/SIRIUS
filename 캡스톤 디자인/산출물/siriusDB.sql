@@ -1,4 +1,4 @@
-use siriusDB;
+-- use siriusDB;
 
 -- ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin';
 
@@ -25,7 +25,7 @@ create table user (
 );
 
 create table deviceRequest (
-	ID int not null primary key,
+	ID int not null primary key auto_increment,
     title varchar(30) not null,
     productName varchar(50) not null,
     type int not null,
@@ -142,8 +142,10 @@ create table productFunction (
 
 
 -- **********************************************************************************************************
-show tables;
--- desc admin;
+-- SET SQL_SAFE_UPDATES = 0;
+
+-- show tables;
+-- -- desc admin;
 
 -- INSERT INTO admin (adminID, adminPW, adminName, adminPhoneNum, adminNickName) 
 -- VALUES (
@@ -151,7 +153,7 @@ show tables;
 --     'admin',
 --     'admin',
 --     '010-1234-1234',
---     'admin1'
+--     'admin'
 -- );
 
 -- INSERT INTO user (userID, userPW, userName, userPhoneNum, postNum, address, sex, userNickName, createDate, adminID) 
@@ -170,3 +172,54 @@ show tables;
 
 -- select * from user;
 
+
+-- INSERT INTO user (userID, userPW, userName, userPhoneNum, postNum, address, sex, userNickName, adminID)
+-- VALUES
+-- ('user1', 'password1', 'John Doe', '123-456-7890', '12345', '123 Main St', 'M', 'johnny', 'admin'),
+-- ('user2', 'password2', 'Jane Smith', '987-654-3210', '54321', '456 Elm St', 'F', 'janesmith', 'admin'),
+-- ('user3', 'password3', 'Michael Johnson', '555-555-5555', '67890', '789 Oak St', 'M', 'mikej', 'admin'),
+-- ('user4', 'password4', 'Emily Davis', '111-222-3333', '24680', '321 Pine St', 'F', 'em_d', 'admin'),
+-- ('user5', 'password5', 'Chris Wilson', '444-444-4444', '13579', '654 Cedar St', 'M', 'chrisw', 'admin');
+
+
+-- INSERT INTO board (boardName, boardIntro, boardRead, boardWrite, boardComWrite, adminID)
+-- VALUES
+-- ('게시판1', '이 게시판은 첫 번째 게시판입니다.', 'A', 'A', 'A', 'admin'),
+-- ('게시판2', '이 게시판은 두 번째 게시판입니다.', 'A', 'A', 'A', 'admin');
+
+
+-- INSERT INTO contents (contentsTitle, content, recommend, views, userID, boardID)
+-- VALUES
+-- ('첫 번째 글', '이것은 첫 번째 글의 내용입니다.', 0, 10, 'user1', 1),
+-- ('두 번째 글', '이것은 두 번째 글의 내용입니다.', 2, 20, 'user2', 1),
+-- ('세 번째 글', '이것은 세 번째 글의 내용입니다.', 5, 30, 'user3', 2),
+-- ('네 번째 글', '이것은 네 번째 글의 내용입니다.', 1, 40, 'user4', 2),
+-- ('다섯 번째 글', '이것은 다섯 번째 글의 내용입니다.', 3, 50, 'user5', 1);
+
+
+-- INSERT INTO comment (commentContent, userID, contentsNum)
+-- VALUES
+-- ('이 글에 대한 댓글입니다.', 'user1', 1),
+-- ('댓글을 달아보는 중입니다.', 'user2', 2),
+-- ('내용에 동의합니다.', 'user3', 3),
+-- ('좋은 글 감사합니다.', 'user4', 4);
+
+
+-- INSERT INTO contentsrecommend (userID, contentsNum)
+-- VALUES
+-- ('user1', 1),
+-- ('user2', 2),
+-- ('user3', 2),
+-- ('user4', 3),
+-- ('user5', 3);
+
+
+-- INSERT INTO devicerequest (title, productName, type, company, state, productImgUrl, userID, adminID)
+-- VALUES
+-- ('요청 제목 1', '에어컨 모델 A', 1, 'AC Company A', 'P', 'air-conditioner.png', 'user1', 'admin'),
+-- ('요청 제목 2', '에어컨 모델 B', 2, 'AC Company B', 'P', 'air-conditioner.png', 'user2', 'admin'),
+-- ('요청 제목 3', '에어컨 모델 C', 3, 'AC Company C', 'P', 'air-conditioner.png', 'user3', 'admin'),
+-- ('요청 제목 4', '에어컨 모델 D', 4, 'AC Company D', 'P', 'air-conditioner.png', 'user4', 'admin'),
+-- ('요청 제목 5', '에어컨 모델 E', 5, 'AC Company E', 'P', 'air-conditioner.png', 'user5', 'admin');
+
+-- desc devicerequest;
