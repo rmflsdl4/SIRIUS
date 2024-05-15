@@ -1,9 +1,6 @@
-show databases;
-create database siriusDB;
 use siriusDB;
-show databases;
 
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin';
+-- ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin';
 
 create table admin (
 	adminID VARCHAR(15) NOT NULL PRIMARY KEY,
@@ -26,8 +23,6 @@ create table user (
     adminID varchar(15) not null,
     FOREIGN KEY (adminID) REFERENCES admin(adminID)
 );
-alter table user add createDate datetime not null default current_timestamp after userNickName;
-desc user;
 
 create table deviceRequest (
 	ID int not null primary key,
@@ -37,6 +32,7 @@ create table deviceRequest (
     company varchar(50) not null,
     requestTime datetime not null default current_timestamp,
     state char(1) not null check(state in('T', 'F')),
+    productImgUrl varchar(100) not null,
     userID varchar(15) not null,
     adminID varchar(15) not null,
     FOREIGN KEY (adminID) REFERENCES admin(adminID),
@@ -114,7 +110,7 @@ create table zigbeeHub (
 );
 
 create table product (
-	serialNum varchar(50) not null primary key,
+	productNum int not null primary key auto_increment,
     modelName varchar(20) not null,
     productName varchar(50) not null,
     type int not null,
@@ -128,19 +124,49 @@ create table product (
 
 create table usingProduct (
 	userID varchar(15) not null,
-    serialNum varchar(50) not null,
+    productNum int not null,
     productState varchar(30) not null,
     usingDate datetime not null default current_timestamp,
-    successOrNot char(1) not null check(successOrNot in('T', 'F'))
+    successOrNot char(1) not null check(successOrNot in('T', 'F')),
+    FOREIGN KEY (userID) REFERENCES user(userID),
+    FOREIGN KEY (productNum) REFERENCES product(productNum)
 );
 
 create table productFunction (
 	functionNum int not null primary key auto_increment,
     functionName varchar(20) not null,
-    serialNum varchar(50) not null,
-    FOREIGN KEY (serialNum) REFERENCES product(serialNum)
+    productNum int not null,
+    FOREIGN KEY (productNum) REFERENCES product(productNum)
 );
 
 
+
 -- **********************************************************************************************************
+show tables;
+-- desc admin;
+
+-- INSERT INTO admin (adminID, adminPW, adminName, adminPhoneNum, adminNickName) 
+-- VALUES (
+--     'admin',
+--     'admin',
+--     'admin',
+--     '010-1234-1234',
+--     'admin1'
+-- );
+
+-- INSERT INTO user (userID, userPW, userName, userPhoneNum, postNum, address, sex, userNickName, createDate, adminID) 
+-- VALUES (
+--     'gildong',          -- 사용자 아이디
+--     '1234',      -- 사용자 비밀번호
+--     '홍길동',          -- 사용자 이름
+--     '010-1234-1234',         -- 사용자 전화번호
+--     '12345',              -- 우편번호
+--     '광주대학교 전산관 320',       -- 주소
+--     'M',                  -- 성별
+--     '홍길동',       -- 사용자 닉네임
+--     NOW(),                -- 생성일시 (현재 시간)
+--     'admin'               -- 관리자 아이디
+-- );
+
+-- select * from user;
 
