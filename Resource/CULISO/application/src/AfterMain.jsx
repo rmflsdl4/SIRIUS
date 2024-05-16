@@ -1,8 +1,9 @@
 import GetIcon from "./modules/GetIcon";
 import { Navigate } from "./modules/Navigate";
-import styled from 'styled-components';
+import styled from "styled-components";
 import "./style.css";
-
+import { useState, useEffect } from "react";
+import { RequestAddress } from "./modules/DataRouter";
 // css
 const CenterBox = styled.div`
   display: flex;
@@ -19,11 +20,11 @@ const Text = styled.span`
 `;
 
 const ImgBox = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin: 0 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0 15px;
 `;
 const Img = styled.img`
   width: ${(props) => props.width};
@@ -43,69 +44,117 @@ const RightContainer = styled.div`
   margin-right: 20px;
 `;
 const EmptyContainer = styled.div`
-    width: 300px;
-    height: 295px;
-    border-radius: 20px;
-    background: #FAFAFA;
+  width: 300px;
+  height: 295px;
+  border-radius: 20px;
+  background: #fafafa;
 `;
 const Button = styled.input`
-    width: 129px;
-    height: 35px;
-    background-color: #B1DBFA;
-    border: none;
-    font-family: normal;
-    font-weight: 700;
-    margin-top: 35px;
-    border-radius: 8px;
-    font-size: 16px;
+  width: 129px;
+  height: 35px;
+  background-color: #b1dbfa;
+  border: none;
+  font-family: normal;
+  font-weight: 700;
+  margin-top: 35px;
+  border-radius: 8px;
+  font-size: 16px;
 `;
 const MenuBox = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 150px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 150px;
 `;
 export const AfterMain = () => {
+  useEffect(() => {
+    setAddress(RequestAddress);
+  }, []);
+  const [address, setAddress] = useState();
   return (
     <div className="afterMain">
       <div className="div">
         <CenterBox align="space-between" top="50px">
-            <Label>
-                <Text> 주소 설정</Text>
-                <Img src={GetIcon("arrow.png")} width={"15px"} style={{marginLeft: "5px"}}/>
-            </Label>
-            <RightContainer>
-                <Img src={GetIcon("inform-black.png")} width={"15px"}/>
-                <Img src={GetIcon("dropdown.png")} width={"15px"} style={{marginLeft: "20px"}}/>
-            </RightContainer>
+          <Label>
+            <Text>{address}</Text>
+            <Img
+              src={GetIcon("mypage-modify.png")}
+              width={"13px"}
+              style={{ marginLeft: "5px" }}
+            />
+          </Label>
+          <RightContainer>
+            <Img src={GetIcon("inform-black.png")} width={"15px"} />
+            <Img
+              src={GetIcon("dropdown.png")}
+              width={"15px"}
+              style={{ marginLeft: "20px" }}
+            />
+          </RightContainer>
         </CenterBox>
         <CenterBox align="center" top="200px">
-            <EmptyContainer>
-                <Img src={GetIcon("home.png")} width={"134px"} top={"25px"}/>
-                <br/><br/><br/>
-                <Text size="20px" font="SejonghospitalBold">등록된 기기가 없으신가요?</Text>
-                
-            <Button type="button" value={"등록하기"}/>
-            </EmptyContainer>
+          <EmptyContainer>
+            <Img src={GetIcon("home.png")} width={"134px"} top={"25px"} />
+            <br />
+            <br />
+            <br />
+            <Text size="20px" font="SejonghospitalBold">
+              등록된 기기가 없으신가요?
+            </Text>
+
+            <Button type="button" value={"등록하기"} />
+          </EmptyContainer>
         </CenterBox>
         <MenuBox>
-            <ImgBox>
-                <Img src={GetIcon("home-white2.png")} width={"37px"}/>
-                <Text align="center" size="12px" color="white" style={{marginTop:"5px"}}>우리 집</Text>
-            </ImgBox>
-            <ImgBox>
-                <Img src={GetIcon("community-white.png")} width={"37px"}/>
-                <Text align="center" size="12px" color="white" style={{marginTop:"5px"}}>커뮤니티</Text>
-            </ImgBox>
-            <ImgBox>
-                <Img src={GetIcon("robot-white2.png")} width={"37px"}/>
-                <Text align="center" size="12px" color="white" style={{marginTop:"5px"}}>인공지능</Text>
-            </ImgBox>
-            <ImgBox>
-                <Img src={GetIcon("profile-white2.png")} width={"37px"} style={{height:"38.08px"}}/>
-                <Text align="center" size="12px" color="white" style={{marginTop:"5px"}}>마이페이지</Text>
-            </ImgBox>
+          <ImgBox>
+            <Img src={GetIcon("home-white2.png")} width={"37px"} />
+            <Text
+              align="center"
+              size="12px"
+              color="white"
+              style={{ marginTop: "5px" }}
+            >
+              우리 집
+            </Text>
+          </ImgBox>
+          <ImgBox>
+            <Img src={GetIcon("community-white.png")} width={"37px"} />
+            <Text
+              align="center"
+              size="12px"
+              color="white"
+              style={{ marginTop: "5px" }}
+            >
+              커뮤니티
+            </Text>
+          </ImgBox>
+          <ImgBox>
+            <Img src={GetIcon("robot-white2.png")} width={"37px"} />
+            <Text
+              align="center"
+              size="12px"
+              color="white"
+              style={{ marginTop: "5px" }}
+            >
+              인공지능
+            </Text>
+          </ImgBox>
+          <ImgBox>
+            <Img
+              src={GetIcon("profile-white2.png")}
+              width={"37px"}
+              style={{ height: "38.08px" }}
+            />
+            <Text
+              align="center"
+              size="12px"
+              color="white"
+              style={{ marginTop: "5px" }}
+            >
+              마이페이지
+            </Text>
+          </ImgBox>
         </MenuBox>
       </div>
     </div>
