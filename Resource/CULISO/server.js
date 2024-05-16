@@ -79,90 +79,198 @@ app.post("/addrReq", async (req, res) => {
   const result = await returnData.ReqResData(req.session.userID);
   res.status(200).json({ success: true, address: result });
 });
+
 // Web 영역
 // 회원 관리 초기 데이터
 app.post("/adminMainMgrInitData", async (req, res) => {
-  const adminID = "admin";
+    const adminID = 'admin';
 
-  const query = `select userID, userName, userNickName, createDate
+    const query = `select userID, userName, userNickName, createDate
                     from user
-                    where adminID = ?`;
+                    where adminID = ? and deleteFlag = ?`;
 
-  const values = [adminID];
+    const values = [adminID, 'FALSE'];
 
-  const result = await database.Query(query, values);
+    const result = await database.Query(query, values);
+    
+    // console.log(result);
 
-  // console.log(result);
-
-  // JSON 형식으로 데이터를 반환
-  res.json(result);
+    // JSON 형식으로 데이터를 반환
+    res.json(result);
 });
 
 // 게시판 관리 초기 데이터
 app.post("/boardMgrInitData", async (req, res) => {
-  const adminID = "admin";
+    const adminID = 'admin';
 
-  const query = `select userID, userName, userNickName, createDate
+    const query = `select userID, userName, userNickName, createDate
                     from user
-                    where adminID = ?`;
+                    where adminID = ? and deleteFlag = ?`;
 
-  const values = [adminID];
+    const values = [adminID, FALSE];
 
-  const result = await database.Query(query, values);
+    const result = await database.Query(query, values);
+    
+    console.log(result);
 
-  console.log(result);
-
-  // JSON 형식으로 데이터를 반환
-  res.json(result);
+    // JSON 형식으로 데이터를 반환
+    res.json(result);
 });
+
 
 // adminMain 상세보기 데이터 select
 app.post("/adminMainViewDetails", async (req, res) => {
-  const { userID } = req.body;
-  const adminID = "admin";
+    const { modalSendData } = req.body;
+    const adminID = 'admin';
 
-  const query = `select 
-                        b.boardName as boardName,
-                        c.content as content,
-                        c.contentsDate as contentsDate,
-                        c.recommend as recommend
-                    from board as b inner join contents as c
-                        on b.boardID = c.boardID
-                    where adminID = ? and userID = ?`;
+    // console.log("modalSendData : " + modalSendData);
 
-  const values = [adminID, userID];
+    const contentListQuery = `select 
+                                c.contentsNum as contentsNum,
+                                b.boardName as boardName,
+                                c.content as content,
+                                c.contentsDate as contentsDate,
+                                c.views as views,
+                                c.recommend as recommend
+                            from board as b inner join contents as c
+                                on b.boardID = c.boardID
+                            where adminID = ? and userID = ?`;
 
-  const result = await database.Query(query, values);
+    const deviceRequestListQuery = `SELECT 
+                                        productName, 
+                                        CASE 
+                                            WHEN type = 1 THEN '전등'
+                                            WHEN type = 2 THEN '커튼'
+                                            WHEN type = 3 THEN '에어컨'
+                                            WHEN type = 4 THEN 'TV'
+                                            WHEN type = 5 THEN '보일러'
+                                            ELSE '등록되지 않은 가전제품' -- 예기치 않은 값을 처리하기 위한 기본값
+                                        END AS type, 
+                                        company, 
+                                        title, 
+                                        requestTime, 
+                                        productImgUrl
+                                    FROM 
+                                        deviceRequest
+                                    where adminID = ? and userID = ?`;
 
-  // console.log("adminMain 상세보기 데이터 : " + userID);
+    const values = [adminID, modalSendData];
 
-  // JSON 형식으로 데이터를 반환
-  res.json(result);
+    // console.log("adminMain 상세보기 데이터 : " + userID);
+
+    // JSON 형식으로 데이터를 반환
+    try {
+        // 두 개의 쿼리를 각각 실행
+        const contentListResult = await database.Query(contentListQuery, values);
+        const deviceRequestListResult = await database.Query(deviceRequestListQuery, values);
+
+        // console.log(contentListResult);
+        // console.log(deviceRequestListResult);
+
+        // 두 결과를 객체로 묶어 JSON 형식으로 반환
+        res.json({
+            contentListResult: contentListResult,
+            deviceRequestListResult: deviceRequestListResult
+        });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // adminMain 프로필카드 데이터 select
-app.post("/profileViewDetails", (req, res) => {
-  const { modalSendData } = req.body;
-  console.log("adminMain 프로필카드 데이터 : " + modalSendData);
+app.post("/profileViewDetails", async (req, res) => {
+    const { modalSendData } = req.body;
+    const adminID = 'admin';
+    // console.log("adminMain 프로필카드 데이터 : " + modalSendData);
 
-  // JSON 형식으로 데이터를 반환
-  res.json("adminMain 프로필카드 데이터: " + modalSendData);
+    const query = `select 
+                        u.userName as userName, 
+                        u.userNickName as userNickName,
+                        z.hubID as hubID,
+                        u.address as address,
+                        u.postNum as postNum,
+                        u.userPhoneNum as userPhoneNum
+                    from user as u inner join zigbeeHub as z
+                        on u.userID = z.userID
+                    where adminID = ? and u.userID = ?`;
+
+    const values = [adminID, modalSendData];
+
+    try {
+        const result = await database.Query(query, values);
+
+        console.log(result);
+
+        // JSON 형식으로 데이터를 반환
+        res.json(result);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // boardMgr 상세보기 데이터 select
 app.post("/boardMgrViewDetails", (req, res) => {
-  const { modalSendData } = req.body;
-  console.log("boardMgr 상세보기 데이터 : " + modalSendData);
+    const { modalSendData } = req.body;
+    console.log("boardMgr 상세보기 데이터 : " + modalSendData);
 
-  // JSON 형식으로 데이터를 반환
-  res.json("boardMgr 상세보기 데이터: " + modalSendData);
+    // JSON 형식으로 데이터를 반환
+    res.json("boardMgr 상세보기 데이터: " + modalSendData);
 });
 
 // requestMgr 상세보기 데이터 select
 app.post("/requestMgrViewDetails", (req, res) => {
-  const { modalSendData } = req.body;
-  console.log("requestMgr 상세보기 데이터 : " + modalSendData);
+    const { modalSendData } = req.body;
+    console.log("requestMgr 상세보기 데이터 : " + modalSendData);
 
-  // JSON 형식으로 데이터를 반환
-  res.json("requestMgr 상세보기 데이터: " + modalSendData);
+    // JSON 형식으로 데이터를 반환
+    res.json("requestMgr 상세보기 데이터: " + modalSendData);
 });
+
+
+// adminMain 회원 관리 테이블 Delete
+app.post("/adminMainDelete", async (req, res) => {
+    const { modalSendData, buttonId } = req.body;
+    // const adminID = 'admin';
+
+    let modalSendDataArray;
+
+    // modalSendData가 문자열인 경우와 배열인 경우를 구분하여 처리
+    if (typeof modalSendData === 'string') {
+        modalSendDataArray = modalSendData.split(',');
+    } else if (Array.isArray(modalSendData)) {
+        modalSendDataArray = modalSendData;
+    } else {
+        console.error('Invalid modalSendData format:', modalSendData);
+        res.status(400).json({ error: 'Invalid modalSendData format' });
+        return;
+    }
+
+    let query;
+
+    switch(buttonId) {
+        case "AdminMainDelete" :
+            // console.log("AdminMain 삭제 버튼 : " + modalSendDataArray);
+            query = `UPDATE user
+                    SET deleteFlag = TRUE
+                    WHERE userID IN (?)`;
+            break;
+        case "AdminMainDetailDelete" :
+            // console.log("AdminMainDetail 삭제 버튼 : " + modalSendDataArray);
+            query = `DELETE FROM contents
+                    WHERE contentsNum IN (?)`;
+            break;
+    }
+
+    try {
+        await Promise.all(modalSendDataArray.map(async deleteID => {
+            await database.Query(query, [deleteID]);
+        }));
+        res.status(200).json({ message: 'Successfully deleted users' });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
