@@ -1,15 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const session = require("express-session");
-const MySQLStore = require("express-mysql-session")(session);
+// const session = require("express-session");
+// const MySQLStore = require("express-mysql-session")(session);
 const app = express();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
 
 const database = require("./database.js");
-const signUp = require("./SignUp.js");
-const login = require("./Login.js");
-const returnData = require("./ReturnDatas.js");
+// const signUp = require("./SignUp.js");
+// const login = require("./Login.js");
+// const returnData = require("./ReturnDatas.js");
 // 데이터베이스 연결
 database.Connect();
 // app 설정
@@ -17,26 +17,26 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // 세션 설정
-const sessionStore = new MySQLStore({
-  host: "localhost",
-  user: "root",
-  password: "1234",
-  database: "siriusDB",
-  port: "3306",
-  charset: "UTF8MB4",
-  expiration: 24 * 60 * 60 * 1000,
-});
-app.use(
-  session({
-    secret: "secret-key",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 24 * 60 * 60 * 1000,
-    },
-    store: sessionStore,
-  })
-);
+// const sessionStore = new MySQLStore({
+//   host: "localhost",
+//   user: "root",
+//   password: "1234",
+//   database: "siriusDB",
+//   port: "3306",
+//   charset: "UTF8MB4",
+//   expiration: 24 * 60 * 60 * 1000,
+// });
+// app.use(
+//   session({
+//     secret: "secret-key",
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//       maxAge: 24 * 60 * 60 * 1000,
+//     },
+//     store: sessionStore,
+//   })
+// );
 app.listen(port, () => console.log(`Listening on port ${port}`));
 // App 영역
 
@@ -123,7 +123,7 @@ app.post("/adminMainViewDetails", async (req, res) => {
     const { modalSendData } = req.body;
     const adminID = 'admin';
 
-    // console.log("modalSendData : " + modalSendData);
+    console.log("modalSendData : " + modalSendData);
 
     const contentListQuery = `select 
                                 c.contentsNum as contentsNum,
@@ -154,15 +154,21 @@ app.post("/adminMainViewDetails", async (req, res) => {
                                         deviceRequest
                                     where adminID = ? and userID = ?`;
 
+    const contentBoardListQuery = `select b.boardID, b.boardName
+                                    from board as b inner join contents as c
+                                        on b.boardID = c.boardID
+                                    where adminID = ? and userID = ?`;
+
     const values = [adminID, modalSendData];
 
     // console.log("adminMain 상세보기 데이터 : " + userID);
 
     // JSON 형식으로 데이터를 반환
     try {
-        // 두 개의 쿼리를 각각 실행
+        // 세 개의 쿼리를 각각 실행
         const contentListResult = await database.Query(contentListQuery, values);
         const deviceRequestListResult = await database.Query(deviceRequestListQuery, values);
+        const contentBoardListResult = await database.Query(contentBoardListQuery, values);
 
         // console.log(contentListResult);
         // console.log(deviceRequestListResult);
@@ -170,7 +176,8 @@ app.post("/adminMainViewDetails", async (req, res) => {
         // 두 결과를 객체로 묶어 JSON 형식으로 반환
         res.json({
             contentListResult: contentListResult,
-            deviceRequestListResult: deviceRequestListResult
+            deviceRequestListResult: deviceRequestListResult,
+            contentBoardListResult : contentBoardListResult
         });
     } catch (error) {
         console.error('Error executing queries:', error);
