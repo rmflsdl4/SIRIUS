@@ -20,6 +20,7 @@ create table user (
     sex char(1) not null check(sex in('M', 'F')),
     userNickName varchar(30) not null unique,
     createDate datetime not null default current_timestamp,
+    deleteFlag boolean not null default false,
     adminID varchar(15) not null,
     FOREIGN KEY (adminID) REFERENCES admin(adminID)
 );
@@ -147,15 +148,6 @@ create table productFunction (
 -- show tables;
 -- -- desc admin;
 
--- INSERT INTO admin (adminID, adminPW, adminName, adminPhoneNum, adminNickName) 
--- VALUES (
---     'admin',
---     'admin',
---     'admin',
---     '010-1234-1234',
---     'admin'
--- );
-
 -- INSERT INTO user (userID, userPW, userName, userPhoneNum, postNum, address, sex, userNickName, createDate, adminID) 
 -- VALUES (
 --     'gildong',          -- 사용자 아이디
@@ -171,6 +163,15 @@ create table productFunction (
 -- );
 
 -- select * from user;
+
+-- INSERT INTO admin (adminID, adminPW, adminName, adminPhoneNum, adminNickName) 
+-- VALUES (
+--     'admin',
+--     'admin',
+--     'admin',
+--     '010-1234-1234',
+--     'admin'
+-- );
 
 
 -- INSERT INTO user (userID, userPW, userName, userPhoneNum, postNum, address, sex, userNickName, adminID)
@@ -216,10 +217,93 @@ create table productFunction (
 
 -- INSERT INTO devicerequest (title, productName, type, company, state, productImgUrl, userID, adminID)
 -- VALUES
--- ('요청 제목 1', '에어컨 모델 A', 1, 'AC Company A', 'P', 'air-conditioner.png', 'user1', 'admin'),
--- ('요청 제목 2', '에어컨 모델 B', 2, 'AC Company B', 'P', 'air-conditioner.png', 'user2', 'admin'),
--- ('요청 제목 3', '에어컨 모델 C', 3, 'AC Company C', 'P', 'air-conditioner.png', 'user3', 'admin'),
--- ('요청 제목 4', '에어컨 모델 D', 4, 'AC Company D', 'P', 'air-conditioner.png', 'user4', 'admin'),
--- ('요청 제목 5', '에어컨 모델 E', 5, 'AC Company E', 'P', 'air-conditioner.png', 'user5', 'admin');
+-- ('요청 제목 1', '에어컨 모델 A', 1, 'AC Company A', 'F', 'air-conditioner.png', 'user1', 'admin'),
+-- ('요청 제목 2', '에어컨 모델 B', 2, 'AC Company B', 'F', 'air-conditioner.png', 'user2', 'admin'),
+-- ('요청 제목 3', '에어컨 모델 C', 3, 'AC Company C', 'F', 'air-conditioner.png', 'user3', 'admin'),
+-- ('요청 제목 4', '에어컨 모델 D', 4, 'AC Company D', 'T', 'air-conditioner.png', 'user4', 'admin'),
+-- ('요청 제목 5', '에어컨 모델 E', 5, 'AC Company E', 'T', 'air-conditioner.png', 'user5', 'admin');
 
--- desc devicerequest;
+-- select * from devicerequest;
+
+-- select * from board;
+-- select * from contents;
+
+-- select *
+-- from board as b inner join contents as c
+-- 	on b.boardID = c.boardID;
+
+-- select 
+-- 	b.boardName as boardName,
+--     c.content as content,
+--     c.contentsDate as contentsDate,
+--     c.views as views,
+--     c.recommend as recommend
+-- from board as b inner join contents as c
+-- 	on b.boardID = c.boardID;
+
+-- select * from deviceRequest;
+
+-- SELECT 
+--     productName, 
+--     CASE 
+--         WHEN type = 1 THEN '전등'
+--         WHEN type = 2 THEN '커튼'
+--         WHEN type = 3 THEN '에어컨'
+--         WHEN type = 4 THEN 'TV'
+--         WHEN type = 5 THEN '보일러'
+--         ELSE '등록되지 않은 가전제품' -- 예기치 않은 값을 처리하기 위한 기본값
+--     END AS type, 
+--     company, 
+--     title, 
+--     requestTime, 
+--     productImgUrl
+-- FROM 
+--     deviceRequest;
+
+-- INSERT INTO contents (contentsTitle, content, recommend, views, userID, boardID)
+-- VALUES
+-- ('user1 test1', '이것은 첫 번째 글의 내용입니다.', 0, 10, 'user1', 1),
+-- ('user1 test2', '이것은 두 번째 글의 내용입니다.', 2, 20, 'user1', 1),
+-- ('user2 test1', '이것은 세 번째 글의 내용입니다.', 5, 30, 'user2', 2),
+-- ('user3 test1', '이것은 네 번째 글의 내용입니다.', 1, 40, 'user3', 2),
+-- ('user3 test2', '이것은 다섯 번째 글의 내용입니다.', 3, 50, 'user3', 1),
+-- ('user3 test3', '이것은 네 번째 글의 내용입니다.', 1, 40, 'user3', 2),
+-- ('user3 test4', '이것은 네 번째 글의 내용입니다.', 1, 40, 'user3', 2),
+-- ('user4 test1', '이것은 네 번째 글의 내용입니다.', 1, 40, 'user4', 2),
+-- ('user4 test2', '이것은 네 번째 글의 내용입니다.', 1, 40, 'user4', 2),
+-- ('user5 test1', '이것은 네 번째 글의 내용입니다.', 1, 40, 'user5', 2);
+
+-- select * from contents;
+
+-- select 
+--                         u.userName as userName, 
+--                         u.userNickName as userNickName,
+--                         z.hubID as hubID,
+--                         u.address as address,
+--                         u.postNum as postNum,
+--                         u.userPhoneNum as userPhoneNum
+--                     from user as u inner join zigbeeHub as z
+--                         on u.userID = z.userID;
+--                         
+-- desc zigbeeHub;
+-- INSERT INTO zigbeeHub (hubID, hubPW, postNum, address, userID)
+-- VALUES
+-- ('hub1', 'hubpassword1', '12345', '123 Main St', 'user1'),
+-- ('hub2', 'hubpassword2', '54321', '456 Elm St', 'user2'),
+-- ('hub3', 'hubpassword3', '67890', '789 Oak St', 'user3'),
+-- ('hub4', 'hubpassword4', '24680', '321 Pine St', 'user4'),
+-- ('hub5', 'hubpassword5', '13579', '654 Cedar St', 'user5');
+
+-- desc user;
+-- select * from user;
+-- select * from contents;
+
+-- select 
+--                         c.contentsNum as contentsNum,
+--                         b.boardName as boardName,
+--                         c.content as content,
+--                         c.contentsDate as contentsDate,
+--                         c.views as views,
+--                         c.recommend as recommend
+--                     from board as b inner join contents as c
+--                         on b.boardID = c.boardID;
