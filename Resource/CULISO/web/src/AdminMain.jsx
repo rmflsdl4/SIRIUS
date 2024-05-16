@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "react-modal"
 import { CustomStyles, ProfileCardStyles } from "./modules/ModalComponent";
 import { GetIcon } from "./modules/GetIcon";
-import { ViewDetails } from "./modules/sendData";        // 모달 팝업창 데이터 전송
+import { ViewDetails, DeleteData } from "./modules/sendData";        // DB 데이터 전송
 import { AdminMainMgrInitData } from "./modules/InitTableData";     // 메인 화면들 초기 데이터
 import { useCheckboxFunctions } from "./modules/checkBox";          // 체크 박스 선택 모듈
 
@@ -20,11 +20,24 @@ export const AdminMain = () => {
         navigate(url);
     }
 
-    const [isOpen, setIsOpen] = useState(false); // 상세보기 팝업 상태
-    const [isOpenProfileCard, setIsOpenProfileCard] = useState(false); // 프로필카드 팝업 상태
-    const [selectedMenu, setSelectedMenu] = useState("boardList"); // 기본값은 "게시글 목록"
-    const [searchTerm, setSearchTerm] = useState('');       // 입력된 검색어 상태
-    const [tableData, setTableData] = useState([]);         // 메인 테이블 데이터 상태
+    const [isOpen, setIsOpen] = useState(false);                            // 상세보기 팝업 상태
+    const [isOpenProfileCard, setIsOpenProfileCard] = useState(false);      // 프로필카드 팝업 상태
+    const [selectedMenu, setSelectedMenu] = useState("boardList");          // 기본값은 "게시글 목록"
+    const [searchTerm, setSearchTerm] = useState('');                       // 입력된 검색어 상태
+    const [tableData, setTableData] = useState([]);                         // 메인 테이블 데이터 상태
+    const [contentListTable, setContentListTable] = useState([]);                // 상세보기 안 게시글 목록 테이블
+    const [deviceRequestListTable, setDeviceRequestListTable] = useState([]);    // 상세보기 안 기기 요청 목록 테이블
+    const [modalSendData, setModalSendData] = useState(null);               // 모달 팝업창 선택 시 해당 버튼 레코드에 해당하는 id 값
+    const [path, setPath] = useState('');                                   // 모달 팝업창 각 버튼에 해당하는 DB path
+    const [userProfileData, setUserProfileData] = useState({
+        userName: '',
+        userNickName: '',
+        hubID: '',
+        address: '',
+        postNum: '',
+        userPhoneNum: ''
+    });                                                                     // 프로필카드 데이터 변경을 위한 useState
+
     
     useEffect(() => {
         const fetchData = async () => {
@@ -79,7 +92,41 @@ export const AdminMain = () => {
         setIsOpenProfileCard(false);
     }
 
-    // 모달 팝업 창 버튼 클릭시 해당 데이터 DB에서 받아오기
+    // 데이터 요청 및 처리
+    useEffect(() => {
+        console.log("useEffect for contentListResult and deviceRequestListResult triggered"); // useEffect가 호출될 때 로그를 출력합니다.
+        if (modalSendData && path) {
+            ViewDetails(modalSendData, path)
+                .then(data => {
+                    setContentListTable(data.contentListResult || []);
+                    setDeviceRequestListTable(data.deviceRequestListResult || []);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        }
+    }, [modalSendData, path]);
+
+    useEffect(() => {
+        console.log("useEffect for userProfileData triggered"); // useEffect가 호출될 때 로그를 출력합니다.
+        // 데이터 요청 및 처리
+        ViewDetails(modalSendData, path)
+            .then(data => {
+                setUserProfileData(data[0] || {
+                    userName: '',
+                    userNickName: '',
+                    hubID: '',
+                    address: '',
+                    postNum: '',
+                    userPhoneNum: ''
+                }); // 받아온 데이터를 상태로 설정; // 받아온 데이터를 상태로 설정
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+    }, [modalSendData, path]); // 모달SendData가 변경될 때마다 실행
+
+    // 모달 팝업 창 버튼 클릭시 해당 데이터 DB에서 받아오기 
     function handleViewDetailsClick (event) {
         // 클릭된 버튼의 id를 가져옵니다.
         const button = event.target.closest('button');
@@ -93,46 +140,90 @@ export const AdminMain = () => {
             const idElement = tdElement.parentNode.querySelector('td.modalSendData');
             if (idElement) {
                 // 선택된 td 태그의 텍스트 콘텐츠를 가져옵니다.
-                const modalSendData = idElement.textContent.trim();
-                console.log("id : " + modalSendData);
+                const modalSendDataValue = idElement.textContent.trim();
                 
-                let path = "";
+                let pathValue = "";
                 // 가져온 아이디 값을 서버로 전송합니다.
                 switch (buttonId) {
                     case "adminMainDetail" :
-                        console.log("AdminMainViewDetails");
-                        path = "adminMainViewDetails";
-                        ViewDetails(modalSendData, path);
-                        break;
-                    case "adminMainDetail" :
-                        console.log("AdminMainViewDetails");
-                        path = "adminMainViewDetails";
-                        ViewDetails(modalSendData, path);
+                        // console.log("AdminMainViewDetails");
+                        pathValue = "adminMainViewDetails";
+                        ViewDetails(modalSendDataValue, pathValue);
                         break;
                     case "adminMainProfile" :
-                        console.log("ProfileViewDetails");
-                        path = "profileViewDetails";
-                        ViewDetails(modalSendData, path);
+                        // console.log("ProfileViewDetails");
+                        pathValue = "profileViewDetails";
+                        ViewDetails(modalSendDataValue, pathValue);
                         break;
                     // case "boardMgrDetail" :
                     //     console.log("BoardMgrViewDetails");
-                    //     path = "boardMgrViewDetails";
-                    //     ViewDetails(modalSendData, path);
+                    //     pathValue = "boardMgrViewDetails";
+                    //     ViewDetails(modalSendDataValue, pathValue);
                     //     break;
                     // case "requestMgrDetail" :
                     //     console.log("RequestMgrViewDetails");
-                    //     path = "requestMgrViewDetails";
-                    //     ViewDetails(modalSendData, path);
+                    //     pathValue = "requestMgrViewDetails";
+                    //     ViewDetails(modalSendDataValue, pathValue);
                     //     break;
                     default:
                         console.error("Unhandled button id:", buttonId);
                 }
+
+                // 상태 업데이트를 통해 useEffect가 실행되도록 설정
+                setModalSendData(modalSendDataValue);
+                setPath(pathValue);
                 
             } else {
                 console.error('아이디를 찾을 수 없습니다.');
             }
         } else {
             console.error('버튼의 부모 요소를 찾을 수 없습니다.');
+        }
+    }
+
+    // 삭제할 데이터 DB에 보내기
+    async function handleDeleteDataClick (event) {
+        // 클릭된 버튼의 id를 가져옵니다.
+        const button = event.target.closest('button');
+        const buttonId = button.id;
+        let tableSendData;
+        let checkID = "";
+        if (buttonId === "AdminMainDelete") {
+            tableSendData = tableData;
+            checkID = "userID";
+        } else {
+            tableSendData = contentListTable;
+            checkID = "contentsNum";
+        }
+
+        // 확인 메시지 표시
+        const isConfirmed = window.confirm('삭제하시겠습니까?');
+
+        // 사용자가 확인을 선택한 경우에만 삭제 이벤트 발생
+        if (isConfirmed) {
+            // 체크된 모든 항목의 ID를 가져옵니다.
+            const checkedIds = tableSendData
+            .map((item, index) => checkedItems[index] ? item[checkID] : null)
+            .filter(id => id !== null);
+
+            if (checkedIds.length > 0) {
+                // ID 리스트를 DeleteData 함수로 보냅니다.
+                try {
+                    await DeleteData(checkedIds, buttonId);
+                    // 삭제 완료 후 테이블 데이터 업데이트
+                    if (buttonId === "AdminMainDelete") {
+                        const newData = await AdminMainMgrInitData();
+                        setTableData(newData);
+                    } else {
+                        // contentListTable에 대한 업데이트 로직 추가
+                        // setContentListTable(newData);
+                    }
+                } catch (error) {
+                    console.warn('삭제 도중 오류가 발생했습니다:', error);
+                }
+            } else {
+                console.warn('삭제할 항목이 선택되지 않았습니다.');
+            }
         }
     }
 
@@ -210,7 +301,7 @@ export const AdminMain = () => {
                                         <td className="modalSendData">{user.userID}</td>
                                         <td>{user.userName}</td>
                                         <td>{user.userNickName}</td>
-                                        <td>{user.createDate}</td>
+                                        <td>{new Date(user.createDate).toLocaleDateString()}</td>
                                         <td className="userListMgr">
                                             <button className="viewDetailsBtn" id="adminMainDetail" onClick={(event) => { openModal(); handleViewDetailsClick(event); }}>
                                                 <img className="viewDetailsImage" alt="Image" src={GetIcon("profile-gray.png")} />
@@ -228,7 +319,12 @@ export const AdminMain = () => {
                     </div>
 
                     {/* 삭제 버튼 */}
-                    <button className="deleteButton">삭제</button>
+                    <button 
+                        className="deleteButton" 
+                        id="AdminMainDelete" 
+                        onClick={(event) => handleDeleteDataClick(event) }
+                        >삭제
+                    </button>
 
                     {/* 페이징 버튼 */}
                     <div className="rectangle-12" />
@@ -315,27 +411,35 @@ export const AdminMain = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td className="modalCheckBox">
-                                            <input
-                                                type="checkbox"
-                                                // checked={checkedItems[index]}
-                                                // onChange={() => handleCheckboxChange(index)}
-                                            />
-                                            </td>
-                                            <td>1</td>
-                                            <td>정보 공유 게시판</td>
-                                            <td>Iot 기기 뭐 사야해요?</td>
-                                            <td>2024.04.29</td>
-                                            <td>3</td>
-                                            <td>0</td>
-                                        </tr>
+                                        {contentListTable.map((item, index) => (
+                                            <tr key={index}>
+                                                <td className="modalCheckBox">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={checkedItems[index] || false}
+                                                        onChange={() => handleCheckboxChange(index)}
+                                                    />
+                                                </td>
+                                                <td className="modalSendData" style={{ display: 'none' }}>{item.contentsNum}</td>
+                                                <td>{index + 1}</td>
+                                                <td>{item.boardName}</td>
+                                                <td>{item.content}</td>
+                                                <td>{new Date(item.contentsDate).toLocaleDateString()}</td>
+                                                <td>{item.views}</td>
+                                                <td>{item.recommend}</td>
+                                            </tr>
+                                        ))}
                                     </tbody>
                                 </table>
                             </div>
 
                             <div className="blockingBox">
-                                <button className="blockingBtn">삭제</button>
+                                <button 
+                                    className="blockingBtn" 
+                                    id="AdminMainDetailDelete" 
+                                    onClick={(event) => handleDeleteDataClick(event) }
+                                >삭제
+                                </button>
                             </div>
                         </div>
                     )}
@@ -384,15 +488,17 @@ export const AdminMain = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>AS191DK1</td>
-                                            <td>에어컨</td>
-                                            <td>LG</td>
-                                            <td>LG 기기 등록 요청합니다.</td>
-                                            <td>2024.04.29</td>
-                                            <td><img className="deviceImg" alt="Image" src={GetIcon("air-conditioner.png")} /></td>
-                                        </tr>
+                                        {deviceRequestListTable.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>{item.productName}</td>
+                                                <td>{item.type}</td>
+                                                <td>{item.company}</td>
+                                                <td>{item.title}</td>
+                                                <td>{new Date(item.requestTime).toLocaleDateString()}</td>
+                                                <td><img className="deviceImg" alt="Device" src={item.productImgUrl} /></td>
+                                            </tr>
+                                        ))}
                                     </tbody>
                                 </table>
                             </div>
@@ -415,15 +521,15 @@ export const AdminMain = () => {
                                     <img className="profileCardUser" alt="User" src={GetIcon("user.png")} />
                                 </td>
                                 <td className="profileCardUserInformation">
-                                    <span className="profileCardUserName">홍길동</span>
-                                    <span className="profileCardUserNickName">gildong01</span>
+                                    <span className="profileCardUserName">{userProfileData.userName}</span>
+                                    <span className="profileCardUserNickName">{userProfileData.userNickName}</span>
                                 </td>
 
                                 <td className="profileCardHubImg">
                                     <img className="profileCardUserHub" alt="Zigbee Hub" src={GetIcon("zigbee.png")} />
                                 </td>
                                 <td className="profileCardHubInformation">
-                                    <span className="profileCardHubNum">ZB-3920XJ</span>
+                                    <span className="profileCardHubNum">{userProfileData.hubID}</span>
                                 </td>
                             </tr>
 
@@ -432,15 +538,15 @@ export const AdminMain = () => {
                                     <img className="profileCardLocation" alt="location" src={GetIcon("location-pin.png")} />
                                 </td>
                                 <td className="profileCardLocationInformation">
-                                    <span className="profileCardLocationName">광주대학교 남구 효덕로 277, 전산관 320호</span>
-                                    <span className="profileCardLocationNum">503-703</span>
+                                    <span className="profileCardLocationName">{userProfileData.address}</span>
+                                    <span className="profileCardLocationNum">{userProfileData.postNum}</span>
                                 </td>
 
                                 <td className="profileCardPhoneImg">
                                     <img className="profileCardPhoneImg" alt="phone" src={GetIcon("telephone.png")} />
                                 </td>
                                 <td className="profileCardPhoneInformation">
-                                    <span className="profileCardPhoneNum">010-1234-1234</span>
+                                    <span className="profileCardPhoneNum">{userProfileData.userPhoneNum}</span>
                                 </td>
                             </tr>
                         </tbody>

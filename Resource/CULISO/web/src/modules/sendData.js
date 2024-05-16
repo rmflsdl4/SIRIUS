@@ -19,7 +19,8 @@ export const ViewDetails = (modalSendData, path) => {
         })
         .then(data => {
             resolve(data);
-            console.log(data); // 파싱된 JSON 데이터 출력
+            // 성공적으로 데이터를 받았을 때 처리
+            console.log("Result: ", data);
             
         })
         .catch(error => {
@@ -28,106 +29,30 @@ export const ViewDetails = (modalSendData, path) => {
     });
 }
 
-// export const AdminMainViewDetails = (modalSendData) => {
-//     return new  Promise((resolve, reject) => {
-//         fetch(url + "adminMainViewDetails", {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({ modalSendData })
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('Network response was not ok');
-//             }
-//             return response.json(); // JSON 데이터로 응답을 파싱
-//         })
-//         .then(data => {
-//             resolve(data);
-//             console.log(data); // 파싱된 JSON 데이터 출력
+// 
+export const DeleteData = (modalSendData, buttonId) => {
+    return new  Promise((resolve, reject) => {
+        fetch(url + "adminMainDelete", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ modalSendData, buttonId })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // JSON 데이터로 응답을 파싱
+        })
+        .then(data => {
+            resolve(data);
+            // 성공적으로 데이터를 받았을 때 처리
+            console.log("Result: ", data);
             
-//         })
-//         .catch(error => {
-//             reject(error);
-//         });
-//     });
-// }
-
-// export const ProfileViewDetails = (modalSendData) => {
-//     return new  Promise((resolve, reject) => {
-//         fetch(url + "profileViewDetails", {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({ modalSendData })
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('Network response was not ok');
-//             }
-//             return response.json(); // JSON 데이터로 응답을 파싱
-//         })
-//         .then(data => {
-//             resolve(data);
-//             console.log(data); // 파싱된 JSON 데이터 출력
-            
-//         })
-//         .catch(error => {
-//             reject(error);
-//         });
-//     });
-// }
-
-// export const BoardMgrViewDetails = (modalSendData) => {
-//     return new  Promise((resolve, reject) => {
-//         fetch(url + "boardMgrViewDetails", {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({ modalSendData })
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('Network response was not ok');
-//             }
-//             return response.json(); // JSON 데이터로 응답을 파싱
-//         })
-//         .then(data => {
-//             resolve(data);
-//             console.log(data); // 파싱된 JSON 데이터 출력
-            
-//         })
-//         .catch(error => {
-//             reject(error);
-//         });
-//     });
-// }
-
-// export const RequestMgrViewDetails = (modalSendData) => {
-//     return new  Promise((resolve, reject) => {
-//         fetch(url + "requestMgrViewDetails", {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({ modalSendData })
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('Network response was not ok');
-//             }
-//             return response.json(); // JSON 데이터로 응답을 파싱
-//         })
-//         .then(data => {
-//             resolve(data);
-//             console.log(data); // 파싱된 JSON 데이터 출력
-            
-//         })
-//         .catch(error => {
-//             reject(error);
-//         });
-//     });
-// }
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+}
