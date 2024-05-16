@@ -27,8 +27,14 @@ export const AdminMain = () => {
     const [tableData, setTableData] = useState([]);                         // 메인 테이블 데이터 상태
     const [contentListTable, setContentListTable] = useState([]);                // 상세보기 안 게시글 목록 테이블
     const [deviceRequestListTable, setDeviceRequestListTable] = useState([]);    // 상세보기 안 기기 요청 목록 테이블
+    const [boardListTable, setBoardListTable] = useState([]);                              // 상세보기 안 게시글 목록의 게시판 리스트 옵션 테이블
     const [modalSendData, setModalSendData] = useState(null);               // 모달 팝업창 선택 시 해당 버튼 레코드에 해당하는 id 값
     const [path, setPath] = useState('');                                   // 모달 팝업창 각 버튼에 해당하는 DB path
+    // 각 필터링 요소에 대한 상태 변수 설정
+    const [selectedBoard, setSelectedBoard] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [searchWord, setSearchWord] = useState('');
     const [userProfileData, setUserProfileData] = useState({
         userName: '',
         userNickName: '',
@@ -94,21 +100,29 @@ export const AdminMain = () => {
 
     // 데이터 요청 및 처리
     useEffect(() => {
-        console.log("useEffect for contentListResult and deviceRequestListResult triggered"); // useEffect가 호출될 때 로그를 출력합니다.
-        if (modalSendData && path) {
-            ViewDetails(modalSendData, path)
-                .then(data => {
-                    setContentListTable(data.contentListResult || []);
-                    setDeviceRequestListTable(data.deviceRequestListResult || []);
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
+        // console.log("useEffect for contentListResult and deviceRequestListResult triggered"); // useEffect가 호출될 때 로그를 출력합니다.
+        try {
+            if (modalSendData && path) {
+                ViewDetails(modalSendData, path)
+                    .then(data => {
+                        setContentListTable(data.contentListResult || []);
+                        setDeviceRequestListTable(data.deviceRequestListResult || []);
+                        setBoardListTable(data.contentBoardListResult || []);
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+            }
+        } catch (error) {
+            console.error("Error:", error);
         }
+
+        // 게시판 데이터를 업데이트하기 전에 현재 선택된 모달의 데이터와 관련된 게시판 데이터를 초기화합니다.
+        setBoardListTable([]);
     }, [modalSendData, path]);
 
     useEffect(() => {
-        console.log("useEffect for userProfileData triggered"); // useEffect가 호출될 때 로그를 출력합니다.
+        // console.log("useEffect for userProfileData triggered"); // useEffect가 호출될 때 로그를 출력합니다.
         // 데이터 요청 및 처리
         ViewDetails(modalSendData, path)
             .then(data => {
@@ -216,7 +230,10 @@ export const AdminMain = () => {
                         setTableData(newData);
                     } else {
                         // contentListTable에 대한 업데이트 로직 추가
-                        // setContentListTable(newData);
+                        if (modalSendData && path) {
+                            const data = await ViewDetails(modalSendData, path);
+                            setContentListTable(data.contentListResult || []);
+                        }
                     }
                 } catch (error) {
                     console.warn('삭제 도중 오류가 발생했습니다:', error);
@@ -226,6 +243,52 @@ export const AdminMain = () => {
             }
         }
     }
+
+    // 검색 필터링 함수
+    const applyFilters = () => {
+        // 필터링된 결과를 담을 배열 초기화
+        let filteredContentList = contentListTable;
+
+        // 게시판 선택 필터링
+        if (selectedBoard) {
+            filteredContentList = filteredContentList.filter(item => item.boardName === selectedBoard);
+        }
+
+        // 등록일 범위 필터링
+        if (startDate && endDate) {
+            const startDateObj = new Date(startDate);
+            const endDateObj = new Date(endDate);
+            filteredContentList = filteredContentList.filter(item => {
+                const contentDate = new Date(item.contentsDate);
+                return contentDate >= startDateObj && contentDate <= endDateObj;
+            });
+        }
+
+        // 검색어 필터링
+        if (searchWord) {
+            // 검색어가 비어있으면 전체 테이블 데이터를 사용
+            const filteredData = searchWord ? contentListTable.filter(item =>
+                item.boardName.toLowerCase().includes(searchWord.toLowerCase()) ||
+                item.content.toLowerCase().includes(searchWord.toLowerCase())
+            ) : contentListTable; // 검색어가 없으면 전체 데이터 유지
+
+            // 필터링된 데이터로 테이블 데이터 업데이트
+            setContentListTable(filteredData);
+        }
+
+        // 필터링된 결과 반환
+        return filteredContentList;
+    };
+
+    // 필터링된 결과를 상태로 업데이트하는 함수
+    const modalHandleSearch = () => {
+        const filteredData = applyFilters();
+        setContentListTable(filteredData);
+    };
+
+    const modalHandleSearchButtonClick = () => {
+        modalHandleSearch(); // 필터링된 결과를 업데이트하는 함수 호출
+    };
 
     return (
         <div className="AdminMain">
@@ -367,22 +430,28 @@ export const AdminMain = () => {
                                         <tr>
                                             <td className="elementLeft">게시판 선택</td>
                                             <td className="elementRight">
-                                                <select>
-                                                    <option value="information">정보 공유 게시판</option>
-                                                    <option value="Communication">소통마당</option>
-                                                </select>
+                                            <select>
+                                                <option value="">전체</option>
+                                                {boardListTable.map(board => (
+                                                    <option key={board.boardID} value={board.boardName}>
+                                                        {board.boardName}
+                                                    </option>
+                                                ))}
+                                            </select>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td className="elementLeft">등록일</td>
                                             <td className="elementRight">
-                                                <input type="date" id="dateFrom"></input> ~ <input type="date" id="dateTo"></input>
+                                                <input type="date" id="dateFrom"/>
+                                                {' ~ '}
+                                                <input type="date" id="dateTo"/>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td className="elementLeft">검색조건</td>
                                             <td className="elementRight">
-                                            <input type="text" id="searchRequirement"></input>
+                                                <input type="text" id="searchRequirement"/>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -393,7 +462,7 @@ export const AdminMain = () => {
                             </div>
 
                             <div className="modalSerchResult">
-                                검색결과 : 총 <span className="modalSerchText">1</span>개
+                                검색결과 : 총 <span className="modalSerchText">{contentListTable.length}</span>개
                             </div>
 
                             {/* 게시글 검색 리스트 */}
