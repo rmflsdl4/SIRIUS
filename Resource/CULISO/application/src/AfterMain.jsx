@@ -1,4 +1,5 @@
 import GetIcon from "./modules/GetIcon";
+import {Cookies} from 'react-cookie';
 import { Navigate } from "./modules/Navigate";
 import styled from "styled-components";
 import "./style.css";
@@ -67,17 +68,33 @@ const MenuBox = styled.div`
   align-items: center;
   margin-top: 150px;
 `;
+const cookies = new Cookies();
+
+function LogOut(){
+  cookies.remove('token');
+  alert("다음에도 큐리소를 이용해 주세요 !");
+  window.location.href = '/login';
+}
 export const AfterMain = () => {
-  useEffect(() => {
-    setAddress(RequestAddress);
-  }, []);
   const [address, setAddress] = useState();
+
+  useEffect(() => {
+    // 주소 얻는 메소드
+    const GetAddr = async () => {
+      const address = await RequestAddress();
+      setAddress(address);
+      console.log("주소: " + address);
+    };
+  
+    GetAddr();
+  }, []);
+
   return (
     <div className="afterMain">
       <div className="div">
         <CenterBox align="space-between" top="50px">
           <Label>
-            <Text>{address}</Text>
+            <Text size="12px" style={{whiteSpace: 'nowrap', overflow: 'hidden',textOverflow: 'ellipsis', width: '100px'}}>{address}</Text>
             <Img
               src={GetIcon("mypage-modify.png")}
               width={"13px"}
@@ -103,7 +120,7 @@ export const AfterMain = () => {
               등록된 기기가 없으신가요?
             </Text>
 
-            <Button type="button" value={"등록하기"} />
+            <Button type="button" value={"등록하기"} onClick={LogOut} />
           </EmptyContainer>
         </CenterBox>
         <MenuBox>

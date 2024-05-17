@@ -1,42 +1,44 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-// const session = require("express-session");
-// const MySQLStore = require("express-mysql-session")(session);
+const session = require("express-session");
 const app = express();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
-
+const util = require('util');
 const database = require("./database.js");
-// const signUp = require("./SignUp.js");
-// const login = require("./Login.js");
-// const returnData = require("./ReturnDatas.js");
+const signUp = require("./SignUp.js");
+const login = require("./Login.js");
+const returnData = require("./ReturnDatas.js");
+
+var router = express.Router();
 // 데이터베이스 연결
 database.Connect();
+// 세션 설정
+app.use(
+  session({
+    secret: "secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 86400,
+      httpOnly: true,
+      sameSite: 'none',
+      secure: false, // HTTPS를 사용하는 경우 true로 설정
+    },
+  })
+);
+
+
 // app 설정
-app.use(cors());
+const corsOptions = {
+    origin: true,
+    credentials: true
+};
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// 세션 설정
-// const sessionStore = new MySQLStore({
-//   host: "localhost",
-//   user: "root",
-//   password: "1234",
-//   database: "siriusDB",
-//   port: "3306",
-//   charset: "UTF8MB4",
-//   expiration: 24 * 60 * 60 * 1000,
-// });
-// app.use(
-//   session({
-//     secret: "secret-key",
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: {
-//       maxAge: 24 * 60 * 60 * 1000,
-//     },
-//     store: sessionStore,
-//   })
-// );
+app.use('/', router);
+
 app.listen(port, () => console.log(`Listening on port ${port}`));
 // App 영역
 
@@ -56,29 +58,45 @@ app.post("/signUp", (req) => {
   );
 });
 app.post("/login", async (req, res) => {
-  const data = req.body;
-  console.log(data);
-  const result = await login.Check(data.id, data.pw);
-  console.log(result);
-  if (result) {
-    res
-      .status(200)
-      .json({ success: true, message: "큐리소에 오신 것을 환영합니다 !" });
-    req.session.userID = data.id;
-    console.log("로그인 했음 현재 세션: " + req.session.userID);
-  } else {
-    res.status(401).json({
-      success: false,
-      message: "아이디 또는 비밀번호가 올바르지 않습니다.",
-    });
-  }
-});
-app.post("/addrReq", async (req, res) => {
-  console.log("로그인 다음 화면으로 넘어옴 현재 세션: " + req.session.userID);
-  console.log(req.body.t);
-  const result = await returnData.ReqResData(req.session.userID);
-  res.status(200).json({ success: true, address: result });
-});
+    const data = req.body;
+    const result = await login.Check(data.id, data.pw);
+    console.log(data);
+    if (result) {
+        req.session.userID = data.id;
+        console.log(req.sessionID);
+        return res.status(200).json({ success: true, message: "큐리소에 오신 것을 환영합니다 !", token: req.sessionID});
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "아이디 또는 비밀번호가 올바르지 않습니다.",
+      });
+    }
+  });
+  app.post("/addrReq", async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token)
+        return res.status(401).json({ success: false, message: "토큰이 필요합니다." });
+    // 세션 스토어에서 토큰으로 세션을 가져오기
+    const getSession = util.promisify(req.sessionStore.get).bind(req.sessionStore);
+
+    try {
+        const session = await getSession(token);
+        if (!session) {
+          return res.status(401).json({ success: false, message: "유효하지 않은 토큰입니다." });
+        }
+    
+        const userID = session.userID;
+        const addr = await returnData.ReqResData(userID);
+        if (addr)
+          res.status(200).json({ success: true, address: addr });
+        else
+          res.status(404).json({ success: false, message: "주소를 찾을 수 없습니다." });
+      } 
+      catch (error) {
+        console.error("서버 오류 발생:", error);
+        res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
+      }
+  });
 
 // Web 영역
 // 회원 관리 초기 데이터

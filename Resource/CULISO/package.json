@@ -2,6 +2,7 @@
   "dependencies": {
     "concurrently": "^8.2.2",
     "cors": "^2.8.5",
+    "express": "^4.19.2",
     "express-mysql-session": "^3.0.2",
     "express-session": "^1.18.0",
     "mysql2": "^3.9.7",
@@ -13,7 +14,10 @@
   "scripts": {
     "app": "cd application && npm run start",
     "web": "cd web && npm run start",
-    "server": "node server.js",
+    "server": "nodemon server.js",
     "all": "concurrently \"cd application && npm run start\" \"cd web && npm run start\" \"npm run server\""
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
