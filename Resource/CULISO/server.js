@@ -1,44 +1,42 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const session = require("express-session");
+// const session = require("express-session");
+// const MySQLStore = require("express-mysql-session")(session);
 const app = express();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
-const util = require('util');
-const database = require("./database.js");
-const signUp = require("./SignUp.js");
-const login = require("./Login.js");
-const returnData = require("./ReturnDatas.js");
 
-var router = express.Router();
+const database = require("./database.js");
+// const signUp = require("./SignUp.js");
+// const login = require("./Login.js");
+// const returnData = require("./ReturnDatas.js");
 // 데이터베이스 연결
 database.Connect();
-// 세션 설정
-app.use(
-  session({
-    secret: "secret-key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 86400,
-      httpOnly: true,
-      sameSite: 'none',
-      secure: false, // HTTPS를 사용하는 경우 true로 설정
-    },
-  })
-);
-
-
 // app 설정
-const corsOptions = {
-    origin: true,
-    credentials: true
-};
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use('/', router);
-
+// 세션 설정
+// const sessionStore = new MySQLStore({
+//   host: "localhost",
+//   user: "root",
+//   password: "1234",
+//   database: "siriusDB",
+//   port: "3306",
+//   charset: "UTF8MB4",
+//   expiration: 24 * 60 * 60 * 1000,
+// });
+// app.use(
+//   session({
+//     secret: "secret-key",
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//       maxAge: 24 * 60 * 60 * 1000,
+//     },
+//     store: sessionStore,
+//   })
+// );
 app.listen(port, () => console.log(`Listening on port ${port}`));
 // App 영역
 
@@ -58,49 +56,33 @@ app.post("/signUp", (req) => {
   );
 });
 app.post("/login", async (req, res) => {
-    const data = req.body;
-    const result = await login.Check(data.id, data.pw);
-    console.log(data);
-    if (result) {
-        req.session.userID = data.id;
-        console.log(req.sessionID);
-        return res.status(200).json({ success: true, message: "큐리소에 오신 것을 환영합니다 !", token: req.sessionID});
-    } else {
-      return res.status(401).json({
-        success: false,
-        message: "아이디 또는 비밀번호가 올바르지 않습니다.",
-      });
-    }
-  });
-  app.post("/addrReq", async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token)
-        return res.status(401).json({ success: false, message: "토큰이 필요합니다." });
-    // 세션 스토어에서 토큰으로 세션을 가져오기
-    const getSession = util.promisify(req.sessionStore.get).bind(req.sessionStore);
-
-    try {
-        const session = await getSession(token);
-        if (!session) {
-          return res.status(401).json({ success: false, message: "유효하지 않은 토큰입니다." });
-        }
-    
-        const userID = session.userID;
-        const addr = await returnData.ReqResData(userID);
-        if (addr)
-          res.status(200).json({ success: true, address: addr });
-        else
-          res.status(404).json({ success: false, message: "주소를 찾을 수 없습니다." });
-      } 
-      catch (error) {
-        console.error("서버 오류 발생:", error);
-        res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
-      }
-  });
+  const data = req.body;
+  console.log(data);
+  const result = await login.Check(data.id, data.pw);
+  console.log(result);
+  if (result) {
+    res
+      .status(200)
+      .json({ success: true, message: "큐리소에 오신 것을 환영합니다 !" });
+    req.session.userID = data.id;
+    console.log("로그인 했음 현재 세션: " + req.session.userID);
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "아이디 또는 비밀번호가 올바르지 않습니다.",
+    });
+  }
+});
+app.post("/addrReq", async (req, res) => {
+  console.log("로그인 다음 화면으로 넘어옴 현재 세션: " + req.session.userID);
+  console.log(req.body.t);
+  const result = await returnData.ReqResData(req.session.userID);
+  res.status(200).json({ success: true, address: result });
+});
 
 // Web 영역
 // 회원 관리 초기 데이터
-app.post("/adminMainMgrInitData", async (req, res) => {
+app.post("/adminMainInitData", async (req, res) => {
     const adminID = 'admin';
 
     const query = `select userID, userName, userNickName, createDate
@@ -110,8 +92,6 @@ app.post("/adminMainMgrInitData", async (req, res) => {
     const values = [adminID, 'FALSE'];
 
     const result = await database.Query(query, values);
-    
-    // console.log(result);
 
     // JSON 형식으로 데이터를 반환
     res.json(result);
@@ -121,11 +101,18 @@ app.post("/adminMainMgrInitData", async (req, res) => {
 app.post("/boardMgrInitData", async (req, res) => {
     const adminID = 'admin';
 
-    const query = `select userID, userName, userNickName, createDate
-                    from user
-                    where adminID = ? and deleteFlag = ?`;
+    const query = `SELECT 
+                        b.boardID as boardID,
+                        b.boardName as boardName,
+                        COALESCE(count(c.content), 0) as contentTotal,
+                        b.boardDate
+                    FROM board as b 
+                    LEFT JOIN contents as c
+                        ON b.boardID = c.boardID
+                    WHERE b.adminID = ?
+                    GROUP BY b.boardID, b.boardName, b.boardDate`;
 
-    const values = [adminID, FALSE];
+    const values = [adminID];
 
     const result = await database.Query(query, values);
     
@@ -136,6 +123,7 @@ app.post("/boardMgrInitData", async (req, res) => {
 });
 
 
+// ***** 상세보기 데이터******
 // adminMain 상세보기 데이터 select
 app.post("/adminMainViewDetails", async (req, res) => {
     const { modalSendData } = req.body;
@@ -236,12 +224,35 @@ app.post("/profileViewDetails", async (req, res) => {
 });
 
 // boardMgr 상세보기 데이터 select
-app.post("/boardMgrViewDetails", (req, res) => {
+app.post("/boardMgrViewDetails", async (req, res) => {
     const { modalSendData } = req.body;
-    console.log("boardMgr 상세보기 데이터 : " + modalSendData);
+    const adminID = 'admin';
+    // console.log("adminMain 프로필카드 데이터 : " + modalSendData);
 
-    // JSON 형식으로 데이터를 반환
-    res.json("boardMgr 상세보기 데이터: " + modalSendData);
+    const query = `select 
+                        c.contentsNum as contentsNum,
+                        b.boardName as boardName,
+                        c.content as content,
+                        c.contentsDate as contentsDate,
+                        c.recommend as recommend,
+                        c.views as views
+                    from board as b inner join contents as c
+                        on b.boardID = c.boardID
+                    where b.adminID = ? and b.boardID = ?`;
+
+    const values = [adminID, modalSendData];
+
+    try {
+        const result = await database.Query(query, values);
+
+        console.log(result);
+
+        // JSON 형식으로 데이터를 반환
+        res.json(result);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // requestMgr 상세보기 데이터 select
@@ -255,7 +266,7 @@ app.post("/requestMgrViewDetails", (req, res) => {
 
 
 // adminMain 회원 관리 테이블 Delete
-app.post("/adminMainDelete", async (req, res) => {
+app.post("/deleteTable", async (req, res) => {
     const { modalSendData, buttonId } = req.body;
     // const adminID = 'admin';
 
@@ -276,13 +287,19 @@ app.post("/adminMainDelete", async (req, res) => {
 
     switch(buttonId) {
         case "AdminMainDelete" :
-            // console.log("AdminMain 삭제 버튼 : " + modalSendDataArray);
             query = `UPDATE user
                     SET deleteFlag = TRUE
                     WHERE userID IN (?)`;
             break;
         case "AdminMainDetailDelete" :
-            // console.log("AdminMainDetail 삭제 버튼 : " + modalSendDataArray);
+            query = `DELETE FROM contents
+                    WHERE contentsNum IN (?)`;
+            break;
+        case "BoardMgrDelete" :
+            query = `DELETE FROM board
+                    WHERE boardID IN (?)`;
+            break;
+        case "BoardMgrDetailDelete" :
             query = `DELETE FROM contents
                     WHERE contentsNum IN (?)`;
             break;
@@ -299,3 +316,61 @@ app.post("/adminMainDelete", async (req, res) => {
     }
 });
 
+// boardMgr 상세보기 데이터 update
+app.post("/updateTable", async (req, res) => {
+    const { modalSendData, formData } = req.body;
+    const adminID = 'admin';
+
+    const query = `UPDATE board
+                    SET 
+                        boardName = ?,
+                        boardIntro = ?,
+                        boardRead = ?, 
+                        boardWrite = ?, 
+                        boardComWrite = ? 
+                    WHERE
+                        boardID = ?`;
+
+    const values = [];
+
+    // formData의 속성들을 순회하면서 value 배열에 추가합니다.
+    formData.forEach(value => {
+        values.push(value);
+    });
+    values.push(modalSendData);
+
+    try {
+        await database.Query(query, values);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// boardMgr 상세보기 데이터 insert
+app.post("/insertTable", async (req, res) => {
+    const { formData, buttonId } = req.body;
+    const adminID = 'admin';
+
+    switch(buttonId) {
+        case "boardMgrInsertBtn" :
+            query = `INSERT INTO board (boardName, boardIntro, boardRead, boardWrite, boardComWrite, adminID) 
+                    VALUES (?, ?, ?, ?, ?, ?)`;
+            break;
+    }
+
+    const values = [];
+
+    // formData의 속성들을 순회하면서 value 배열에 추가합니다.
+    formData.forEach(value => {
+        values.push(value);
+    });
+    values.push(adminID);
+
+    try {
+        await database.Query(query, values);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
