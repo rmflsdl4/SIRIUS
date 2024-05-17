@@ -30,11 +30,6 @@ export const AdminMain = () => {
     const [boardListTable, setBoardListTable] = useState([]);                              // 상세보기 안 게시글 목록의 게시판 리스트 옵션 테이블
     const [modalSendData, setModalSendData] = useState(null);               // 모달 팝업창 선택 시 해당 버튼 레코드에 해당하는 id 값
     const [path, setPath] = useState('');                                   // 모달 팝업창 각 버튼에 해당하는 DB path
-    // 각 필터링 요소에 대한 상태 변수 설정
-    const [selectedBoard, setSelectedBoard] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [searchWord, setSearchWord] = useState('');
     const [userProfileData, setUserProfileData] = useState({
         userName: '',
         userNickName: '',
@@ -57,8 +52,6 @@ export const AdminMain = () => {
 
         fetchData();
     }, []);
-
-    const { selectAll, checkedItems, handleSelectAll, handleCheckboxChange } = useCheckboxFunctions(tableData);
 
     // 검색어 입력 시 상태 업데이트
     const handleInputChange = (event) => {
@@ -120,6 +113,7 @@ export const AdminMain = () => {
         // 게시판 데이터를 업데이트하기 전에 현재 선택된 모달의 데이터와 관련된 게시판 데이터를 초기화합니다.
         setBoardListTable([]);
     }, [modalSendData, path]);
+    
 
     useEffect(() => {
         // console.log("useEffect for userProfileData triggered"); // useEffect가 호출될 때 로그를 출력합니다.
@@ -202,12 +196,16 @@ export const AdminMain = () => {
         const buttonId = button.id;
         let tableSendData;
         let checkID = "";
+        let checkedItems;
+
         if (buttonId === "AdminMainDelete") {
             tableSendData = tableData;
             checkID = "userID";
+            checkedItems = tableCheckedItems;
         } else {
             tableSendData = contentListTable;
             checkID = "contentsNum";
+            checkedItems = contentCheckedItems;
         }
 
         // 확인 메시지 표시
@@ -244,51 +242,19 @@ export const AdminMain = () => {
         }
     }
 
-    // 검색 필터링 함수
-    const applyFilters = () => {
-        // 필터링된 결과를 담을 배열 초기화
-        let filteredContentList = contentListTable;
+    const {
+        selectAll: tableSelectAll,
+        checkedItems: tableCheckedItems,
+        handleSelectAll: handleTableSelectAll,
+        handleCheckboxChange: handleTableCheckboxChange
+    } = useCheckboxFunctions(tableData);
 
-        // 게시판 선택 필터링
-        if (selectedBoard) {
-            filteredContentList = filteredContentList.filter(item => item.boardName === selectedBoard);
-        }
-
-        // 등록일 범위 필터링
-        if (startDate && endDate) {
-            const startDateObj = new Date(startDate);
-            const endDateObj = new Date(endDate);
-            filteredContentList = filteredContentList.filter(item => {
-                const contentDate = new Date(item.contentsDate);
-                return contentDate >= startDateObj && contentDate <= endDateObj;
-            });
-        }
-
-        // 검색어 필터링
-        if (searchWord) {
-            // 검색어가 비어있으면 전체 테이블 데이터를 사용
-            const filteredData = searchWord ? contentListTable.filter(item =>
-                item.boardName.toLowerCase().includes(searchWord.toLowerCase()) ||
-                item.content.toLowerCase().includes(searchWord.toLowerCase())
-            ) : contentListTable; // 검색어가 없으면 전체 데이터 유지
-
-            // 필터링된 데이터로 테이블 데이터 업데이트
-            setContentListTable(filteredData);
-        }
-
-        // 필터링된 결과 반환
-        return filteredContentList;
-    };
-
-    // 필터링된 결과를 상태로 업데이트하는 함수
-    const modalHandleSearch = () => {
-        const filteredData = applyFilters();
-        setContentListTable(filteredData);
-    };
-
-    const modalHandleSearchButtonClick = () => {
-        modalHandleSearch(); // 필터링된 결과를 업데이트하는 함수 호출
-    };
+    const {
+        selectAll: contentSelectAll,
+        checkedItems: contentCheckedItems,
+        handleSelectAll: handleContentSelectAll,
+        handleCheckboxChange: handleContentCheckboxChange
+    } = useCheckboxFunctions(contentListTable);
 
     return (
         <div className="AdminMain">
@@ -341,7 +307,7 @@ export const AdminMain = () => {
                         <table className="userListTable">
                             <thead>
                                 <tr>
-                                <th className="checkBox"><input type="checkbox" checked={selectAll} onChange={handleSelectAll} /></th>
+                                <th className="checkBox"><input type="checkbox" checked={tableSelectAll} onChange={handleTableSelectAll} /></th>
                                 <th>번호</th>
                                 <th>아이디</th>
                                 <th>이름</th>
@@ -356,8 +322,8 @@ export const AdminMain = () => {
                                         <td className="checkBox">
                                         <input
                                             type="checkbox"
-                                            checked={checkedItems[index]}
-                                            onChange={() => handleCheckboxChange(index)}
+                                            checked={tableCheckedItems[index]}
+                                            onChange={() => handleTableCheckboxChange(index)}
                                         />
                                         </td>
                                         <td>{index + 1}</td>
@@ -470,7 +436,7 @@ export const AdminMain = () => {
                                 <table className="modalUserBoardListTb">
                                     <thead>
                                         <tr>
-                                            <th className="modalCheckBox"><input type="checkbox" checked={selectAll} onChange={handleSelectAll}/></th>
+                                            <th className="modalCheckBox"><input type="checkbox" checked={contentSelectAll} onChange={handleContentSelectAll}/></th>
                                             <th>번호</th>
                                             <th>게시판명</th>
                                             <th>제목</th>
@@ -485,8 +451,8 @@ export const AdminMain = () => {
                                                 <td className="modalCheckBox">
                                                     <input
                                                         type="checkbox"
-                                                        checked={checkedItems[index] || false}
-                                                        onChange={() => handleCheckboxChange(index)}
+                                                        checked={contentCheckedItems[index] || false}
+                                                        onChange={() => handleContentCheckboxChange(index)}
                                                     />
                                                 </td>
                                                 <td className="modalSendData" style={{ display: 'none' }}>{item.contentsNum}</td>
