@@ -20,9 +20,10 @@ export const DeviceMgrInitData = () => {
 }
 
 
-export const AdminMainMgrInitData = () => {
+export const InitTableData = (path) => {
+    console.log("InitTableData : " + path);
     return new  Promise((resolve, reject) => {
-        fetch(url + "adminMainMgrInitData", {
+        fetch(url + path, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -45,38 +46,6 @@ export const AdminMainMgrInitData = () => {
     });
 }
 
-
-export const BoardMgrInitData = () => {
-    // return new  Promise((resolve, reject) => {
-    //     fetch(url + "boardMgrInitData", {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //     })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         return response.json(); // JSON 데이터로 응답을 파싱
-    //     })
-    //     .then(data => {
-    //         resolve(data);
-    //         // console.log(data); // 파싱된 JSON 데이터 출력
-            
-    //     })
-    //     .catch(error => {
-    //         reject(error);
-    //     });
-    // });
-
-    const initialData = [
-        { boardName: '정보 공유 게시판', numberOfPosts: 3, creationDate: '2024.04.29' },
-        { boardName: '소통 게시판', numberOfPosts: 5, creationDate: '2024.04.29' },
-    ];
-
-    return initialData;
-}
 
 
 export const RequestMgrInitData = () => {

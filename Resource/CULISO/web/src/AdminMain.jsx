@@ -5,7 +5,7 @@ import Modal from "react-modal"
 import { CustomStyles, ProfileCardStyles } from "./modules/ModalComponent";
 import { GetIcon } from "./modules/GetIcon";
 import { ViewDetails, DeleteData } from "./modules/sendData";        // DB 데이터 전송
-import { AdminMainMgrInitData } from "./modules/InitTableData";     // 메인 화면들 초기 데이터
+import { InitTableData } from "./modules/InitTableData";     // 메인 화면들 초기 데이터
 import { useCheckboxFunctions } from "./modules/checkBox";          // 체크 박스 선택 모듈
 
 
@@ -20,6 +20,7 @@ export const AdminMain = () => {
         navigate(url);
     }
 
+    const [inItPath, setInItPath] = useState('');                       // 메인 화면 초기 데이터 DB path
     const [isOpen, setIsOpen] = useState(false);                            // 상세보기 팝업 상태
     const [isOpenProfileCard, setIsOpenProfileCard] = useState(false);      // 프로필카드 팝업 상태
     const [selectedMenu, setSelectedMenu] = useState("boardList");          // 기본값은 "게시글 목록"
@@ -29,7 +30,7 @@ export const AdminMain = () => {
     const [deviceRequestListTable, setDeviceRequestListTable] = useState([]);    // 상세보기 안 기기 요청 목록 테이블
     const [boardListTable, setBoardListTable] = useState([]);                              // 상세보기 안 게시글 목록의 게시판 리스트 옵션 테이블
     const [modalSendData, setModalSendData] = useState(null);               // 모달 팝업창 선택 시 해당 버튼 레코드에 해당하는 id 값
-    const [path, setPath] = useState('');                                   // 모달 팝업창 각 버튼에 해당하는 DB path
+    const [detailPath, setDetailPath] = useState('');                       // 모달 팝업창 각 버튼에 해당하는 DB path
     const [userProfileData, setUserProfileData] = useState({
         userName: '',
         userNickName: '',
@@ -39,12 +40,14 @@ export const AdminMain = () => {
         userPhoneNum: ''
     });                                                                     // 프로필카드 데이터 변경을 위한 useState
 
-    
+    // 메인 화면 초기 데이터 생성
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await AdminMainMgrInitData();
+                const path = "adminMainInitData";
+                const data = await InitTableData(path);
                 setTableData(data);
+                setInItPath(path);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -59,17 +62,21 @@ export const AdminMain = () => {
     };
 
     // 검색 버튼 클릭 시 필터링된 데이터 보여주기
-    const handleSearch = () => {
-        // 검색어가 비어있으면 전체 테이블 데이터를 사용
-        const filteredData = searchTerm ? tableData.filter(item =>
-                item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.usernickname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.registrationDate.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            : AdminMainMgrInitData;
+    const handleSearch = async () => {
+        if (!searchTerm) {
+            // 검색어가 비어있으면 초기 데이터를 가져오기
+            const data = await InitTableData(inItPath);
+            setTableData(data);
+            return;
+        }
 
-        // 필터링된 데이터로 테이블 데이터 업데이트
+        const filteredData = tableData.filter(item =>
+            (item.userID && item.userID.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (item.userName && item.userName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (item.userNickName && item.userNickName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (item.createDate && item.createDate.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+
         setTableData(filteredData);
     };
 
@@ -91,12 +98,12 @@ export const AdminMain = () => {
         setIsOpenProfileCard(false);
     }
 
-    // 데이터 요청 및 처리
+    // 상세보기 데이터 가져오기
     useEffect(() => {
         // console.log("useEffect for contentListResult and deviceRequestListResult triggered"); // useEffect가 호출될 때 로그를 출력합니다.
         try {
-            if (modalSendData && path) {
-                ViewDetails(modalSendData, path)
+            if (modalSendData && detailPath) {
+                ViewDetails(modalSendData, detailPath)
                     .then(data => {
                         setContentListTable(data.contentListResult || []);
                         setDeviceRequestListTable(data.deviceRequestListResult || []);
@@ -112,13 +119,13 @@ export const AdminMain = () => {
 
         // 게시판 데이터를 업데이트하기 전에 현재 선택된 모달의 데이터와 관련된 게시판 데이터를 초기화합니다.
         setBoardListTable([]);
-    }, [modalSendData, path]);
+    }, [modalSendData, detailPath]);
     
-
+    // 프로필카드 데이터 가져오기
     useEffect(() => {
         // console.log("useEffect for userProfileData triggered"); // useEffect가 호출될 때 로그를 출력합니다.
         // 데이터 요청 및 처리
-        ViewDetails(modalSendData, path)
+        ViewDetails(modalSendData, detailPath)
             .then(data => {
                 setUserProfileData(data[0] || {
                     userName: '',
@@ -132,7 +139,7 @@ export const AdminMain = () => {
             .catch(error => {
                 console.error("Error:", error);
             });
-    }, [modalSendData, path]); // 모달SendData가 변경될 때마다 실행
+    }, [modalSendData, detailPath]); // 모달SendData가 변경될 때마다 실행
 
     // 모달 팝업 창 버튼 클릭시 해당 데이터 DB에서 받아오기 
     function handleViewDetailsClick (event) {
@@ -163,23 +170,13 @@ export const AdminMain = () => {
                         pathValue = "profileViewDetails";
                         ViewDetails(modalSendDataValue, pathValue);
                         break;
-                    // case "boardMgrDetail" :
-                    //     console.log("BoardMgrViewDetails");
-                    //     pathValue = "boardMgrViewDetails";
-                    //     ViewDetails(modalSendDataValue, pathValue);
-                    //     break;
-                    // case "requestMgrDetail" :
-                    //     console.log("RequestMgrViewDetails");
-                    //     pathValue = "requestMgrViewDetails";
-                    //     ViewDetails(modalSendDataValue, pathValue);
-                    //     break;
                     default:
                         console.error("Unhandled button id:", buttonId);
                 }
 
                 // 상태 업데이트를 통해 useEffect가 실행되도록 설정
                 setModalSendData(modalSendDataValue);
-                setPath(pathValue);
+                setDetailPath(pathValue);
                 
             } else {
                 console.error('아이디를 찾을 수 없습니다.');
@@ -224,12 +221,12 @@ export const AdminMain = () => {
                     await DeleteData(checkedIds, buttonId);
                     // 삭제 완료 후 테이블 데이터 업데이트
                     if (buttonId === "AdminMainDelete") {
-                        const newData = await AdminMainMgrInitData();
+                        const newData = await InitTableData(inItPath);
                         setTableData(newData);
                     } else {
                         // contentListTable에 대한 업데이트 로직 추가
-                        if (modalSendData && path) {
-                            const data = await ViewDetails(modalSendData, path);
+                        if (modalSendData && detailPath) {
+                            const data = await ViewDetails(modalSendData, detailPath);
                             setContentListTable(data.contentListResult || []);
                         }
                     }
@@ -242,13 +239,13 @@ export const AdminMain = () => {
         }
     }
 
+    // table에 따라 체크박스 선택 독립적으로 나누기
     const {
         selectAll: tableSelectAll,
         checkedItems: tableCheckedItems,
         handleSelectAll: handleTableSelectAll,
         handleCheckboxChange: handleTableCheckboxChange
     } = useCheckboxFunctions(tableData);
-
     const {
         selectAll: contentSelectAll,
         checkedItems: contentCheckedItems,
