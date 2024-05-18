@@ -5,6 +5,7 @@ import styled from "styled-components";
 import "./style.css";
 import { useState, useEffect } from "react";
 import { RequestAddress } from "./modules/DataRouter";
+import { PopupVoice } from "./modules/AI";
 // css
 const CenterBox = styled.div`
   display: flex;
@@ -26,6 +27,7 @@ const ImgBox = styled.div`
   align-items: center;
   flex-direction: column;
   margin: 0 15px;
+  cursor: pointer;
 `;
 const Img = styled.img`
   width: ${(props) => props.width};
@@ -87,14 +89,14 @@ export const AfterMain = () => {
     };
   
     GetAddr();
-  }, []);
+  });
 
   return (
     <div className="afterMain">
       <div className="div">
         <CenterBox align="space-between" top="50px">
           <Label>
-            <Text size="12px" style={{whiteSpace: 'nowrap', overflow: 'hidden',textOverflow: 'ellipsis', width: '100px'}}>{address}</Text>
+            <Text size="12px" style={{whiteSpace: 'nowrap', overflow: 'hidden',textOverflow: 'ellipsis', maxWidth: '100px'}}>{address}</Text>
             <Img
               src={GetIcon("mypage-modify.png")}
               width={"13px"}
@@ -146,7 +148,7 @@ export const AfterMain = () => {
               커뮤니티
             </Text>
           </ImgBox>
-          <ImgBox>
+          <ImgBox onClick={PopupVoice}>
             <Img src={GetIcon("robot-white2.png")} width={"37px"} />
             <Text
               align="center"
