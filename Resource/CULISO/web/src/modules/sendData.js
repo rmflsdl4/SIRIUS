@@ -69,18 +69,18 @@ export const InsertData = (formData, buttonId) => {
             body: JSON.stringify({formData, buttonId})
         })
         .then(response => {
+            console.log('Response received:', response);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return response.json(); // JSON 데이터로 응답을 파싱
+            return response.json();
         })
         .then(data => {
+            console.log('Update request was successful:', data);
             resolve(data);
-            // 성공적으로 데이터를 받았을 때 처리
-            console.log("Result: ", data);
-            
         })
         .catch(error => {
+            console.error('Error in UpdateData function:', error);
             reject(error);
         });
     });
@@ -97,18 +97,18 @@ export const UpdateData = (modalSendData, formData) => {
             body: JSON.stringify({modalSendData, formData})
         })
         .then(response => {
+            console.log('Response received:', response);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return response.json(); // JSON 데이터로 응답을 파싱
+            return response.json();
         })
         .then(data => {
+            console.log('Update request was successful:', data);
             resolve(data);
-            // 성공적으로 데이터를 받았을 때 처리
-            console.log("Result: ", data);
-            
         })
         .catch(error => {
+            console.error('Error in UpdateData function:', error);
             reject(error);
         });
     });

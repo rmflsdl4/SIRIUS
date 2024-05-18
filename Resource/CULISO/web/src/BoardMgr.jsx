@@ -510,7 +510,6 @@ export const BoardMgr = () => {
                             <div className="postMgrbottom">
                                 <div className="postMgrBtnBox">
                                     <button className="postMgrDeleteBtn" id="BoardMgrDetailDelete" onClick={(event) => handleDeleteDataClick(event) } >삭제</button>
-                                    <button className="postMgrPrivateBtn">비공개</button>
                                 </div>
                             </div>
                         </div>

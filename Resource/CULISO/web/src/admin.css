@@ -288,6 +288,7 @@
   font-size: 25px;
   font-weight: 400;
   cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 상태로 만듦 */
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
 }
 
 .AdminMain .searchBtn:hover {
@@ -414,6 +415,7 @@
   width: 127px;
   margin-left: 20px;
   cursor: pointer;
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
 }
 
 .AdminMain .viewDetailsBtn:hover {
@@ -637,6 +639,7 @@
   position: relative;
   width: 100px;
   cursor: pointer;
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
 }
 
 .AdminMain .mgrDetailBtn:hover {
@@ -703,19 +706,6 @@
   text-align: center;
   top: 192px;
 }
-
-.AdminMain .requestStateDiv .requestNotComplete, .requestComplete {
-  margin-right: 55px;
-  font-weight: bold;
-}
-
-.AdminMain .requestStateDiv .requestNotComplete {
-  margin-right: 55px;
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-
 
 /* 상세보기 팝업 창 */
 .modalTop {
@@ -842,7 +832,7 @@
   transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
 }
 
-.searchRequirementBtn:hover, .blockingBtn:hover, .boardMgrCompleteBtn:hover {
+.searchRequirementBtn:hover, .blockingBtn:hover, .boardMgrCompleteBtn:hover .searchBtn:hover {
   background-color: #0056b3; 
 }
 
@@ -993,26 +983,10 @@
   color: white; 
   cursor: pointer; 
   transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
-  margin-right: 15px;
 }
 
 .postMgrDeleteBtn:hover {
   background-color: #cc0000; 
-}
-
-.postMgrPrivateBtn {
-  padding: 10px 20px; 
-  font-size: 16px; 
-  border: none; 
-  border-radius: 5px; 
-  background-color: #007bff; 
-  color: white; 
-  cursor: pointer; 
-  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
-}
-
-.postMgrPrivateBtn:hover {
-  background-color: #0056b3; 
 }
 
 .postMgrBtnBox {
@@ -1063,4 +1037,45 @@
   pointer-events: none; /* 사용자의 입력을 막습니다. */
   background-color: #f2f2f2; /* 비활성화된 모습을 나타내기 위해 배경색을 변경합니다. */
   color: #666666; 
+}
+
+.requestNotComplete,
+.requestComplete {
+    cursor: pointer; /* 마우스 포인터를 보여줌 */
+    text-decoration: none; /* 기본 텍스트 밑줄 제거 */
+    padding-bottom: 1px; /* 클릭된 요소에 밑줄을 추가하기 위한 여백 */
+    margin-right: 55px;
+    font-weight: bold;
+}
+
+.requestNotComplete:hover,
+.requestComplete:hover {
+    text-decoration: underline; /* 마우스를 가져다 대면 밑줄 표시 */
+}
+
+.requestStateDiv .active {
+  text-decoration: underline;
+}
+
+.requestComplitedBtn {
+  background-color: #007bff;
+  color: #ffffff;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  font-size: 25px;
+  font-weight: 700;
+  height: 50px;
+  width: 150px;
+  left: 1710px;
+  position: absolute;
+  top: 889px;
+  cursor: pointer;
+  border : none;
+  border-radius: 10px;
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
+}
+
+.requestComplitedBtn:hover {
+  background-color: #0056b3;
 }

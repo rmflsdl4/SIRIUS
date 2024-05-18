@@ -56,48 +56,6 @@ export const AdminMain = () => {
         fetchData();
     }, []);
 
-    // 검색어 입력 시 상태 업데이트
-    const handleInputChange = (event) => {
-        setSearchTerm(event.target.value);
-    };
-
-    // 검색 버튼 클릭 시 필터링된 데이터 보여주기
-    const handleSearch = async () => {
-        if (!searchTerm) {
-            // 검색어가 비어있으면 초기 데이터를 가져오기
-            const data = await InitTableData(inItPath);
-            setTableData(data);
-            return;
-        }
-
-        const filteredData = tableData.filter(item =>
-            (item.userID && item.userID.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (item.userName && item.userName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (item.userNickName && item.userNickName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (item.createDate && item.createDate.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-
-        setTableData(filteredData);
-    };
-
-    // 모달 팝업 창 설정 함수들
-    const openModal = () => {
-        setIsOpen(true);
-    }
-    const closeModal = () => {
-        setIsOpen(false);
-    }
-    // 메뉴를 변경하는 함수
-    const handleMenuChange = (menu) => {
-        setSelectedMenu(menu);
-    }
-    const openProfileCard = () => {
-        setIsOpenProfileCard(true);
-    }
-    const closeProfileCard = () => {
-        setIsOpenProfileCard(false);
-    }
-
     // 상세보기 데이터 가져오기
     useEffect(() => {
         // console.log("useEffect for contentListResult and deviceRequestListResult triggered"); // useEffect가 호출될 때 로그를 출력합니다.
@@ -140,6 +98,48 @@ export const AdminMain = () => {
                 console.error("Error:", error);
             });
     }, [modalSendData, detailPath]); // 모달SendData가 변경될 때마다 실행
+
+    // 검색어 입력 시 상태 업데이트
+    const handleInputChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    // 검색 버튼 클릭 시 필터링된 데이터 보여주기
+    const handleSearch = async () => {
+        if (!searchTerm) {
+            // 검색어가 비어있으면 초기 데이터를 가져오기
+            const data = await InitTableData(inItPath);
+            setTableData(data);
+            return;
+        }
+
+        const filteredData = tableData.filter(item =>
+            (item.userID && item.userID.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (item.userName && item.userName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (item.userNickName && item.userNickName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (item.createDate && item.createDate.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+
+        setTableData(filteredData);
+    };
+
+    // 모달 팝업 창 설정 함수들
+    const openModal = () => {
+        setIsOpen(true);
+    }
+    const closeModal = () => {
+        setIsOpen(false);
+    }
+    // 메뉴를 변경하는 함수
+    const handleMenuChange = (menu) => {
+        setSelectedMenu(menu);
+    }
+    const openProfileCard = () => {
+        setIsOpenProfileCard(true);
+    }
+    const closeProfileCard = () => {
+        setIsOpenProfileCard(false);
+    }
 
     // 모달 팝업 창 버튼 클릭시 해당 데이터 DB에서 받아오기 
     function handleViewDetailsClick (event) {
