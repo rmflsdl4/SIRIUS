@@ -1,15 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-// const session = require("express-session");
-// const MySQLStore = require("express-mysql-session")(session);
+const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
 const app = express();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
 
 const database = require("./database.js");
-// const signUp = require("./SignUp.js");
-// const login = require("./Login.js");
-// const returnData = require("./ReturnDatas.js");
+const signUp = require("./SignUp.js");
+const login = require("./Login.js");
+const returnData = require("./ReturnDatas.js");
 // 데이터베이스 연결
 database.Connect();
 // app 설정
@@ -17,26 +17,26 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // 세션 설정
-// const sessionStore = new MySQLStore({
-//   host: "localhost",
-//   user: "root",
-//   password: "1234",
-//   database: "siriusDB",
-//   port: "3306",
-//   charset: "UTF8MB4",
-//   expiration: 24 * 60 * 60 * 1000,
-// });
-// app.use(
-//   session({
-//     secret: "secret-key",
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: {
-//       maxAge: 24 * 60 * 60 * 1000,
-//     },
-//     store: sessionStore,
-//   })
-// );
+const sessionStore = new MySQLStore({
+  host: "localhost",
+  user: "root",
+  password: "1234",
+  database: "siriusDB",
+  port: "3306",
+  charset: "UTF8MB4",
+  expiration: 24 * 60 * 60 * 1000,
+});
+app.use(
+  session({
+    secret: "secret-key",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+    store: sessionStore,
+  })
+);
 app.listen(port, () => console.log(`Listening on port ${port}`));
 // App 영역
 
@@ -120,6 +120,88 @@ app.post("/boardMgrInitData", async (req, res) => {
 
     // JSON 형식으로 데이터를 반환
     res.json(result);
+});
+
+// 기기관리 초기 데이터
+app.post("/deviceMgrInitData", async (req, res) => {
+    const adminID = 'admin';
+
+    const query = `SELECT 
+                        productNum,
+                        modelName,
+                        CASE 
+                            WHEN type = 1 THEN '전등'
+                            WHEN type = 2 THEN '커튼'
+                            WHEN type = 3 THEN '에어컨'
+                            WHEN type = 4 THEN 'TV'
+                            WHEN type = 5 THEN '보일러'
+                            ELSE '등록되지 않은 가전제품' -- 예기치 않은 값을 처리하기 위한 기본값
+                        END AS type,
+                        company,
+                        registrationDate,
+                        productImgUrl
+                    FROM product
+                    `;
+
+    const result = await database.Query(query);
+    
+    console.log(result);
+
+    // JSON 형식으로 데이터를 반환
+    res.json(result);
+});
+
+// 요청관리 초기 데이터
+app.post("/requestMgrInitData", async (req, res) => {
+    const adminID = 'admin';
+
+    const requestCompletedQuery = `select 
+                                        d.id as deviceRequestID,
+                                        u.userID as userID,
+                                        u.userName as userName,
+                                        u.userNickName as userNickName,
+                                        CASE 
+                                            WHEN d.state = 'T' THEN '요청 완료'
+                                            WHEN d.state = 'F' THEN '요청 미완료'
+                                            ELSE '상태 미정의'
+                                        END AS state,
+                                        d.requestTime as requestTime
+                                    from user as u inner join deviceRequest as d
+                                        on u.userID = d.userID
+                                    where d.state = 'T' and u.adminID = ?`;
+
+    const requestNotCompletedQuery = `select 
+                                        d.id as deviceRequestID,
+                                        u.userID as userID,
+                                        u.userName as userName,
+                                        u.userNickName as userNickName,
+                                        CASE 
+                                            WHEN d.state = 'T' THEN '요청 완료'
+                                            WHEN d.state = 'F' THEN '요청 미완료'
+                                            ELSE '상태 미정의'
+                                        END AS state,
+                                        d.requestTime as requestTime
+                                    from user as u inner join deviceRequest as d
+                                        on u.userID = d.userID
+                                    where d.state = 'F' and u.adminID = ?`;
+
+    const values = [adminID];
+
+    // JSON 형식으로 데이터를 반환
+    try {
+        // 세 개의 쿼리를 각각 실행
+        const requestCompletedResult = await database.Query(requestCompletedQuery, values);
+        const requestNotCompletedResult = await database.Query(requestNotCompletedQuery, values);
+
+        // 두 결과를 객체로 묶어 JSON 형식으로 반환
+        res.json({
+            requestCompletedResult: requestCompletedResult,
+            requestNotCompletedResult: requestNotCompletedResult
+        });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 
@@ -256,16 +338,44 @@ app.post("/boardMgrViewDetails", async (req, res) => {
 });
 
 // requestMgr 상세보기 데이터 select
-app.post("/requestMgrViewDetails", (req, res) => {
+app.post("/requestMgrViewDetails", async (req, res) => {
     const { modalSendData } = req.body;
-    console.log("requestMgr 상세보기 데이터 : " + modalSendData);
+    const adminID = 'admin';
+    // console.log("adminMain 프로필카드 데이터 : " + modalSendData);
 
-    // JSON 형식으로 데이터를 반환
-    res.json("requestMgr 상세보기 데이터: " + modalSendData);
+    const query = `select 
+                        productImgUrl,
+                        company,
+                        productName,
+                        CASE 
+                            WHEN type = 1 THEN '전등'
+                            WHEN type = 2 THEN '커튼'
+                            WHEN type = 3 THEN '에어컨'
+                            WHEN type = 4 THEN 'TV'
+                            WHEN type = 5 THEN '보일러'
+                            ELSE '등록되지 않은 가전제품'
+                        END AS type,
+                        title
+                    from deviceRequest
+                    where ID = ? and adminID = ?`;
+
+    const values = [modalSendData, adminID];
+
+    try {
+        const result = await database.Query(query, values);
+
+        console.log(result);
+
+        // JSON 형식으로 데이터를 반환
+        res.json(result);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 
-// adminMain 회원 관리 테이블 Delete
+// 테이블 Delete
 app.post("/deleteTable", async (req, res) => {
     const { modalSendData, buttonId } = req.body;
     // const adminID = 'admin';
@@ -303,6 +413,10 @@ app.post("/deleteTable", async (req, res) => {
             query = `DELETE FROM contents
                     WHERE contentsNum IN (?)`;
             break;
+        case "DeviceMgrDelete" :
+        query = `DELETE FROM product
+                WHERE productNum IN (?)`;
+        break;
     }
 
     try {
@@ -341,6 +455,7 @@ app.post("/updateTable", async (req, res) => {
 
     try {
         await database.Query(query, values);
+        res.status(200).json({ message: 'Update successful' }); // 성공 응답 추가
     } catch (error) {
         console.error('Error executing queries:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -369,6 +484,7 @@ app.post("/insertTable", async (req, res) => {
 
     try {
         await database.Query(query, values);
+        res.status(200).json({ message: 'Insert successful' }); // 성공 응답 추가
     } catch (error) {
         console.error('Error executing queries:', error);
         res.status(500).json({ error: 'Internal Server Error' });
