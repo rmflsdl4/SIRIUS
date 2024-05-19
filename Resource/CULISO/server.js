@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const sessionStore = new MySQLStore({
   host: "localhost",
   user: "root",
-  password: "1234",
+  password: "tkfkdgo3",
   database: "siriusDB",
   port: "3306",
   charset: "UTF8MB4",
@@ -81,20 +81,15 @@ const getSessionAsync = util.promisify(sessionStore.get).bind(sessionStore);
 app.post("/addrReq", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
   // 세션 스토어에서 토큰으로 세션을 가져오기
-  const getSession = util
-    .promisify(req.sessionStore.get)
-    .bind(req.sessionStore);
-
+  console.log(token);
   try {
-    const session = await getSession(token);
+    const session = await getSessionAsync(token);
     if (!session) {
-      return res
-        .status(401)
-        .json({ success: false, message: "유효하지 않은 토큰입니다." });
+      return res.status(401).json({ success: false, message: "유효하지 않은 토큰입니다." });
     }
 
     const userID = session.userID;
-    const addr = await returnData.ReqResData(userID);
+    const addr = await returnData.GetAddr(userID);
     if (addr) res.status(200).json({ success: true, address: addr });
     else
       res
@@ -107,7 +102,52 @@ app.post("/addrReq", async (req, res) => {
       .json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
+app.post("/sexReq", async (req, res) => {
+  const token = req.headers.authorization.replace("Bearer ", "");
+  // 세션 스토어에서 토큰으로 세션을 가져오기
+  try {
+    const session = await getSessionAsync(token);
+    if (!session) {
+      return res.status(401).json({ success: false, message: "유효하지 않은 토큰입니다." });
+    }
 
+    const userID = session.userID;
+    const sex = await returnData.GetSex(userID);
+    if (sex) res.status(200).json({ success: true, sex: sex });
+    else
+      res
+        .status(404)
+        .json({ success: false, message: "주소를 찾을 수 없습니다." });
+  } catch (error) {
+    console.error("서버 오류 발생:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "서버 오류가 발생했습니다." });
+  }
+});
+app.post("/nameReq", async (req, res) => {
+  const token = req.headers.authorization.replace("Bearer ", "");
+  // 세션 스토어에서 토큰으로 세션을 가져오기
+  try {
+    const session = await getSessionAsync(token);
+    if (!session) {
+      return res.status(401).json({ success: false, message: "유효하지 않은 토큰입니다." });
+    }
+
+    const userID = session.userID;
+    const name = await returnData.GetName(userID);
+    if (name) res.status(200).json({ success: true, name: name });
+    else
+      res
+        .status(404)
+        .json({ success: false, message: "주소를 찾을 수 없습니다." });
+  } catch (error) {
+    console.error("서버 오류 발생:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "서버 오류가 발생했습니다." });
+  }
+});
 // Web 영역
 // 회원 관리 초기 데이터
 app.post("/adminMainInitData", async (req, res) => {

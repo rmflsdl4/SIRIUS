@@ -67,7 +67,7 @@ export async function RequestUserData(path, data = null) {
     const response = await fetch(url + path, {
       method: "POST",
       headers: headers,
-      body: JSON.stringify(data),
+      body: JSON.stringify(),
     });
 
     const resData = await response.json();
@@ -75,10 +75,13 @@ export async function RequestUserData(path, data = null) {
     if (resData.success) {
       switch (path) {
         case "addrReq":
-          return data.address;
-        case "sex":
-          return data.sex;
-
+          return resData.address;
+        case "sexReq":
+          const imgName = resData.sex === 'M' ? "mypage-profile.png" : "mypage-profile2.png";
+          console.log(imgName);
+          return imgName;
+        case "nameReq":
+          return resData.name;
         default:
           return;
       }
@@ -95,5 +98,8 @@ export async function GetAddress() {
   return await RequestUserData("addrReq");
 }
 export async function GetSex() {
-  return await RequestUserData("sex");
+  return await RequestUserData("sexReq");
+}
+export async function GetName() {
+  return await RequestUserData("nameReq");
 }

@@ -1,6 +1,6 @@
 const database = require("./database.js");
 
-async function ReqResData(id) {
+async function GetAddr(id) {
   let query;
   let values;
   let result;
@@ -11,13 +11,45 @@ async function ReqResData(id) {
   try {
     result = await database.Query(query, values);
 
-    console.log("반환된 주소: " + result[0].address);
     return result[0].address;
   } catch (error) {
     console.log("데이터 수색 중 오류: ", error.message);
   }
 }
+async function GetSex(id) {
+  let query;
+  let values;
+  let result;
 
+  query = `SELECT sex FROM user WHERE userID = ?`;
+  values = [id];
+
+  try {
+    result = await database.Query(query, values);
+
+    return result[0].sex;
+  } catch (error) {
+    console.log("데이터 수색 중 오류: ", error.message);
+  }
+}
+async function GetName(id) {
+  let query;
+  let values;
+  let result;
+
+  query = `SELECT userName FROM user WHERE userID = ?`;
+  values = [id];
+
+  try {
+    result = await database.Query(query, values);
+
+    return result[0].userName;
+  } catch (error) {
+    console.log("데이터 수색 중 오류: ", error.message);
+  }
+}
 module.exports = {
-  ReqResData: ReqResData,
+  GetAddr: GetAddr,
+  GetSex: GetSex,
+  GetName: GetName
 };
