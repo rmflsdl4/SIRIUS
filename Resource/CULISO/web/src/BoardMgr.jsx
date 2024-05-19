@@ -352,18 +352,7 @@ export const BoardMgr = () => {
                     </div>
 
                     {/* 페이징 버튼 */}
-                    <div className="rectangle-12" />
-                    <div className="rectangle-13" />
-                    <div className="rectangle-14" />
-                    <div className="rectangle-15" />
-                    <div className="rectangle-16" />
-                    <div className="rectangle-17" />
-                    <div className="text-wrapper-36">1</div>
-                    <div className="text-wrapper-37">2</div>
-                    <div className="text-wrapper-38">&lt;&lt;</div>
-                    <div className="text-wrapper-39">&gt;</div>
-                    <div className="text-wrapper-40">&lt;</div>
-                    <div className="text-wrapper-41">&gt;&gt;</div>
+
                 </div>
             </div>
 

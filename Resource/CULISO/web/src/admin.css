@@ -1057,7 +1057,7 @@
   text-decoration: underline;
 }
 
-.requestComplitedBtn {
+.requestNotComplitedBtn {
   background-color: #007bff;
   color: #ffffff;
   font-family: "Inter-Bold", Helvetica;
@@ -1076,6 +1076,29 @@
   transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
 }
 
-.requestComplitedBtn:hover {
+.requestNotComplitedBtn:hover {
   background-color: #0056b3;
+}
+
+.requestComplitedBtn {
+  background-color: #b40505;
+  color: #ffffff;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  font-size: 25px;
+  font-weight: 700;
+  height: 50px;
+  width: 100px;
+  left: 1760px;
+  position: absolute;
+  top: 889px;
+  cursor: pointer;
+  border : none;
+  border-radius: 10px;
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 전환을 추가합니다. */
+}
+
+.requestComplitedBtn:hover {
+  background-color: #8d0404;
 }

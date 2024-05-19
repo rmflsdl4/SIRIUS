@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "react-modal"
 import { CustomStyles } from "./modules/ModalComponent";
 import { GetIcon } from "./modules/GetIcon";
-import { ViewDetails, DeleteData } from "./modules/sendData";        // DB 데이터 전송
+import { ViewDetails, DeleteData, UpdateData } from "./modules/sendData";        // DB 데이터 전송
 import { InitTableData } from "./modules/InitTableData";     // 메인 화면들 초기 데이터
 import { useCheckboxFunctions } from "./modules/checkBox";          // 체크 박스 선택 모듈
 
@@ -29,6 +29,8 @@ export const RequestMgr = () => {
     const [modalSendData, setModalSendData] = useState(null);                       // 모달 팝업창 선택 시 해당 버튼 레코드에 해당하는 id 값
     const [detailPath, setDetailPath] = useState('');                               // 모달 팝업창 각 버튼에 해당하는 DB path
     const [requestDetailContent, setRequestDetailContent] = useState([]);           // 상세보기 안 요청 내용
+    const [displayedTableData, setDisplayedTableData] = useState([]); // 초기 상태 설정
+
     // 메인 화면 초기 데이터 생성
     useEffect(() => {
         const fetchData = async () => {
@@ -38,6 +40,7 @@ export const RequestMgr = () => {
                 setRequestCompletedTable(data.requestCompletedResult || []);
                 setRequestNotCompletedTable(data.requestNotCompletedResult || []);
                 setInItPath(path);
+                setDisplayedTableData(data.requestNotCompletedResult || []);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -67,10 +70,15 @@ export const RequestMgr = () => {
         fetchData();
     }, [modalSendData, detailPath]);
 
-    const handleCompletedClick = () => setIsCompleted(true);
-    const handleNotCompletedClick = () => setIsCompleted(false);
-
-    const displayedTableData = isCompleted ? requestCompletedTable : requestNotCompletedTable;
+    const handleCompletedClick = () => {
+        setDisplayedTableData(requestCompletedTable);
+        setIsCompleted(true);
+    };
+    
+    const handleNotCompletedClick = () => {
+        setDisplayedTableData(requestNotCompletedTable);
+        setIsCompleted(false);
+    };
 
     // 검색어 입력 시 상태 업데이트
     const handleInputChange = (event) => {
@@ -135,6 +143,76 @@ export const RequestMgr = () => {
         }
     }
 
+    // 삭제 할 데이터 DB에 보내기
+    async function handleDeleteDataClick (event) {
+        // 클릭된 버튼의 id를 가져옵니다.
+        const button = event.target.closest('button');
+        const buttonId = button.id;
+        let tableSendData;
+        let checkID = "";
+        let checkedItems;
+        let isConfirmed;
+
+        console.log("buttonID = " + buttonId);
+
+        if (buttonId === "requestComplitedBtn") {
+            tableSendData = requestCompletedTable;
+            checkID = "deviceRequestID";
+            checkedItems = completedCheckedItems;
+
+            // 확인 메시지 표시
+            isConfirmed = window.confirm('삭제하시겠습니까?');
+        } else {
+            tableSendData = requestNotCompletedTable;
+            checkID = "deviceRequestID";
+            checkedItems = notCompletedCheckedItems;
+
+            // 확인 메시지 표시
+            isConfirmed = window.confirm('요청 완료하시겠습니까?');
+        }
+
+        // 사용자가 확인을 선택한 경우에만 삭제 이벤트 발생
+        if (isConfirmed) {
+            // 체크된 모든 항목의 ID를 가져옵니다.
+            const checkedIds = tableSendData
+            .map((item, index) => checkedItems[index] ? item[checkID] : null)
+            .filter(id => id !== null);
+
+            if (checkedIds.length > 0) {
+                // ID 리스트를 DeleteData 함수로 보냅니다.
+                try {
+                    await DeleteData(checkedIds, buttonId);
+                    // 삭제 완료 후 테이블 데이터 업데이트
+                    if (buttonId === "requestComplitedBtn") {
+                        const data = await InitTableData(inItPath);
+                        setRequestCompletedTable(data.requestCompletedResult || []);
+                    } else {
+                        const data = await InitTableData(inItPath);
+                        setRequestCompletedTable(data.requestNotCompletedResult || []);
+                    }
+                } catch (error) {
+                    console.warn('삭제 도중 오류가 발생했습니다:', error);
+                }
+            } else {
+                console.warn('삭제할 항목이 선택되지 않았습니다.');
+            }
+        }
+    }
+
+    // table에 따라 체크박스 선택 독립적으로 나누기
+    const {
+        selectAll: completedSelectAll,
+        checkedItems: completedCheckedItems,
+        handleSelectAll: handleCompletedSelectAll,
+        handleCheckboxChange: handleCompletedCheckboxChange
+    } = useCheckboxFunctions(requestCompletedTable);
+    const {
+        selectAll: notCompletedSelectAll,
+        checkedItems: notCompletedCheckedItems,
+        handleSelectAll: handleNotCompletedSelectAll,
+        handleCheckboxChange: handleNotCompletedCheckboxChange
+    } = useCheckboxFunctions(requestNotCompletedTable);
+
     return (
         <div className="AdminMain">
             <div className="main-overlap-wrapper">
@@ -181,27 +259,38 @@ export const RequestMgr = () => {
                     <button className="searchBtn" onClick={handleSearch}>검색</button>
 
                     <div className="requestStateDiv">
-                        <span className="requestNotComplete" onClick={handleNotCompletedClick}>요청 미완료</span>
-                        <span className="requestComplete" onClick={handleCompletedClick}>요청 완료</span>
+                        <span className={`requestNotComplete ${displayedTableData === requestNotCompletedTable ? 'active' : ''}`} onClick={handleNotCompletedClick}>요청 미완료</span>
+                        <span className={`requestComplete ${displayedTableData === requestCompletedTable ? 'active' : ''}`} onClick={handleCompletedClick}>요청 완료</span>
                     </div>
                     
                     <div className="userListBox" >
                         <table className="userListTable">
                             <thead>
                                 <tr>
-                                <th className="checkBox"><input type="checkbox" /></th>
-                                <th>번호</th>
-                                <th>아이디</th>
-                                <th>닉네임</th>
-                                <th>상태</th>
-                                <th>요청시간</th>
-                                <th>상세보기</th>
+                                    <th className="checkBox">
+                                        <input type="checkbox" 
+                                            checked={displayedTableData === requestCompletedTable ? completedSelectAll : notCompletedSelectAll} 
+                                            onChange={displayedTableData === requestCompletedTable ? handleCompletedSelectAll : handleNotCompletedSelectAll} 
+                                        />
+                                    </th>
+                                    <th>번호</th>
+                                    <th>아이디</th>
+                                    <th>닉네임</th>
+                                    <th>상태</th>
+                                    <th>요청시간</th>
+                                    <th>상세보기</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {displayedTableData.map((item, index) => (
                                     <tr key={index}>
-                                        <td className="checkBox"><input type="checkbox" /></td>
+                                        <td className="checkBox">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={displayedTableData === requestCompletedTable ? completedCheckedItems[index] : notCompletedCheckedItems[index]} 
+                                                onChange={() => displayedTableData === requestCompletedTable ? handleCompletedCheckboxChange(index) : handleNotCompletedCheckboxChange(index)} 
+                                            />
+                                        </td>
                                         <td>{index + 1}</td>
                                         <td className="modalSendData" style={{ display: 'none' }}>{item.deviceRequestID}</td>
                                         <td>{item.userID}</td>
@@ -219,21 +308,14 @@ export const RequestMgr = () => {
                         </table>
                     </div>
 
-                    <button className="requestComplitedBtn">요청 완료</button>
+                    {isCompleted ? (
+                        <button className="requestComplitedBtn" id="requestMgrComplitedDelete" onClick={(event) => handleDeleteDataClick(event) } >삭제</button>
+                    ) : (
+                        <button className="requestNotComplitedBtn" id="requestMgrNotComplitedDelete" onClick={(event) => handleDeleteDataClick(event) } >요청 완료</button>
+                    )}
 
                     {/* 페이징 버튼 */}
-                    <div className="rectangle-12" />
-                    <div className="rectangle-13" />
-                    <div className="rectangle-14" />
-                    <div className="rectangle-15" />
-                    <div className="rectangle-16" />
-                    <div className="rectangle-17" />
-                    <div className="text-wrapper-36">1</div>
-                    <div className="text-wrapper-37">2</div>
-                    <div className="text-wrapper-38">&lt;&lt;</div>
-                    <div className="text-wrapper-39">&gt;</div>
-                    <div className="text-wrapper-40">&lt;</div>
-                    <div className="text-wrapper-41">&gt;&gt;</div>
+                    
                     
                 </div>
             </div>
