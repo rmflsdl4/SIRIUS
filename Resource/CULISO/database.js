@@ -7,7 +7,7 @@ function DB_Connect() {
     connectionLimit: 200,
     host: "localhost",
     user: "root",
-    password: "tkfkdgo3",
+    password: "1234",
     database: "siriusDB",
     port: "3306",
     charset: "UTF8MB4",

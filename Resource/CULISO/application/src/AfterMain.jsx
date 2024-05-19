@@ -1,5 +1,5 @@
 import GetIcon from "./modules/GetIcon";
-import {Cookies} from 'react-cookie';
+import { Cookies } from "react-cookie";
 import { Navigate } from "./modules/Navigate";
 import styled from "styled-components";
 import "./style.css";
@@ -72,10 +72,10 @@ const MenuBox = styled.div`
 `;
 const cookies = new Cookies();
 
-function LogOut(){
-  cookies.remove('token');
+function LogOut() {
+  cookies.remove("token");
   alert("다음에도 큐리소를 이용해 주세요 !");
-  window.location.href = '/login';
+  window.location.href = "/login";
 }
 export const AfterMain = () => {
   const [address, setAddress] = useState();
@@ -87,16 +87,26 @@ export const AfterMain = () => {
       setAddress(address);
       console.log("주소: " + address);
     };
-  
+
     GetAddr();
-  });
+  }, []);
 
   return (
     <div className="afterMain">
       <div className="div">
         <CenterBox align="space-between" top="50px">
           <Label>
-            <Text size="12px" style={{whiteSpace: 'nowrap', overflow: 'hidden',textOverflow: 'ellipsis', maxWidth: '100px'}}>{address}</Text>
+            <Text
+              size="12px"
+              style={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "100px",
+              }}
+            >
+              {address}
+            </Text>
             <Img
               src={GetIcon("mypage-modify.png")}
               width={"13px"}
@@ -104,7 +114,12 @@ export const AfterMain = () => {
             />
           </Label>
           <RightContainer>
-            <Img src={GetIcon("inform-black.png")} width={"15px"} />
+            <Img src={GetIcon("logout.png")} width={"17px"} onClick={LogOut} />
+            <Img
+              src={GetIcon("inform-black.png")}
+              width={"15px"}
+              style={{ marginLeft: "20px" }}
+            />
             <Img
               src={GetIcon("dropdown.png")}
               width={"15px"}
@@ -122,7 +137,7 @@ export const AfterMain = () => {
               등록된 기기가 없으신가요?
             </Text>
 
-            <Button type="button" value={"등록하기"} onClick={LogOut} />
+            <Button type="button" value={"등록하기"} />
           </EmptyContainer>
         </CenterBox>
         <MenuBox>
@@ -159,7 +174,11 @@ export const AfterMain = () => {
               인공지능
             </Text>
           </ImgBox>
-          <ImgBox>
+          <ImgBox
+            onClick={() => {
+              window.location.href = "/myPage";
+            }}
+          >
             <Img
               src={GetIcon("profile-white2.png")}
               width={"37px"}
