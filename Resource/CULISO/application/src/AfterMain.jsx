@@ -4,7 +4,7 @@ import { Navigate } from "./modules/Navigate";
 import styled from "styled-components";
 import "./style.css";
 import { useState, useEffect } from "react";
-import { RequestAddress } from "./modules/DataRouter";
+import { GetAddress, RequestAddress } from "./modules/DataRouter";
 import { PopupVoice } from "./modules/AI";
 // css
 const CenterBox = styled.div`
@@ -83,7 +83,7 @@ export const AfterMain = () => {
   useEffect(() => {
     // 주소 얻는 메소드
     const GetAddr = async () => {
-      const address = await RequestAddress();
+      const address = await GetAddress();
       setAddress(address);
       console.log("주소: " + address);
     };

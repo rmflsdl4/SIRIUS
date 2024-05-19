@@ -329,7 +329,7 @@ input[type="reset"] {
   justify-content: center;
   align-items: center;
 }
-.postBG{
+.postBG {
   width: 135px;
   height: 47px;
   border-radius: 6px;
@@ -381,8 +381,7 @@ input[type="reset"] {
   text-decoration-line: none;
 }
 
-.labelBG{
-  
+.labelBG {
   color: #939393;
 }
 /* #man:checked + label {

@@ -38,6 +38,9 @@ app.use(
   })
 );
 app.listen(port, () => console.log(`Listening on port ${port}`));
+
+// 아두이노
+
 // App 영역
 
 app.post("/signUp", (req) => {

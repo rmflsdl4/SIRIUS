@@ -2,7 +2,6 @@
 
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
 // 페이지 불러오기
 import { Intro } from "./Intro";
 import { Main } from "./Main";
