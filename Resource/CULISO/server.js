@@ -10,6 +10,12 @@ const database = require("./database.js");
 const signUp = require("./SignUp.js");
 const login = require("./Login.js");
 const returnData = require("./ReturnDatas.js");
+const profile = require("./Profile.js");
+const ChatGPT = require("./ChatGPT.js");
+const axios = require('axios');
+const findingID = require('./FindingID.js');
+const findingPW = require('./FindingPW.js');
+
 // 데이터베이스 연결
 database.Connect();
 // app 설정
@@ -20,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const sessionStore = new MySQLStore({
   host: "localhost",
   user: "root",
-  password: "tkfkdgo3",
+  password: "1234",
   database: "siriusDB",
   port: "3306",
   charset: "UTF8MB4",
@@ -45,8 +51,6 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 
 app.post("/signUp", (req) => {
   const data = req.body;
-  console.log("유저에게 받은 회원가입 데이터");
-  console.log(data);
   signUp.Add_NewUser(
     data.id,
     data.pw,
@@ -60,9 +64,7 @@ app.post("/signUp", (req) => {
 });
 app.post("/login", async (req, res) => {
   const data = req.body;
-  console.log(data);
   const result = await login.Check(data.id, data.pw);
-  console.log(result);
   if (result) {
     res.status(200).json({
       success: true,
@@ -81,11 +83,12 @@ const getSessionAsync = util.promisify(sessionStore.get).bind(sessionStore);
 app.post("/addrReq", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
   // 세션 스토어에서 토큰으로 세션을 가져오기
-  console.log(token);
   try {
     const session = await getSessionAsync(token);
     if (!session) {
-      return res.status(401).json({ success: false, message: "유효하지 않은 토큰입니다." });
+      return res
+        .status(401)
+        .json({ success: false, message: "유효하지 않은 토큰입니다." });
     }
 
     const userID = session.userID;
@@ -108,7 +111,9 @@ app.post("/sexReq", async (req, res) => {
   try {
     const session = await getSessionAsync(token);
     if (!session) {
-      return res.status(401).json({ success: false, message: "유효하지 않은 토큰입니다." });
+      return res
+        .status(401)
+        .json({ success: false, message: "유효하지 않은 토큰입니다." });
     }
 
     const userID = session.userID;
@@ -131,7 +136,9 @@ app.post("/nameReq", async (req, res) => {
   try {
     const session = await getSessionAsync(token);
     if (!session) {
-      return res.status(401).json({ success: false, message: "유효하지 않은 토큰입니다." });
+      return res
+        .status(401)
+        .json({ success: false, message: "유효하지 않은 토큰입니다." });
     }
 
     const userID = session.userID;
@@ -148,6 +155,89 @@ app.post("/nameReq", async (req, res) => {
       .json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });
+app.post("/updateProfile", async (req, res) => {
+  const token = req.headers.authorization.replace("Bearer ", "");
+  const {pw} = req.body;
+  try {
+    const session = await getSessionAsync(token);
+    if (!session) {
+      return res
+        .status(401)
+        .json({ success: false, message: "유효하지 않은 토큰입니다." });
+    }
+
+    const userID = session.userID;
+    const result = await profile.InUpdatePage(userID, pw);
+    res.status(200).json({success: true, flag: result});
+  } catch (error) {
+    console.error("서버 오류 발생:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "서버 오류가 발생했습니다." });
+  }
+});
+app.post("/getUserData", async (req, res) => {
+  const token = req.headers.authorization.replace("Bearer ", "");
+
+  try {
+    const session = await getSessionAsync(token);
+    if (!session) {
+      return res
+        .status(401)
+        .json({ success: false, message: "유효하지 않은 토큰입니다." });
+    }
+
+    const userID = session.userID;
+    const result = await profile.GetInfo(userID);
+    res.status(200).json({success: true, row: result});
+  } catch (error) {
+    console.error("서버 오류 발생:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "서버 오류가 발생했습니다." });
+  }
+})
+app.post("/updateProfileData", async (req, res) => {
+  const token = req.headers.authorization.replace("Bearer ", "");
+  const data = req.body;
+  try {
+    const session = await getSessionAsync(token);
+    if (!session) {
+      return res
+        .status(401)
+        .json({ success: false, message: "유효하지 않은 토큰입니다." });
+    }
+    const userID = session.userID;
+    const result = profile.UpdateInfo(
+      data.name,
+      data.nickName,
+      data.sex,
+      data.phoneNum,
+      data.address,
+      data.postNum,
+      userID
+    );
+    if(result){
+      console.log(`${userID}님의 회원정보 업데이트 성공`);
+      res.status(200).json({success: true});
+    }
+    else{
+      console.log(`${userID}님의 회원정보 업데이트 실패`);
+      res.status(401).json({success: false});
+    }
+  } catch (error) {
+    console.error("서버 오류 발생:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "서버 오류가 발생했습니다." });
+  }
+})
+
+
+
+
+
+
 // Web 영역
 // 회원 관리 초기 데이터
 app.post("/adminMainInitData", async (req, res) => {
@@ -183,8 +273,6 @@ app.post("/boardMgrInitData", async (req, res) => {
   const values = [adminID];
 
   const result = await database.Query(query, values);
-
-  console.log(result);
 
   // JSON 형식으로 데이터를 반환
   res.json(result);
@@ -568,5 +656,902 @@ app.post("/insertTable", async (req, res) => {
   } catch (error) {
     console.error("Error executing queries:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
+// AI
+
+
+let openaiApiKey = process.env.OPENAI_API_KEY;
+let tavilyApiKey = process.env.TAVILY_API_KEY;
+
+app.post('/chat', async (req, res) => {
+  const { message, latitude, longitude } = req.body;
+  const session = req.session;
+  
+  if (!session.messages) {
+    session.messages = [];
+  }
+
+  const token = req.headers.authorization.replace("Bearer ", "");
+  // 세션 스토어에서 토큰으로 세션을 가져오기
+  const sessionToken = await getSessionAsync(token);
+  const userID = sessionToken.userID;
+
+  session.messages.push({ role: 'user', content: message });
+  const cityMatch = message.match(/서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주/);
+  const timeMatch = message.match(/(\d{1,2})시/);
+
+  const specificTime = timeMatch ? parseInt(timeMatch[1], 10) : undefined;
+
+  if (message.toLowerCase().includes('날씨')) {
+    if (cityMatch) {
+      const city = cityMatch[0];
+      if (specificTime !== undefined) {
+        try {
+          const weatherMessage = await ChatGPT.getWeatherForecastByCityWithMessage(city, specificTime);
+          session.messages.push({ role: 'assistant', content: weatherMessage });
+          res.json({ response: weatherMessage });
+        } catch (error) {
+          console.error('Error in /chat endpoint:', error.message);
+          res.status(500).send('날씨 예보 정보를 가져오는 데 문제가 발생했습니다.');
+        }
+        return;
+      } else if (message.toLowerCase().includes('예보')) {
+        try {
+          const weatherMessage = await ChatGPT.getWeatherForecastByCityWithMessage(city);
+          session.messages.push({ role: 'assistant', content: weatherMessage });
+          res.json({ response: weatherMessage });
+        } catch (error) {
+          console.error('Error in /chat endpoint:', error.message);
+          res.status(500).send('날씨 예보 정보를 가져오는 데 문제가 발생했습니다.');
+        }
+        return;
+      } else {
+        try {
+          const weatherMessage = await ChatGPT.getCurrentWeatherByCityWithMessage(city);
+          session.messages.push({ role: 'assistant', content: weatherMessage });
+          res.json({ response: weatherMessage });
+        } catch (error) {
+          console.error('Error in /chat endpoint:', error.message);
+          res.status(500).send('현재 날씨 정보를 가져오는 데 문제가 발생했습니다.');
+        }
+        return;
+      }
+    } else if (latitude && longitude) {
+      if (specificTime !== undefined) {
+        try {
+          const weatherMessage = await ChatGPT.getWeatherForecastByLocationWithMessage(latitude, longitude, specificTime);
+          session.messages.push({ role: 'assistant', content: weatherMessage });
+          res.json({ response: weatherMessage });
+        } catch (error) {
+          console.error('Error in /chat endpoint:', error.message);
+          res.status(500).send('날씨 예보 정보를 가져오는 데 문제가 발생했습니다.');
+        }
+        return;
+      } else if (message.toLowerCase().includes('예보')) {
+        try {
+          const weatherMessage = await ChatGPT.getWeatherForecastByLocationWithMessage(latitude, longitude);
+          session.messages.push({ role: 'assistant', content: weatherMessage });
+          res.json({ response: weatherMessage });
+        } catch (error) {
+          console.error('Error in /chat endpoint:', error.message);
+          res.status(500).send('날씨 예보 정보를 가져오는 데 문제가 발생했습니다.');
+        }
+        return;
+      } else {
+        try {
+          const weatherMessage = await ChatGPT.getCurrentWeatherByLocationWithMessage(latitude, longitude);
+          session.messages.push({ role: 'assistant', content: weatherMessage });
+          res.json({ response: weatherMessage });
+        } catch (error) {
+          console.error('Error in /chat endpoint:', error.message);
+          res.status(500).send('현재 날씨 정보를 가져오는 데 문제가 발생했습니다.');
+        }
+        return;
+      }
+    } else {
+      const noLocationMessage = '위치 정보를 가져올 수 없습니다.';
+      session.messages.push({ role: 'assistant', content: noLocationMessage });
+      res.json({ response: noLocationMessage });
+      return;
+    }
+  }
+
+  try {
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: 'gpt-4o',
+        messages: session.messages,
+        max_tokens: 1500
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${openaiApiKey}`
+        }
+      }
+    );
+
+    const botMessage = response.data.choices[0].message.content.trim();
+    session.messages.push({ role: 'assistant', content: botMessage });
+    res.json({ response: botMessage });
+  } catch (error) {
+    console.error('Error with OpenAI API:', error);
+    try {
+      const tavilyMessage = await ChatGPT.getAnswerFromTavily(message);
+      session.messages.push({ role: 'assistant', content: tavilyMessage });
+      res.json({ response: tavilyMessage });
+    } catch (tavilyError) {
+      console.error('Error with Tavily API:', tavilyError);
+      res.status(500).send('오픈AI 및 타빌리 API 사용에 문제가 발생했습니다.');
+    }
+  }
+
+
+  let insertQuery = `INSERT INTO chat(userID, userChatContext, senderType) VALUES`;
+
+  for(let idx = 0; idx < session.messages.length; idx++){
+    insertQuery += "(";
+    if(session.messages[idx].role === "user"){
+      insertQuery += `'${userID}', '${session.messages[idx].content}', 'U'`;
+    }
+    else{
+      insertQuery += `'${userID}', '${session.messages[idx].content}', 'A'`;
+    }
+    insertQuery += ")";
+    if(idx < session.messages.length - 1){
+      insertQuery += ", ";
+    }
+  }
+  try{
+    await database.Query(insertQuery);
+
+    console.log("채팅 기록에 성공했습니다.");
+  }
+  catch(error){
+    console.log("채팅 기록에 실패했습니다: ", error.message);
+  }
+  
+});
+app.post("/getChatLog", async (req, res) => {
+  const token = req.headers.authorization.replace("Bearer ", "");
+  // 세션 스토어에서 토큰으로 세션을 가져오기
+  try {
+    const session = await getSessionAsync(token);
+    const userID = session.userID;
+
+    const logData = await returnData.GetChatLog(userID);
+    res.status(200).json({success: true, log : logData});
+  }
+  catch(err){
+    res.status(401).json({success: false});
+    console.log(err);
+  }
+    
+});
+// ************커뮤니티************
+// 커뮤니티 메인 메뉴
+app.post("/MenuBarValue", async (req, res) => {
+  const query = `select 
+                      boardID,
+                      boardName
+                  from board
+                  where boardRead = 'A' or boardRead = 'U'`;
+
+  const result = await database.Query(query);
+
+  // JSON 형식으로 데이터를 반환
+  res.json(result);
+});
+
+// 유저 정보 select
+app.post("/UserInfoValue", async (req, res) => {
+  let userID = "user1";
+  const query = `select 
+                      userID,
+                      userName,
+                      userNickName, 
+                      createDate,
+                      profileUrl
+                  from user
+                  where deleteFlag = false and userID = ?`;
+
+  const value = [userID];
+  const result = await database.Query(query, value);
+
+  // JSON 형식으로 데이터를 반환
+  res.json(result);
+});
+
+// 커뮤니티 select
+app.post("/ContentsValue", async (req, res) => {
+  const { boardID } = req.body;
+  let result;
+
+  if(boardID === 1){
+      const query = `SELECT 
+                      b.boardName as boardName, 
+                      c.contentsNum as contentsNum, 
+                      c.contentsTitle as contentsTitle, 
+                      c.content as content, 
+                      c.recommend as recommend, 
+                      c.views as views
+                  FROM board AS b
+                  INNER JOIN contents AS c ON b.boardID = c.boardID
+                  INNER JOIN (
+                      SELECT b.boardName, MAX(c.recommend) AS max_recommend
+                      FROM board AS b
+                      INNER JOIN contents AS c ON b.boardID = c.boardID
+                      GROUP BY b.boardName
+                  ) AS maxContents 
+                      ON b.boardName = maxContents.boardName AND c.recommend = maxContents.max_recommend`;
+      
+      result = await database.Query(query);
+  }
+  else {
+      const query = `select 
+                          c.contentsNum as contentsNum, 
+                          b.boardName as boardName,
+                          c.contentsTitle as contentsTitle, 
+                          c.content as content, 
+                          c.recommend as recommend, 
+                          c.views as views
+                      from board as b inner join contents as c
+                          on b.boardID = c.boardID
+                      where b.boardID = ?`;
+
+      const value = [boardID];
+      result = await database.Query(query, value);
+      }
+
+  // JSON 형식으로 데이터를 반환
+  res.json(result);
+});
+
+
+// 커뮤니티 게시글 select
+app.post("/BoardContentsValue", async (req, res) => {
+  const { contentsNum } = req.body;
+
+  const contentsQuery = `select 
+                              u.userID as userID,
+                              u.userName as userName,
+                              u.createDate as createDate,
+                              u.profileUrl as profileUrl,
+                              c.contentsNum as contentsNum,
+                              c.contentsTitle as contentsTitle,
+                              c.content as content,
+                              c.recommend as recommend,
+                              c.views as views,
+                              b.boardID as boardID,
+                              b.boardName as boardName
+                          from contents as c 
+                          inner join user as u on c.userID = u.userID
+                          inner join board as b on c.boardID = b.boardID
+                          where c.contentsNum = ?`;
+
+  const commentQuery = `select 
+                              u.userID as userID,
+                              u.userName as userName,
+                              u.createDate as createDate,
+                              u.profileUrl as profileUrl,
+                              c.commentNum as commentNum,
+                              c.commentContent as commentContent,
+                              c.commentDate as commentDate
+                          from comment as c inner join user as u
+                              on c.userID = u.userID
+                          where c.contentsNum = ?`;
+
+  const fileQuery = `select 
+                          fileUploadNum,
+                          fileUrl,
+                          fileName
+                      from file
+                      where contentsNum = ?`;
+  
+  const value = [contentsNum];
+
+  try {
+      // 두 개의 쿼리를 각각 실행
+      const contentsResult = await database.Query(contentsQuery, value);
+      const commentResult = await database.Query(commentQuery, value);
+      const fileResult = await database.Query(fileQuery, value);
+
+      // 두 결과를 객체로 묶어 JSON 형식으로 반환
+      res.json({
+          contentsResult: contentsResult,
+          commentResult: commentResult,
+          fileResult: fileResult
+      });
+  } catch (error) {
+      console.error('Error executing queries:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 커뮤니티 게시글 댓글 select
+app.post("/CommentSelectValue", async (req, res) => {
+  const { contentsNum } = req.body;
+
+  const query = `select 
+                      u.userID as userID,
+                      u.userName as userName,
+                      u.createDate as createDate,
+                      u.profileUrl as profileUrl,
+                      c.commentNum as commentNum,
+                      c.commentContent as commentContent,
+                      c.commentDate as commentDate
+                  from comment as c inner join user as u
+                      on c.userID = u.userID
+                  where c.contentsNum = ?`;
+  
+  const value = [contentsNum];
+
+  try {
+      // 두 개의 쿼리를 각각 실행
+      const result = await database.Query(query, value);
+
+      // 두 결과를 객체로 묶어 JSON 형식으로 반환
+      res.json(result);
+  } catch (error) {
+      console.error('Error executing queries:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 커뮤니티 게시글 댓글 insert
+app.post("/CommentInsertValue", async (req, res) => {
+  const { comment, contentsNum } = req.body;
+  let userID = 'user1';
+
+  const query = `insert into comment(commentContent, userID, contentsNum)
+                  values(?, ?, ?)`;
+  
+  const value = [comment, userID, contentsNum];
+
+  try {
+      await database.Query(query, value);
+      res.status(200).json({ message: 'Successfully deleted users' });
+  } catch (error) {
+      console.error('Error executing queries:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 커뮤니티 게시글 댓글 delete
+app.post("/CommentDeleteValue", async (req, res) => {
+  const { commentNum } = req.body;
+  let userID = 'user1';
+
+  const query = `delete from comment
+                  where commentNum = ?`;
+  
+  const value = [commentNum];
+
+  try {
+      await database.Query(query, value);
+      res.status(200).json({ message: 'Successfully deleted users' });
+  } catch (error) {
+      console.error('Error executing queries:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 커뮤니티 게시글 Update
+app.post("/PrevPageValue", async (req, res) => {
+  const { contentsNum } = req.body;
+
+  const contentsQuery = `select 
+                              contentsNum,
+                              contentsTitle,
+                              content
+                          from contents
+                          where contentsNum = ?`;
+
+  const fileQuery = `select 
+                          fileUploadNum,
+                          fileUrl,
+                          fileName
+                      from file
+                      where contentsNum = ?`;
+  
+  const value = [contentsNum];
+
+  try {
+      // 두 개의 쿼리를 각각 실행
+      const contentsResult = await database.Query(contentsQuery, value);
+      const fileResult = await database.Query(fileQuery, value);
+
+      // 두 결과를 객체로 묶어 JSON 형식으로 반환
+      res.json({
+          contentsResult: contentsResult,
+          fileResult: fileResult
+      });
+  } catch (error) {
+      console.error('Error executing queries:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 커뮤니티 게시글 쓰기 게시판 목록
+app.post("/CheckBoard", async (req, res) => {
+  const query = `SELECT 
+                      boardID,
+                      boardName
+                  FROM 
+                      board
+                  WHERE 
+                      boardName != '모아보기' AND
+                      (boardWrite = 'A' OR boardWrite = 'U')
+                  order by boardID`;
+
+  try {
+      const result = await database.Query(query);
+      res.json(result);
+  } catch (error) {
+      console.error('Error executing queries:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+
+
+
+// ********* Web 영역 *********
+// 회원 관리 초기 데이터
+app.post("/adminMainInitData", async (req, res) => {
+    const adminID = 'admin';
+
+    const query = `select userID, userName, userNickName, createDate
+                    from user
+                    where adminID = ? and deleteFlag = ?`;
+
+    const values = [adminID, 'FALSE'];
+
+    const result = await database.Query(query, values);
+
+    // JSON 형식으로 데이터를 반환
+    res.json(result);
+});
+
+// 게시판 관리 초기 데이터
+app.post("/boardMgrInitData", async (req, res) => {
+    const adminID = 'admin';
+
+    const query = `SELECT 
+                        b.boardID as boardID,
+                        b.boardName as boardName,
+                        COALESCE(count(c.content), 0) as contentTotal,
+                        b.boardDate
+                    FROM board as b 
+                    LEFT JOIN contents as c
+                        ON b.boardID = c.boardID
+                    WHERE b.adminID = ?
+                    GROUP BY b.boardID, b.boardName, b.boardDate`;
+
+    const values = [adminID];
+
+    const result = await database.Query(query, values);
+    
+    console.log(result);
+
+    // JSON 형식으로 데이터를 반환
+    res.json(result);
+});
+
+// 기기관리 초기 데이터
+app.post("/deviceMgrInitData", async (req, res) => {
+    const adminID = 'admin';
+
+    const query = `SELECT 
+                        productNum,
+                        modelName,
+                        CASE 
+                            WHEN type = 1 THEN '전등'
+                            WHEN type = 2 THEN '커튼'
+                            WHEN type = 3 THEN '에어컨'
+                            WHEN type = 4 THEN 'TV'
+                            WHEN type = 5 THEN '보일러'
+                            ELSE '등록되지 않은 가전제품' -- 예기치 않은 값을 처리하기 위한 기본값
+                        END AS type,
+                        company,
+                        registrationDate,
+                        productImgUrl
+                    FROM product
+                    `;
+
+    const result = await database.Query(query);
+    
+    console.log(result);
+
+    // JSON 형식으로 데이터를 반환
+    res.json(result);
+});
+
+// 요청관리 초기 데이터
+app.post("/requestMgrInitData", async (req, res) => {
+    const adminID = 'admin';
+
+    const requestCompletedQuery = `select 
+                                        d.id as deviceRequestID,
+                                        u.userID as userID,
+                                        u.userName as userName,
+                                        u.userNickName as userNickName,
+                                        CASE 
+                                            WHEN d.state = 'T' THEN '요청 완료'
+                                            WHEN d.state = 'F' THEN '요청 미완료'
+                                            ELSE '상태 미정의'
+                                        END AS state,
+                                        d.requestTime as requestTime
+                                    from user as u inner join deviceRequest as d
+                                        on u.userID = d.userID
+                                    where d.state = 'T' and u.adminID = ?`;
+
+    const requestNotCompletedQuery = `select 
+                                        d.id as deviceRequestID,
+                                        u.userID as userID,
+                                        u.userName as userName,
+                                        u.userNickName as userNickName,
+                                        CASE 
+                                            WHEN d.state = 'T' THEN '요청 완료'
+                                            WHEN d.state = 'F' THEN '요청 미완료'
+                                            ELSE '상태 미정의'
+                                        END AS state,
+                                        d.requestTime as requestTime
+                                    from user as u inner join deviceRequest as d
+                                        on u.userID = d.userID
+                                    where d.state = 'F' and u.adminID = ?`;
+
+    const values = [adminID];
+
+    // JSON 형식으로 데이터를 반환
+    try {
+        // 두 개의 쿼리를 각각 실행
+        const requestCompletedResult = await database.Query(requestCompletedQuery, values);
+        const requestNotCompletedResult = await database.Query(requestNotCompletedQuery, values);
+
+        // 두 결과를 객체로 묶어 JSON 형식으로 반환
+        res.json({
+            requestCompletedResult: requestCompletedResult,
+            requestNotCompletedResult: requestNotCompletedResult
+        });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+// ***** 상세보기 데이터******
+// adminMain 상세보기 데이터 select
+app.post("/adminMainViewDetails", async (req, res) => {
+    const { modalSendData } = req.body;
+    const adminID = 'admin';
+
+    console.log("modalSendData : " + modalSendData);
+
+    const contentListQuery = `select 
+                                c.contentsNum as contentsNum,
+                                b.boardName as boardName,
+                                c.content as content,
+                                c.contentsDate as contentsDate,
+                                c.views as views,
+                                c.recommend as recommend
+                            from board as b inner join contents as c
+                                on b.boardID = c.boardID
+                            where adminID = ? and userID = ?`;
+
+    const deviceRequestListQuery = `SELECT 
+                                        productName, 
+                                        CASE 
+                                            WHEN type = 1 THEN '전등'
+                                            WHEN type = 2 THEN '커튼'
+                                            WHEN type = 3 THEN '에어컨'
+                                            WHEN type = 4 THEN 'TV'
+                                            WHEN type = 5 THEN '보일러'
+                                            ELSE '등록되지 않은 가전제품' 
+                                        END AS type, 
+                                        company, 
+                                        title, 
+                                        requestTime, 
+                                        productImgUrl
+                                    FROM 
+                                        deviceRequest
+                                    where adminID = ? and userID = ?`;
+
+    const contentBoardListQuery = `select b.boardID, b.boardName
+                                    from board as b inner join contents as c
+                                        on b.boardID = c.boardID
+                                    where adminID = ? and userID = ?`;
+
+    const values = [adminID, modalSendData];
+
+    // console.log("adminMain 상세보기 데이터 : " + userID);
+
+    // JSON 형식으로 데이터를 반환
+    try {
+        // 세 개의 쿼리를 각각 실행
+        const contentListResult = await database.Query(contentListQuery, values);
+        const deviceRequestListResult = await database.Query(deviceRequestListQuery, values);
+        const contentBoardListResult = await database.Query(contentBoardListQuery, values);
+
+        // console.log(contentListResult);
+        // console.log(deviceRequestListResult);
+
+        // 두 결과를 객체로 묶어 JSON 형식으로 반환
+        res.json({
+            contentListResult: contentListResult,
+            deviceRequestListResult: deviceRequestListResult,
+            contentBoardListResult : contentBoardListResult
+        });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// adminMain 프로필카드 데이터 select
+app.post("/profileViewDetails", async (req, res) => {
+    const { modalSendData } = req.body;
+    const adminID = 'admin';
+    // console.log("adminMain 프로필카드 데이터 : " + modalSendData);
+
+    const query = `select 
+                        u.userName as userName, 
+                        u.userNickName as userNickName,
+                        z.hubID as hubID,
+                        u.address as address,
+                        u.postNum as postNum,
+                        u.userPhoneNum as userPhoneNum
+                    from user as u inner join zigbeeHub as z
+                        on u.userID = z.userID
+                    where adminID = ? and u.userID = ?`;
+
+    const values = [adminID, modalSendData];
+
+    try {
+        const result = await database.Query(query, values);
+
+        console.log(result);
+
+        // JSON 형식으로 데이터를 반환
+        res.json(result);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// boardMgr 상세보기 데이터 select
+app.post("/boardMgrViewDetails", async (req, res) => {
+    const { modalSendData } = req.body;
+    const adminID = 'admin';
+    // console.log("adminMain 프로필카드 데이터 : " + modalSendData);
+
+    const query = `select 
+                        c.contentsNum as contentsNum,
+                        b.boardName as boardName,
+                        c.content as content,
+                        c.contentsDate as contentsDate,
+                        c.recommend as recommend,
+                        c.views as views
+                    from board as b inner join contents as c
+                        on b.boardID = c.boardID
+                    where b.adminID = ? and b.boardID = ?`;
+
+    const values = [adminID, modalSendData];
+
+    try {
+        const result = await database.Query(query, values);
+
+        console.log(result);
+
+        // JSON 형식으로 데이터를 반환
+        res.json(result);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// requestMgr 상세보기 데이터 select
+app.post("/requestMgrViewDetails", async (req, res) => {
+    const { modalSendData } = req.body;
+    const adminID = 'admin';
+    // console.log("adminMain 프로필카드 데이터 : " + modalSendData);
+
+    const query = `select 
+                        productImgUrl,
+                        company,
+                        productName,
+                        CASE 
+                            WHEN type = 1 THEN '전등'
+                            WHEN type = 2 THEN '커튼'
+                            WHEN type = 3 THEN '에어컨'
+                            WHEN type = 4 THEN 'TV'
+                            WHEN type = 5 THEN '보일러'
+                            ELSE '등록되지 않은 가전제품'
+                        END AS type,
+                        title
+                    from deviceRequest
+                    where ID = ? and adminID = ?`;
+
+    const values = [modalSendData, adminID];
+
+    try {
+        const result = await database.Query(query, values);
+
+        console.log(result);
+
+        // JSON 형식으로 데이터를 반환
+        res.json(result);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+// 테이블 Delete
+app.post("/deleteTable", async (req, res) => {
+    const { modalSendData, buttonId } = req.body;
+    // const adminID = 'admin';
+
+    let modalSendDataArray;
+
+    // modalSendData가 문자열인 경우와 배열인 경우를 구분하여 처리
+    if (typeof modalSendData === 'string') {
+        modalSendDataArray = modalSendData.split(',');
+    } else if (Array.isArray(modalSendData)) {
+        modalSendDataArray = modalSendData;
+    } else {
+        console.error('Invalid modalSendData format:', modalSendData);
+        res.status(400).json({ error: 'Invalid modalSendData format' });
+        return;
+    }
+
+    let query;
+
+    switch(buttonId) {
+        case "AdminMainDelete" :
+            query = `UPDATE user
+                    SET deleteFlag = TRUE
+                    WHERE userID IN (?)`;
+            break;
+        case "AdminMainDetailDelete" :
+            query = `DELETE FROM contents
+                    WHERE contentsNum IN (?)`;
+            break;
+        case "BoardMgrDelete" :
+            query = `DELETE FROM board
+                    WHERE boardID IN (?)`;
+            break;
+        case "BoardMgrDetailDelete" :
+            query = `DELETE FROM contents
+                    WHERE contentsNum IN (?)`;
+            break;
+        case "DeviceMgrDelete" :
+        query = `DELETE FROM product
+                WHERE productNum IN (?)`;
+        break;
+    }
+
+    try {
+        await Promise.all(modalSendDataArray.map(async deleteID => {
+            await database.Query(query, [deleteID]);
+        }));
+        res.status(200).json({ message: 'Successfully deleted users' });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// boardMgr 상세보기 데이터 update
+app.post("/updateTable", async (req, res) => {
+    const { modalSendData, formData } = req.body;
+    const adminID = 'admin';
+
+    const query = `UPDATE board
+                    SET 
+                        boardName = ?,
+                        boardIntro = ?,
+                        boardRead = ?, 
+                        boardWrite = ?, 
+                        boardComWrite = ? 
+                    WHERE
+                        boardID = ?`;
+
+    const values = [];
+
+    // formData의 속성들을 순회하면서 value 배열에 추가합니다.
+    formData.forEach(value => {
+        values.push(value);
+    });
+    values.push(modalSendData);
+
+    try {
+        await database.Query(query, values);
+        res.status(200).json({ message: 'Update successful' }); // 성공 응답 추가
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// boardMgr 상세보기 데이터 insert
+app.post("/insertTable", async (req, res) => {
+    const { formData, buttonId } = req.body;
+    const adminID = 'admin';
+
+    switch(buttonId) {
+        case "boardMgrInsertBtn" :
+            query = `INSERT INTO board (boardName, boardIntro, boardRead, boardWrite, boardComWrite, adminID) 
+                    VALUES (?, ?, ?, ?, ?, ?)`;
+            break;
+    }
+
+    const values = [];
+
+    // formData의 속성들을 순회하면서 value 배열에 추가합니다.
+    formData.forEach(value => {
+        values.push(value);
+    });
+    values.push(adminID);
+
+    try {
+        await database.Query(query, values);
+        res.status(200).json({ message: 'Insert successful' }); // 성공 응답 추가
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// 아이디 찾기
+
+app.post("/findingID", async (req, res) => {
+  const data = req.body;
+  const result = await findingID.FindingID(data.phoneNum);
+  if (result) {
+    res.status(200).json({ success: true, message: result.userID });
+  }
+  else {
+    res.status(401).json({ success: false, message: "전화번호에 일치하는 회원이 없습니다." });
+  }
+});
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// 비밀번호찾기
+
+
+// 전화번호 인증
+app.post("/verifyPhoneNum", async (req, res) => {
+  const { phoneNum, id } = req.body;
+  try {
+    const result = await findingPW.verifyPhoneNum(phoneNum, id);
+    console.log('Verification result:', result);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error verifying phone number:", error);
+    res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
+  }
+});
+
+// 비밀번호 재설정
+app.post("/resetPassword", async (req, res) => {
+  const { id, phoneNum, newPassword } = req.body;
+  try {
+    const result = await findingPW.resetPassword(id, phoneNum, newPassword);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
   }
 });

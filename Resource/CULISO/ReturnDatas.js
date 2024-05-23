@@ -48,8 +48,25 @@ async function GetName(id) {
     console.log("데이터 수색 중 오류: ", error.message);
   }
 }
+async function GetChatLog(id) {
+  let query;
+  let values;
+  let result;
+
+  query = `SELECT userChatContext, senderType FROM chat WHERE userID = ? ORDER BY sendTime ASC`;
+  values = [id];
+
+  try {
+    result = await database.Query(query, values);
+    return result;
+  } 
+  catch (error) {
+    console.log("데이터 수색 중 오류: ", error.message);
+  }
+}
 module.exports = {
   GetAddr: GetAddr,
   GetSex: GetSex,
-  GetName: GetName
+  GetName: GetName,
+  GetChatLog: GetChatLog
 };

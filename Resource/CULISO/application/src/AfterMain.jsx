@@ -1,3 +1,5 @@
+
+import { MenuBar } from "./MenuBar";
 import GetIcon from "./modules/GetIcon";
 import { Cookies } from "react-cookie";
 import { Navigate } from "./modules/Navigate";
@@ -5,7 +7,6 @@ import styled from "styled-components";
 import "./style.css";
 import { useState, useEffect } from "react";
 import { GetAddress, RequestAddress } from "./modules/DataRouter";
-import { PopupVoice } from "./modules/AI";
 // css
 const CenterBox = styled.div`
   display: flex;
@@ -93,7 +94,7 @@ export const AfterMain = () => {
 
   return (
     <div className="afterMain">
-      <div className="div">
+      <div className="afterMainDiv">
         <CenterBox align="space-between" top="50px">
           <Label>
             <Text
@@ -140,60 +141,8 @@ export const AfterMain = () => {
             <Button type="button" value={"등록하기"} />
           </EmptyContainer>
         </CenterBox>
-        <MenuBox>
-          <ImgBox>
-            <Img src={GetIcon("home-white2.png")} width={"37px"} />
-            <Text
-              align="center"
-              size="12px"
-              color="white"
-              style={{ marginTop: "5px" }}
-            >
-              우리 집
-            </Text>
-          </ImgBox>
-          <ImgBox>
-            <Img src={GetIcon("community-white.png")} width={"37px"} />
-            <Text
-              align="center"
-              size="12px"
-              color="white"
-              style={{ marginTop: "5px" }}
-            >
-              커뮤니티
-            </Text>
-          </ImgBox>
-          <ImgBox onClick={PopupVoice}>
-            <Img src={GetIcon("robot-white2.png")} width={"37px"} />
-            <Text
-              align="center"
-              size="12px"
-              color="white"
-              style={{ marginTop: "5px" }}
-            >
-              인공지능
-            </Text>
-          </ImgBox>
-          <ImgBox
-            onClick={() => {
-              window.location.href = "/myPage";
-            }}
-          >
-            <Img
-              src={GetIcon("profile-white2.png")}
-              width={"37px"}
-              style={{ height: "38.08px" }}
-            />
-            <Text
-              align="center"
-              size="12px"
-              color="white"
-              style={{ marginTop: "5px" }}
-            >
-              마이페이지
-            </Text>
-          </ImgBox>
-        </MenuBox>
+        {/* 메뉴바 */}
+        <MenuBar/>
       </div>
     </div>
   );

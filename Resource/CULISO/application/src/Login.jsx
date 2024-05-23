@@ -2,6 +2,7 @@ import GetIcon from "./modules/GetIcon";
 import styled from 'styled-components';
 import { LoginDataSend } from "./modules/DataRouter";
 import "./style.css";
+import { SmallTextMenus } from "./modules/Navigate";
 
 // css
 const CenterBox = styled.div`
@@ -9,13 +10,16 @@ const CenterBox = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 100px;
 `;
 const Text = styled.p`
   text-align: ${(props) => props.align};
   width:331px;
   color: ${(props) => props.color};
   font-size: ${(props) => props.size};
+`;
+const InputImg = styled.img`
+  width: 22px;
+  margin-left: 20px;
 `;
 const InputContainer = styled.div`
   width: 285px;
@@ -26,10 +30,6 @@ const InputContainer = styled.div`
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-`;
-const InputImg = styled.img`
-  width: 22px;
-  margin-left: 20px;
 `;
 const InputTag = styled.input`
   width: 210px;
@@ -70,11 +70,7 @@ export const Login = () => {
               </label>
               <input className="loginSubmit" type="submit" value={"로그인"}/>
             </form>
-            <div className="aDiv">
-              <a href="/signUp">계정 생성</a>
-              <a href="#">아이디 찾기</a>
-              <a href="#">비밀번호 찾기</a>
-            </div>
+            <SmallTextMenus signUp={true} findID={true} findPW={true}/>
           </div>
         </CenterBox>
       </div>

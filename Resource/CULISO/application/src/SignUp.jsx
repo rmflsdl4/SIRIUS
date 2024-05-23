@@ -4,6 +4,18 @@ import { TimerNavigate } from "./modules/Navigate";
 import { SignUpDataSend } from "./modules/DataRouter";
 import DaumPostcode from "react-daum-postcode";
 import "./style.css";
+import styled from 'styled-components';
+
+// css
+const CenterBox = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+`;
+
 
 const culiMsg = {
   0: "지금부터 회원가입을\n도와드릴게요!",
@@ -651,41 +663,44 @@ export const SignUp = () => {
   return (
     <div className="signUp">
       <div className="div" onClick={() => SignUpManager()}>
-        <div className="overlap-group">
-          <div className="rectangle">
-            <img
-              className="polygon"
-              alt="Polygon"
-              src={GetIcon("polygon.png")}
-            />
-            <span id="signUpText">{msg}</span>
-          </div>
-          <img className="robot" alt="Robot" src={GetIcon("robot-white.png")} />
-        </div>
-        <div className="box">
-          {isForm && (
-            <form className="signUpForm" id="signUpForm">
-              <div
-                className="inputBoxBG1"
-                style={{
-                  height: SetBoxHeight,
-                  paddingTop: "15px",
-                  paddingBottom: "15px",
-                }}
-              >
-                {<RenderInputs />}
-              </div>
-              <input
-                id="submitBtn"
-                type="button"
-                value="다음으로"
-                ref={btn}
-                style={{ opacity: isInputCheck ? 1.0 : 0.5 }}
-                onClick={NextPage}
+        <CenterBox>
+          <div className="overlap-group">
+            <div className="rectangle">
+              <img
+                className="polygon"
+                alt="Polygon"
+                src={GetIcon("polygon.png")}
               />
-            </form>
-          )}
-        </div>
+              <span id="signUpText">{msg}</span>
+            </div>
+            <img className="robot" alt="Robot" src={GetIcon("robot-white.png")} />
+          </div>
+          <div className="box">
+            {isForm && (
+              <form className="signUpForm" id="signUpForm">
+                <div
+                  className="inputBoxBG1"
+                  style={{
+                    height: SetBoxHeight,
+                    paddingTop: "15px",
+                    paddingBottom: "15px",
+                  }}
+                >
+                  {<RenderInputs />}
+                </div>
+                <input
+                  id="submitBtn"
+                  type="button"
+                  value="다음으로"
+                  ref={btn}
+                  style={{ opacity: isInputCheck ? 1.0 : 0.5 }}
+                  onClick={NextPage}
+                />
+              </form>
+            )}
+          </div>
+        </CenterBox>
+        
       </div>
     </div>
   );

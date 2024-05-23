@@ -6,6 +6,10 @@
   font-family: "KCC-Hanbit";
   letter-spacing: 1.5px;
 }
+body, html{
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
 input[type="button"],
 input[type="submit"],
 input[type="reset"] {
@@ -25,16 +29,37 @@ input[type="reset"] {
 
   border: 1px solid;
   border-color: #cacaca;
-  height: 50rem;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  width: 100vw;
+}
+.afterMainDiv {
   position: relative;
-  width: 22.5rem;
+  background: linear-gradient(
+      33deg,
+      rgba(55, 219, 255, 0) 48.63%,
+      rgba(124, 154, 204, 0.2) 56.31%,
+      rgba(85, 112, 205, 0.19) 62.04%,
+      rgba(24, 46, 242, 0.2) 69.1%
+    ),
+    linear-gradient(200deg, #a9d7f1 59.9%, #9ed4f2 66.52%, #55aee0 86.36%);
+
+  border: 1px solid;
+  border-color: #cacaca;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  width: 100vw;
 }
 .div {
   opacity: 0;
   animation: fadeIn ease-out 1s forwards;
 }
 .intro,
-.main,
 .signUp {
   background-color: rgba(255, 255, 255, 1);
   display: flex;
@@ -102,15 +127,6 @@ input[type="reset"] {
   width: 26px;
 }
 
-.main .overlap {
-  background-color: #67acff;
-  border-radius: 10px;
-  height: 44px;
-  left: 66px;
-  position: absolute;
-  top: 446px;
-  width: 229px;
-}
 
 .main .group-2 {
   height: 22px;
@@ -120,23 +136,6 @@ input[type="reset"] {
   width: 141px;
 }
 
-.main .text-wrapper-2 {
-  color: #ffffff;
-  font-size: 16px;
-  left: 31px;
-  position: absolute;
-  top: 2px;
-  white-space: nowrap;
-}
-
-.main .closed-padlock {
-  height: 22px;
-  left: 0;
-  object-fit: cover;
-  position: absolute;
-  top: 0;
-  width: 22px;
-}
 
 .main .robot {
   height: 51px;
@@ -158,7 +157,6 @@ input[type="reset"] {
 .main .overlap-group-wrapper {
   height: 66px;
   left: 0;
-  position: absolute;
   top: 0;
   width: 276px;
 }
@@ -248,7 +246,7 @@ input[type="reset"] {
 /* 입력 폼 */
 .box {
   height: auto;
-  margin-top: 250px;
+  margin-top: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -367,14 +365,16 @@ input[type="reset"] {
   background-color: #b1dbfa;
   color: #474747;
   margin-top: 30px;
+  font-family: "SejonghospitalBold";
 }
 .aDiv {
   width: 285px;
-  margin-top: 6px;
-  display: inline-block;
+  margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
   text-align: left;
 }
-.aDiv > a {
+.aDiv > div {
   margin-right: 10px;
   font-size: 10px;
   color: #a1a1a1;
@@ -388,3 +388,203 @@ input[type="reset"] {
   accent-color: #359eff;
   filter: opacity(0.5) drop-shadow(0 0 0 #359eff);
 } */
+
+
+
+/* 아이디 찾기 */
+
+.findingBG {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 20px;
+  background: #fafafa;
+  width: 331px;
+  height: 427px;
+  top: 20%;
+}
+
+.findingID .overlap-group {
+  position: absolute;
+  height: 66px;
+  width: 100%;
+  top: 313px;
+  left: 45%;
+}
+
+.findingID .rectangle {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0px 4px 4px #5f5f5f40;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 51px;
+  width: 100%;
+}
+
+.findingID .polygon {
+  height: 22px;
+  left: 125px;
+  position: absolute;
+  top: 0;
+  width: 26px;
+}
+
+.findingSubmit {
+  width: 285px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background-color: #b1dbfa;
+  color: #474747;
+  margin-top: 30px;
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  color: #a1a1a1;
+  font-size: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.nav-button:focus {
+  outline: none;
+}
+
+.screen .overlap-group {
+  border-radius: 20px;
+  height: 163px;
+  left: 12px;
+  position: absolute;
+  top: 319px;
+  width: 335px;
+}
+
+.screen .rectangle {
+  background-color: #f9f9f9;
+  border-radius: 20px;
+  height: 163px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 335px;
+}
+
+.screen .rectangle-2 {
+  background-color: #e9e7e7;
+  border-radius: 6px;
+  height: 47px;
+  left: 27px;
+  position: absolute;
+  top: 28px;
+  width: 281px;
+}
+
+.screen .view {
+  background-color: #67acff;
+  border-radius: 10px;
+  height: 44px;
+  left: 27px;
+  position: absolute;
+  top: 96px;
+  width: 281px;
+}
+
+.screen .group {
+  height: 22px;
+  left: 99px;
+  position: absolute;
+  top: 107px;
+  width: 141px;
+}
+
+.screen .text-wrapper-4 {
+  color: #ffffff;
+  font-family: "Inter", Helvetica;
+  font-size: 16px;
+  font-weight: 600;
+  left: 31px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 2px;
+  white-space: nowrap;
+}
+
+.screen .CULISO-account {
+  color: #000000;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  left: 15px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 65px;
+  white-space: nowrap;
+}
+
+.screen .overlap {
+  height: 66px;
+  left: 42px;
+  position: absolute;
+  top: 162px;
+  width: 276px;
+}
+
+.screen .rectangle-3 {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0px 4px 4px #5f5f5f40;
+  height: 51px;
+  left: 0;
+  position: absolute;
+  top: 15px;
+  width: 276px;
+}
+
+.screen .polygon {
+  height: 22px;
+  left: 125px;
+  position: absolute;
+  top: 0;
+  width: 26px;
+}
+
+.screen .text-wrapper-7 {
+  color: #8abfff;
+  font-family: "Inter", Helvetica;
+  font-size: 13px;
+  font-weight: 600;
+  left: 25px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 31px;
+  width: 226px;
+}
+
+.screen .robot {
+  height: 51px;
+  left: 155px;
+  object-fit: cover;
+  position: absolute;
+  top: 111px;
+  width: 50px;
+}
+
+.printID {
+  /* 아이디 찾기 아이디 출력되는 박스 */
+  font-family: "Inter", Helvetica;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 30px;
+}

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import GetIcon from "./modules/GetIcon";
 import "./style.css";
-import { GetSex, GetName } from "./modules/DataRouter";
-
+import { GetSex, GetName, SaveProfileImgURL } from "./modules/DataRouter";
+import { MenuBar } from "./MenuBar";
+import { BackButton, UpdateButton } from "./modules/Navigate";
 // css
 const CenterBox = styled.div`
   display: flex;
@@ -13,26 +14,30 @@ const CenterBox = styled.div`
   margin-top: 100px;
 `;
 const Text = styled.span`
+  height: ${(props) => props.height};
   text-align: ${(props) => props.align};
   color: ${(props) => props.color};
   font-size: ${(props) => props.size};
+  font-family: ${(props) => props.font};
+  margin: ${(props) => props.margin};
 `;
 const EmptyContainer = styled.div`
   width: ${(props) => props.width};
+  margin: ${(props) => props.margin};
+  background-color: ${(props) => props.bg};
+  border-radius: ${(props) => props.radius};;
 `;
 const InputContainer = styled.div`
-  width: 285px;
-  height: 47px;
-  border-radius: 6px;
+  width: ${(props) => props.width};
+  height: 35px;
   background: ${(props) => props.bg};
-  margin-top: 20px;
-  margin-bottom: 10px;
   display: flex;
   align-items: center;
 `;
 const InputImg = styled.img`
   width: ${(props) => props.width};
   margin-left: ${(props) => props.left};
+  margin-right: ${(props) => props.right};
 `;
 const InputTag = styled.input`
   width: 210px;
@@ -52,6 +57,27 @@ const Button = styled.button`
 export const MyPage = () => {
   const [sexImg, setSexImg] = useState();
   const [name, setName] = useState();
+  const fileInput = useRef(null);
+
+  const onChange = (e) => {
+    const tempImg = sexImg;
+    if(e.target.files[0]){
+      setSexImg(e.target.files[0])
+      SaveProfileImgURL(e.target.files[0]);
+    }
+    else{
+      setSexImg(tempImg);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if(reader.readyState === 2){
+        setSexImg(reader.result);
+      }
+    }
+    reader.readAsDataURL(e.target.files[0]);
+  }
+
 
   useEffect(() => {
     const GetSexData = async () => {
@@ -65,29 +91,76 @@ export const MyPage = () => {
     GetSexData();
     GetNameData();
   }, []);
+
+
   return (
     <div className="myPage">
       <div className="div">
         <CenterBox>
-          <EmptyContainer width="80%">
-            <Text color={"#3252C2"} size={"15px"} style={{marginLeft: "5px"}}>
-              <span style={{ fontWeight: "bold" }}>CULISO </span>
-              <span style={{ color: "#4B66C8" }}>MyPage</span>
-            </Text>
+          <EmptyContainer width="80%"> {/* 좌우 80% 박스 */}
+            <EmptyContainer style={{display:"flex", alignItems:"center"}}>
+              <BackButton left="0px"/>
+              <Text color={"#3252C2"} size={"15px"}>
+                <span style={{ fontWeight: "bold" }}>CULISO </span>
+                <span style={{ color: "#4B66C8" }}>MyPage</span>
+              </Text>
+            </EmptyContainer>
+            <br/>
             <InputContainer bg={"none"}>
-              <InputImg src={GetIcon(sexImg)} width={"50px"}/>
+              <InputImg src={GetIcon(sexImg)} width={"55px"} height={"59px"} onClick={()=>{fileInput.current.click()}}/>
+              <input type="file" style={{display:"none"}} accept="image/jpg,image/png,image/jpeg" name="profileImg" onChange={onChange} ref={fileInput}/>
               <EmptyContainer>
-                <EmptyContainer style={{display:"flex", alignItems:"center"}}>
-                  <Text style={{marginLeft: "10px"}} size={"17px"}>{name}</Text>
-                  <InputImg src={GetIcon("mypage-modify.png")} width={"14px"} left={"8px"}/> {/*여기에 수정 온클릭 삽입*/}
+                <EmptyContainer style={{display:"flex", alignItems:"center", marginBottomom: "5px"}}>
+                  <Text margin="0 0 0 10px" size={"15px"}>{name}</Text>
                 </EmptyContainer>
-                <Button height={"20px"} size={"12px"} bg={"#FFFFFF"} radius={"10px"} style={{border:"0.3px solid black", marginLeft: "10px"}}>내 정보 수정</Button>
-                
+                <UpdateButton/>
               </EmptyContainer>
             </InputContainer>
+            {/* 커뮤니티 */}
+            <EmptyContainer margin="50px 0px 0px 0px">
+              <p>커뮤니티</p>
+              <EmptyContainer width="100%" bg="#FAFAFA" radius="20px" style={{display:"flex", justifyContent:"center", padding:"6px 0"}}>
+                <EmptyContainer width="80%">
+                  <InputContainer>
+                    <InputImg src={GetIcon("mypage-list.png")} width={"20px"}/>
+                    <Text height="20px" margin="0 0 0 8px" style={{borderBottom:"1px solid black"}}>작성 게시글 목록</Text>
+                  </InputContainer>
+                  <InputContainer>
+                    <InputImg src={GetIcon("comments.png")} width={"20px"}/>
+                    <Text height="20px" margin="0 0 0 8px" style={{borderBottom:"1px solid black"}}>작성 댓글 목록</Text>
+                  </InputContainer>
+                </EmptyContainer>
+              </EmptyContainer>
+            </EmptyContainer>
+
+            {/* 기기 사용/관리 */}
+            <EmptyContainer margin="50px 0px 0px 0px">
+              <p>기기 사용/관리</p>
+              <EmptyContainer width="100%" bg="#FAFAFA" radius="20px" style={{display:"flex", justifyContent:"center", padding:"6px 0"}}>
+                <EmptyContainer width="80%">
+                  <InputContainer onClick={() => {alert("아직 구현되지 않은 기능입니다.")}}>
+                    <InputImg src={GetIcon("iot-list.png")} width={"20px"}/>
+                    <Text height="20px" margin="0 0 0 8px" style={{borderBottom:"1px solid black"}}>기기 목록</Text>
+                  </InputContainer>
+                  <InputContainer onClick={() => {alert("아직 구현되지 않은 기능입니다.")}}>
+                    <InputImg src={GetIcon("using.png")} width={"20px"}/>
+                    <Text height="20px" margin="0 0 0 8px" style={{borderBottom:"1px solid black"}}>사용 기록 조회</Text>
+                  </InputContainer>
+                  <InputContainer onClick={() => {alert("아직 구현되지 않은 기능입니다.")}}>
+                    <InputImg src={GetIcon("iot-req.png")} width={"20px"}/>
+                    <Text height="20px" margin="0 0 0 8px" style={{borderBottom:"1px solid black"}}>기기 등록 요청</Text>
+                  </InputContainer>
+                  <InputContainer onClick={() => {alert("아직 구현되지 않은 기능입니다.")}}>
+                    <InputImg src={GetIcon("routine.png")} width={"20px"}/>
+                    <Text height="20px" margin="0 0 0 8px" style={{borderBottom:"1px solid black"}}>루틴 관리</Text>
+                  </InputContainer>
+                </EmptyContainer>
+              </EmptyContainer>
+            </EmptyContainer>
           </EmptyContainer>
+          {/* 메뉴바 */}
+          <MenuBar/>
         </CenterBox>
-        
       </div>
     </div>
   );
