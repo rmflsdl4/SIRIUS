@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import GetIcon from "./GetIcon";
 import styled from 'styled-components';
-import { ContentsValue, BoardContentsValue } from "./CommunityDataRouter";
+import { ContentsValue, BoardContentsValue, IncrementViews } from "./CommunityDataRouter";
 import { useNavigate } from "react-router-dom";
 import { ContentsComponent } from "./ContentsComponent";
 
@@ -99,6 +99,16 @@ export const AllContents = ({ boardID }) => {
         navigate(url);
     }
 
+    // 각 게시글 선택시 조회수 올리기
+    const viewsCount = async (sendContentsNum) => {
+      try {
+        // 조회수 증가 플래그가 false일 때만 조회수 증가
+        await IncrementViews(sendContentsNum);
+      } catch (error) {
+          console.error("Error fetching data:", error);
+      }
+    }
+
     return(
         <div className="communityBoard">
             {contents.map((board, index) => (
@@ -113,7 +123,7 @@ export const AllContents = ({ boardID }) => {
                             </TitleLeft>
                         </MenuTitle>
                     )}
-                    <CommunityContents onClick={()=> goToPage(`contentsComponent?contentsNum=${board.contentsNum}`)}>
+                    <CommunityContents onClick={()=> {goToPage(`contentsComponent?contentsNum=${board.contentsNum}`); viewsCount(board.contentsNum)}}>
                         <ContentsTitle>{board.contentsTitle}</ContentsTitle>
                         <Contents>{board.content}</Contents> 
                         <Element>

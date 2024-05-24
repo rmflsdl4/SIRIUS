@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import GetIcon from "./GetIcon";
 import styled from 'styled-components';
 import { AllContents } from "./getCommunityMainData";
@@ -9,10 +9,16 @@ import { TopBar, BoardCenterBox, ProfileBox, ProfileImg, ProfileCon, UserName, S
         DropdownItem, ContentsImgBox, ImageContainer, Image
 } from "../style/CommunicationStyle";
 import { useNavigate, useLocation } from "react-router-dom";
-import { BoardContentsValue, CommentInsertValue, CommentSelectValue, CommentDeleteValue } from "./CommunityDataRouter";
+import { BoardContentsValue, CommentInsertValue, CommentSelectValue, CommentDeleteValue, ContentsDeleteValue, RecommendClicked, IncrementViews } from "./CommunityDataRouter";
 import Modal from "react-modal"
 import { CustomStyles } from "./ModalComponent"
 import "../style.css";
+
+Modal.setAppElement('#root'); // 'root'는 React 앱의 루트 요소의 ID입니다.
+
+const ClickableImg  = styled.img`
+    filter: ${({ clicked }) => (clicked ? 'invert(50%) sepia(100%) saturate(500%) hue-rotate(150deg)' : 'none')};
+`;
 
 export const ContentsComponent = () => {
     const navigate = useNavigate();
@@ -27,8 +33,11 @@ export const ContentsComponent = () => {
     const [relatedFiles, setRelatedFiles] = useState([]);
     const [newComment, setNewComment] = useState("");
     const [isOpen, setIsOpen] = useState(false);                    // 삭제 팝업 상태
+    const [isContentOpen, setContentIsOpen] = useState(false);      // 게시글 삭제 팝업 상태
     const [deleteComment, setDeleteComment] = useState();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);    // 게시글 수정, 삭제 드롭다운 메뉴
+    const [isRecommendClicked, setIsRecommendClicked] = useState(false);    // 좋아요 클릭
+    const [like, setLike] = useState();                             // 좋아요 값 초기화
 
     // GET 방식으로 contentsNum 가져오기
     const query = new URLSearchParams(useLocation().search);
@@ -43,6 +52,14 @@ export const ContentsComponent = () => {
         setIsOpen(false);
     }
 
+    const contentOpenModal = () => {
+        setContentIsOpen(true);
+    }
+    
+    const contentCloseModal = () => {
+        setContentIsOpen(false);
+    }
+
     // 각 게시판 게시글 DB에 데이터 보내기
     useEffect(() => {
         const fetchData = async () => {
@@ -51,6 +68,17 @@ export const ContentsComponent = () => {
                 setNewContents(data.contentsResult);
                 setComment(data.commentResult);
                 setRelatedFiles(data.fileResult);
+                
+                if (data.contentsResult.length > 0) {
+                    setLike(data.contentsResult[0].recommend);
+                }
+
+                // 해당 게시글에 좋아요 눌렀는지 확인
+                if(data.contentsRecommendResult[0].count){
+                    setIsRecommendClicked(true);
+                } else {
+                    setIsRecommendClicked(false);
+                }
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -94,10 +122,15 @@ export const ContentsComponent = () => {
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
+    // 게시글 삭제하기
+    const handleDeletePost = async () => {
+        try {
+            await ContentsDeleteValue(sendContentsNum);
 
-    const handleDeletePost = () => {
-        // 게시글 삭제하기 로직
-        console.log("Delete post");
+            goToPage("CommunicationMain");
+        } catch (error) {
+            console.error("Error submitting comment:", error);
+        }
     };
     // 드롭다운 메뉴 있을 때 화면 터치 이벤트
     const screenTouch = () => {
@@ -106,11 +139,34 @@ export const ContentsComponent = () => {
         }
     };  
 
+    
+    // 추천 이벤트
+    const handleRecommendClick = async () => {
+        // 새로운 추천 상태 값을 결정합니다.
+        const newRecommendClicked = !isRecommendClicked;
+        
+        // 추천 상태를 업데이트합니다.
+        setIsRecommendClicked(newRecommendClicked);
+    
+        try {
+            // 서버로 보낼 체크 값을 설정합니다.
+            const check = newRecommendClicked ? 1 : 0;
+    
+            // 서버에 추천 상태를 업데이트하도록 요청합니다.
+            const recommendData = await RecommendClicked(check, sendContentsNum);
+    
+            setLike(recommendData.recommend);
+        } catch (error) {
+            // 에러 발생 시 로그에 출력합니다.
+            console.error("Error updating recommendation:", error);
+        }
+    };
+
     return (
         <div className="div" onClick={() => screenTouch()}>
             <TopBar>
                 <LeftContainer>
-                    <TopImg><img src={GetIcon("backArrow.png")} onClick={()=> goToPage("")}></img></TopImg>
+                    <TopImg><img src={GetIcon("backArrow.png")} onClick={()=> goToPage("CommunicationMain")}></img></TopImg>
                     <MainTitle style={{ marginLeft: "15px" }}>{newContents[0]?.boardName}</MainTitle>
                 </LeftContainer>
                 <RightContainer>
@@ -119,7 +175,7 @@ export const ContentsComponent = () => {
                     {isDropdownOpen && (
                         <DropdownMenu>
                             <DropdownItem onClick={() => goToPage(`contentUpload?contentsNum=${sendContentsNum}&prevPage=ContentsComponent`)}>게시글 수정하기</DropdownItem>
-                            <DropdownItem onClick={handleDeletePost}>게시글 삭제하기</DropdownItem>
+                            <DropdownItem onClick={() => contentOpenModal() }>게시글 삭제하기</DropdownItem>
                         </DropdownMenu>
                     )}
                 </RightContainer>
@@ -130,7 +186,7 @@ export const ContentsComponent = () => {
                     <ProfileImg src={newContents[0]?.profileUrl ? GetIcon(newContents[0].profileUrl) : GetIcon("userProfile.png")} alt="User Profile" />
                     <ProfileCon>
                         <UserName>{newContents[0]?.userName}</UserName>
-                        <SubText>{newContents[0] ? new Date(newContents[0].createDate).toLocaleString() : ''}</SubText>
+                        <SubText>{newContents[0] ? new Date(newContents[0].contentsDate).toLocaleString() : ''}</SubText>
                     </ProfileCon>
                 </ProfileBox>
             </TopBar>
@@ -156,9 +212,14 @@ export const ContentsComponent = () => {
                         </Contents> 
                         <Element>
                             <RecommendAndContentsNum>
-                                <img src={GetIcon("recommend.png")} alt="Recommend Icon" />
+                                <ClickableImg
+                                    src={GetIcon("recommend.png")}
+                                    alt="Recommend Icon"
+                                    clicked={isRecommendClicked}
+                                    onClick={handleRecommendClick}
+                                />
                             </RecommendAndContentsNum>
-                            <RecommendAndContentsNum>{content.recommend}</RecommendAndContentsNum>
+                            <RecommendAndContentsNum>{like}</RecommendAndContentsNum>
                             <RecommendAndContentsNum>
                                 <img src={GetIcon("comments.png")} alt="Views Icon" />
                             </RecommendAndContentsNum>
@@ -230,6 +291,17 @@ export const ContentsComponent = () => {
                 <DeleteBox>
                     <DeleteBtnLeft onClick={()=> handleCommentDelete()}>확인</DeleteBtnLeft>
                     <DeleteBtnRight onClick={()=> closeModal()}>취소</DeleteBtnRight>
+                </DeleteBox>
+            </Modal>
+
+            <Modal isOpen={isContentOpen} onRequestClose={contentCloseModal} style={CustomStyles}>
+                <DeleteBox>
+                    <DeleteImg><img src={GetIcon("mark.png")}></img></DeleteImg>
+                    <DeleteTitle>게시글을 삭제하시겠습니까?</DeleteTitle>
+                </DeleteBox>
+                <DeleteBox>
+                    <DeleteBtnLeft onClick={()=> handleDeletePost()}>확인</DeleteBtnLeft>
+                    <DeleteBtnRight onClick={()=> contentCloseModal()}>취소</DeleteBtnRight>
                 </DeleteBox>
             </Modal>
         </div>

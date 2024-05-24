@@ -250,5 +250,19 @@ export const ImageContainer = styled.div`
 export const Image = styled.img`
     width: 300px;
     height: 300px;
-    /* 추가적인 스타일링을 원하는 경우 여기에 추가 */
+`;
+
+export const ImgCloseBtn = styled.button`
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;

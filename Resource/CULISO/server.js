@@ -16,6 +16,10 @@ const axios = require('axios');
 const findingID = require('./FindingID.js');
 const findingPW = require('./FindingPW.js');
 
+// 웹앱 테스트
+app.use(express.static(path.join(__dirname, './application/build')));
+
+
 // 데이터베이스 연결
 database.Connect();
 // app 설정
@@ -835,267 +839,546 @@ app.post("/getChatLog", async (req, res) => {
 });
 // ************커뮤니티************
 // 커뮤니티 메인 메뉴
+const multer = require('multer');
+
+// **이미지 파일 폴더에 저장**
+var fs = require('fs');
+const path = require('path');
+let folderHeadUrl = "./application/public/uploadFile";
+let folder;
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 +1이 필요하며, 두 자리로 포맷
+        const day = date.getDate().toString().padStart(2, '0'); // 일은 두 자리로 포맷
+        const hour = date.getHours().toString().padStart(2, '0');
+        const minute = date.getMinutes().toString().padStart(2, '0');
+        const userId = "user1";
+        
+        folder = `${folderHeadUrl}/${userId}/`;
+
+        // uploadFile 폴더가 없으면 생성
+        if (!fs.existsSync(folderHeadUrl)) {
+            fs.mkdirSync(folderHeadUrl, { recursive: true });
+        }
+
+        // 해당 유저 아이디 폴더가 없으면 생성
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder, { recursive: true });
+        }
+
+        // 이미지 파일을 해당 날짜 폴더에 저장
+        cb(null, folder);
+    }, 
+    filename: (req, file, cb) => {
+        // 이미지 번호 증가
+        console.log(file)
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname))
+    }
+});
+
+const upload = multer({storage: storage});
+
+// app.use('/images', express.static('./application/public/uploadFile/'));
+
+// ************커뮤니티************
+// 커뮤니티 메인 메뉴
 app.post("/MenuBarValue", async (req, res) => {
-  const query = `select 
-                      boardID,
-                      boardName
-                  from board
-                  where boardRead = 'A' or boardRead = 'U'`;
+    const query = `select 
+                        boardID,
+                        boardName
+                    from board
+                    where boardRead = 'A' or boardRead = 'U'`;
 
-  const result = await database.Query(query);
+    const result = await database.Query(query);
 
-  // JSON 형식으로 데이터를 반환
-  res.json(result);
+    // JSON 형식으로 데이터를 반환
+    res.json(result);
 });
 
 // 유저 정보 select
 app.post("/UserInfoValue", async (req, res) => {
-  let userID = "user1";
-  const query = `select 
-                      userID,
-                      userName,
-                      userNickName, 
-                      createDate,
-                      profileUrl
-                  from user
-                  where deleteFlag = false and userID = ?`;
+    let userID = "user1";
+    const query = `select 
+                        userID,
+                        userName,
+                        userNickName, 
+                        createDate,
+                        profileUrl
+                    from user
+                    where deleteFlag = false and userID = ?`;
 
-  const value = [userID];
-  const result = await database.Query(query, value);
+    const value = [userID];
+    const result = await database.Query(query, value);
 
-  // JSON 형식으로 데이터를 반환
-  res.json(result);
+    // JSON 형식으로 데이터를 반환
+    res.json(result);
 });
 
 // 커뮤니티 select
 app.post("/ContentsValue", async (req, res) => {
-  const { boardID } = req.body;
-  let result;
+    const { boardID } = req.body;
+    let result;
 
-  if(boardID === 1){
-      const query = `SELECT 
-                      b.boardName as boardName, 
-                      c.contentsNum as contentsNum, 
-                      c.contentsTitle as contentsTitle, 
-                      c.content as content, 
-                      c.recommend as recommend, 
-                      c.views as views
-                  FROM board AS b
-                  INNER JOIN contents AS c ON b.boardID = c.boardID
-                  INNER JOIN (
-                      SELECT b.boardName, MAX(c.recommend) AS max_recommend
-                      FROM board AS b
-                      INNER JOIN contents AS c ON b.boardID = c.boardID
-                      GROUP BY b.boardName
-                  ) AS maxContents 
-                      ON b.boardName = maxContents.boardName AND c.recommend = maxContents.max_recommend`;
-      
-      result = await database.Query(query);
-  }
-  else {
-      const query = `select 
-                          c.contentsNum as contentsNum, 
-                          b.boardName as boardName,
-                          c.contentsTitle as contentsTitle, 
-                          c.content as content, 
-                          c.recommend as recommend, 
-                          c.views as views
-                      from board as b inner join contents as c
-                          on b.boardID = c.boardID
-                      where b.boardID = ?`;
+    if(boardID === 1){
+        const query = `SELECT 
+                        b.boardName as boardName, 
+                        c.contentsNum as contentsNum, 
+                        c.contentsTitle as contentsTitle, 
+                        c.content as content, 
+                        c.recommend as recommend, 
+                        c.views as views
+                    FROM board AS b
+                    INNER JOIN contents AS c ON b.boardID = c.boardID
+                    INNER JOIN (
+                        SELECT b.boardName, MAX(c.recommend) AS max_recommend
+                        FROM board AS b
+                        INNER JOIN contents AS c ON b.boardID = c.boardID
+                        GROUP BY b.boardName
+                    ) AS maxContents 
+                        ON b.boardName = maxContents.boardName AND c.recommend = maxContents.max_recommend`;
+        
+        result = await database.Query(query);
+    }
+    else {
+        const query = `select 
+                            c.contentsNum as contentsNum, 
+                            b.boardName as boardName,
+                            c.contentsTitle as contentsTitle, 
+                            c.content as content, 
+                            c.recommend as recommend, 
+                            c.views as views
+                        from board as b inner join contents as c
+                            on b.boardID = c.boardID
+                        where b.boardID = ?`;
 
-      const value = [boardID];
-      result = await database.Query(query, value);
-      }
+        const value = [boardID];
+        result = await database.Query(query, value);
+        }
 
-  // JSON 형식으로 데이터를 반환
-  res.json(result);
+    // JSON 형식으로 데이터를 반환
+    res.json(result);
 });
 
 
 // 커뮤니티 게시글 select
 app.post("/BoardContentsValue", async (req, res) => {
-  const { contentsNum } = req.body;
+    const { contentsNum } = req.body;
+    const userID = 'user1';
 
-  const contentsQuery = `select 
-                              u.userID as userID,
-                              u.userName as userName,
-                              u.createDate as createDate,
-                              u.profileUrl as profileUrl,
-                              c.contentsNum as contentsNum,
-                              c.contentsTitle as contentsTitle,
-                              c.content as content,
-                              c.recommend as recommend,
-                              c.views as views,
-                              b.boardID as boardID,
-                              b.boardName as boardName
-                          from contents as c 
-                          inner join user as u on c.userID = u.userID
-                          inner join board as b on c.boardID = b.boardID
-                          where c.contentsNum = ?`;
+    const contentsQuery = `select 
+                                u.userID as userID,
+                                u.userName as userName,
+                                u.createDate as createDate,
+                                u.profileUrl as profileUrl,
+                                c.contentsNum as contentsNum,
+                                c.contentsTitle as contentsTitle,
+                                c.content as content,
+                                c.recommend as recommend,
+                                c.contentsDate as contentsDate,
+                                c.views as views,
+                                b.boardID as boardID,
+                                b.boardName as boardName
+                            from contents as c 
+                            inner join user as u on c.userID = u.userID
+                            inner join board as b on c.boardID = b.boardID
+                            where c.contentsNum = ?`;
 
-  const commentQuery = `select 
-                              u.userID as userID,
-                              u.userName as userName,
-                              u.createDate as createDate,
-                              u.profileUrl as profileUrl,
-                              c.commentNum as commentNum,
-                              c.commentContent as commentContent,
-                              c.commentDate as commentDate
-                          from comment as c inner join user as u
-                              on c.userID = u.userID
-                          where c.contentsNum = ?`;
+    const commentQuery = `select 
+                                u.userID as userID,
+                                u.userName as userName,
+                                u.createDate as createDate,
+                                u.profileUrl as profileUrl,
+                                c.commentNum as commentNum,
+                                c.commentContent as commentContent,
+                                c.commentDate as commentDate
+                            from comment as c inner join user as u
+                                on c.userID = u.userID
+                            where c.contentsNum = ?`;
 
-  const fileQuery = `select 
-                          fileUploadNum,
-                          fileUrl,
-                          fileName
-                      from file
-                      where contentsNum = ?`;
-  
-  const value = [contentsNum];
+    const fileQuery = `select 
+                            fileUploadNum,
+                            fileUrl,
+                            fileName
+                        from file
+                        where contentsNum = ?`;
 
-  try {
-      // 두 개의 쿼리를 각각 실행
-      const contentsResult = await database.Query(contentsQuery, value);
-      const commentResult = await database.Query(commentQuery, value);
-      const fileResult = await database.Query(fileQuery, value);
+    const contentsRecommendQuery = `select count(userID) as count from contentsRecommend
+                                    where userID = ? and contentsNum = ?`;
+    
+    const value = [contentsNum];
+    const contentsRecommendvalue = [userID, contentsNum];
 
-      // 두 결과를 객체로 묶어 JSON 형식으로 반환
-      res.json({
-          contentsResult: contentsResult,
-          commentResult: commentResult,
-          fileResult: fileResult
-      });
-  } catch (error) {
-      console.error('Error executing queries:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
+    try {
+        // 두 개의 쿼리를 각각 실행
+        const contentsResult = await database.Query(contentsQuery, value);
+        const commentResult = await database.Query(commentQuery, value);
+        const fileResult = await database.Query(fileQuery, value);
+        const contentsRecommendResult = await database.Query(contentsRecommendQuery, contentsRecommendvalue);
+
+        // 두 결과를 객체로 묶어 JSON 형식으로 반환
+        res.json({
+            contentsResult: contentsResult,
+            commentResult: commentResult,
+            fileResult: fileResult,
+            contentsRecommendResult: contentsRecommendResult
+        });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // 커뮤니티 게시글 댓글 select
 app.post("/CommentSelectValue", async (req, res) => {
-  const { contentsNum } = req.body;
+    const { contentsNum } = req.body;
 
-  const query = `select 
-                      u.userID as userID,
-                      u.userName as userName,
-                      u.createDate as createDate,
-                      u.profileUrl as profileUrl,
-                      c.commentNum as commentNum,
-                      c.commentContent as commentContent,
-                      c.commentDate as commentDate
-                  from comment as c inner join user as u
-                      on c.userID = u.userID
-                  where c.contentsNum = ?`;
-  
-  const value = [contentsNum];
+    const query = `select 
+                        u.userID as userID,
+                        u.userName as userName,
+                        u.createDate as createDate,
+                        u.profileUrl as profileUrl,
+                        c.commentNum as commentNum,
+                        c.commentContent as commentContent,
+                        c.commentDate as commentDate
+                    from comment as c inner join user as u
+                        on c.userID = u.userID
+                    where c.contentsNum = ?`;
+    
+    const value = [contentsNum];
 
-  try {
-      // 두 개의 쿼리를 각각 실행
-      const result = await database.Query(query, value);
+    try {
+        // 두 개의 쿼리를 각각 실행
+        const result = await database.Query(query, value);
 
-      // 두 결과를 객체로 묶어 JSON 형식으로 반환
-      res.json(result);
-  } catch (error) {
-      console.error('Error executing queries:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
+        // 두 결과를 객체로 묶어 JSON 형식으로 반환
+        res.json(result);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // 커뮤니티 게시글 댓글 insert
 app.post("/CommentInsertValue", async (req, res) => {
-  const { comment, contentsNum } = req.body;
-  let userID = 'user1';
+    const { comment, contentsNum } = req.body;
+    let userID = 'user1';
 
-  const query = `insert into comment(commentContent, userID, contentsNum)
-                  values(?, ?, ?)`;
-  
-  const value = [comment, userID, contentsNum];
+    const query = `insert into comment(commentContent, userID, contentsNum)
+                    values(?, ?, ?)`;
+    
+    const value = [comment, userID, contentsNum];
 
-  try {
-      await database.Query(query, value);
-      res.status(200).json({ message: 'Successfully deleted users' });
-  } catch (error) {
-      console.error('Error executing queries:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
+    try {
+        await database.Query(query, value);
+        res.status(200).json({ message: 'Successfully deleted users' });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // 커뮤니티 게시글 댓글 delete
 app.post("/CommentDeleteValue", async (req, res) => {
-  const { commentNum } = req.body;
-  let userID = 'user1';
+    const { commentNum } = req.body;
+    let userID = 'user1';
 
-  const query = `delete from comment
-                  where commentNum = ?`;
-  
-  const value = [commentNum];
+    const query = `delete from comment
+                    where commentNum = ?`;
+    
+    const value = [commentNum];
 
-  try {
-      await database.Query(query, value);
-      res.status(200).json({ message: 'Successfully deleted users' });
-  } catch (error) {
-      console.error('Error executing queries:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
+    try {
+        await database.Query(query, value);
+        res.status(200).json({ message: 'Successfully deleted users' });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // 커뮤니티 게시글 Update
 app.post("/PrevPageValue", async (req, res) => {
-  const { contentsNum } = req.body;
+    const { contentsNum } = req.body;
 
-  const contentsQuery = `select 
-                              contentsNum,
-                              contentsTitle,
-                              content
-                          from contents
-                          where contentsNum = ?`;
+    const contentsQuery = `select 
+                                contentsNum,
+                                contentsTitle,
+                                content
+                            from contents
+                            where contentsNum = ?`;
 
-  const fileQuery = `select 
-                          fileUploadNum,
-                          fileUrl,
-                          fileName
-                      from file
-                      where contentsNum = ?`;
-  
-  const value = [contentsNum];
+    const fileQuery = `select 
+                            fileUploadNum,
+                            fileUrl,
+                            fileName
+                        from file
+                        where contentsNum = ?`;
+    
+    const value = [contentsNum];
 
-  try {
-      // 두 개의 쿼리를 각각 실행
-      const contentsResult = await database.Query(contentsQuery, value);
-      const fileResult = await database.Query(fileQuery, value);
+    try {
+        // 두 개의 쿼리를 각각 실행
+        const contentsResult = await database.Query(contentsQuery, value);
+        const fileResult = await database.Query(fileQuery, value);
 
-      // 두 결과를 객체로 묶어 JSON 형식으로 반환
-      res.json({
-          contentsResult: contentsResult,
-          fileResult: fileResult
-      });
-  } catch (error) {
-      console.error('Error executing queries:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
+        // 두 결과를 객체로 묶어 JSON 형식으로 반환
+        res.json({
+            contentsResult: contentsResult,
+            fileResult: fileResult
+        });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // 커뮤니티 게시글 쓰기 게시판 목록
 app.post("/CheckBoard", async (req, res) => {
-  const query = `SELECT 
-                      boardID,
-                      boardName
-                  FROM 
-                      board
-                  WHERE 
-                      boardName != '모아보기' AND
-                      (boardWrite = 'A' OR boardWrite = 'U')
-                  order by boardID`;
+    const query = `SELECT 
+                        boardID,
+                        boardName
+                    FROM 
+                        board
+                    WHERE 
+                        boardName != '모아보기' AND
+                        (boardWrite = 'A' OR boardWrite = 'U')
+                    order by boardID`;
 
-  try {
-      const result = await database.Query(query);
-      res.json(result);
-  } catch (error) {
-      console.error('Error executing queries:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
+    try {
+        const result = await database.Query(query);
+        res.json(result);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// 커뮤니티 게시글 수정
+app.post("/ContentsUpdate", upload.array('images', 10), async (req, res) => {
+    const { title, contents, contentsNum, imgUrl, delImgName } = req.body;
+    const files = req.files;
+    const userID = 'user1';
+    const fileUrl = `uploadFile/${userID}/`;
+    let dirname = "./application/public/uploadFile/";
+
+    console.log("title, contents, contentsNum, imgUrl === " + title + ", " + contents + ", " + contentsNum + ", " + imgUrl);
+    console.log("imgUrl === " + imgUrl + " | ");
+    console.log("delImgName === " + delImgName + " | ");
+
+    // 파일 정보 저장 로직 추가
+    const fileInfos = files.map(file => ({
+        filename: file.filename,
+        path: file.path,
+        mimetype: file.mimetype,
+        size: file.size
+    }));
+
+    console.log("Number of files uploaded: " + fileInfos.length);
+
+    // 데이터베이스 쿼리
+    const contentQuery = `UPDATE contents SET contentsTitle = ?, content = ? WHERE contentsNum = ?`;
+    const fileInsertQuery = `INSERT INTO file (fileUrl, fileName, userID, contentsNum) VALUES ?`;
+    const fileDeleteQuery = `DELETE FROM file WHERE contentsNum = ? AND fileName IN (?)`;
+
+    try {
+        // 게시글 업데이트
+        await database.Query(contentQuery, [title, contents, contentsNum]);
+
+        // 파일 정보 삽입 (파일이 있을 경우에만)
+        if (fileInfos.length > 0) {
+            const fileValues = fileInfos.map(fileInfo => [
+                fileUrl,
+                fileInfo.filename,
+                userID,
+                contentsNum
+            ]);
+
+            console.log("Inserting files with values: ", fileValues);
+
+            await database.Query(fileInsertQuery, [fileValues])
+        }
+        
+        // delImgName을 배열로 변환
+        let delImgNames = [];
+
+        if (typeof delImgName === 'string') {
+            delImgNames = delImgName.split(',');
+        } else if (Array.isArray(delImgName)) {
+            delImgNames = delImgName;
+        }
+        console.log("delImgNames.length : " + delImgNames.length);
+
+        if (delImgNames.length > 0) {
+            // 게시글 이미지 파일 삭제
+            await database.Query(fileDeleteQuery, [contentsNum, delImgNames]);
+        }
+
+        for (const fileName of delImgNames) {
+            const filePath = path.join(dirname, userID, "/", fileName);
+            try {
+                await fs.promises.unlink(filePath);
+                console.log(`Successfully deleted file: ${filePath}`);
+            } catch (err) {
+                console.error(`Failed to delete file: ${filePath}`, err);
+            }
+        }
+
+        res.json({ success: true, message: "게시글과 파일이 성공적으로 수정되었습니다." });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+
+// 커뮤니티 게시글 삽입
+app.post("/ContentsInsert", upload.array('images', 10), async (req, res) => {
+    const { title, contents, boardID } = req.body;
+    const files = req.files;
+    const userID = 'user1';
+    const fileUrl = `uploadFile/${userID}/`;
+
+    console.log("title, contents, boardID === " + title + ", " + contents + ", " + boardID);
+    console.log("Number of files uploaded: " + files.length);
+
+    // 파일 정보 저장 로직 추가
+    const fileInfos = files.map(file => ({
+        filename: file.filename,
+        path: file.path,
+        mimetype: file.mimetype,
+        size: file.size
+    }));
+
+    // 데이터베이스 쿼리
+    const contentQuery = `INSERT INTO contents (contentsTitle, content, boardID, userID) VALUES (?, ?, ?, ?)`;
+    const fileQuery = `INSERT INTO file (fileUrl, fileName, userID, contentsNum) VALUES ?`;
+
+    try {
+        // 기본 게시글 삽입
+        const result = await database.Query(contentQuery, [title, contents, boardID, userID]);
+        const contentID = result.insertId;
+
+        // 파일 정보 삽입 (파일이 있을 경우에만)
+        if (fileInfos.length > 0) {
+            const fileValues = fileInfos.map(fileInfo => [
+                fileUrl,
+                fileInfo.filename,
+                userID,
+                contentID
+            ]);
+
+            await database.Query(fileQuery, [fileValues]);
+        }
+
+        res.json({ success: true, message: "게시글과 파일이 성공적으로 저장되었습니다." });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// 커뮤니티 게시글 댓글 delete
+app.post("/ContentsDeleteValue", async (req, res) => {
+    const { contentsNum } = req.body;
+    let dirname = "./application/public/";
+
+    const fileQuery = `select fileUrl, fileName
+                        from file
+                        where contentsNum = ?`;
+
+    const deleteQuery = `delete from contents
+                    where contentsNum = ?`;
+    
+    const value = [contentsNum];
+
+    try {
+        const result = await database.Query(fileQuery, value);
+
+        await result.forEach(file => {
+            const filePath = path.join(dirname, file.fileUrl, file.fileName);
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error(`Failed to delete file: ${filePath}`, err);
+                } else {
+                    console.log(`Successfully deleted file: ${filePath}`);
+                }
+            });
+        })
+
+        await database.Query(deleteQuery, value);
+        res.status(200).json({ message: 'Successfully deleted users' });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// 커뮤니티 게시글 좋아요 선택
+app.post("/RecommendClicked", async (req, res) => {
+    const { check, contentsNum } = req.body;
+    let recommendQuery
+    const userID = 'user1';
+
+    console.log("check : " + check);
+
+    if(check) {
+        recommendQuery = `update contents
+                            set recommend = recommend + 1
+                            where contentsNum = ?`;
+        contentsRecommendQuery = `insert into contentsRecommend(userID, contentsNum)
+                                    values(?, ?)`;
+    }
+    else {
+        recommendQuery = `update contents
+                            set recommend = recommend - 1
+                            where contentsNum = ?`;
+        contentsRecommendQuery = `delete from contentsRecommend
+                                    where userID = ? and contentsNum = ?`;
+    }
+    
+    const value = [contentsNum];
+    const contentsRecommendValue = [userID, contentsNum];
+
+    const contentsSelect = `select recommend from contents where contentsNum = ?`;
+
+    try {
+        await database.Query(recommendQuery, value);
+        await database.Query(contentsRecommendQuery, contentsRecommendValue);
+
+        const contentRecommentResult = await database.Query(contentsSelect, value);
+
+        res.json(contentRecommentResult[0]);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// 조회수 올리기
+app.post("/IncrementViews", async (req, res) => {
+    const { contentsNum } = req.body;
+    const userID = 'user1';
+
+    // 조회수 쿼리
+    const viewsQuery = `update contents
+                        set views = views + 1
+                        where contentsNum = ?`;
+    
+    const value = [contentsNum];
+
+    try {
+        // 조회 쿼리
+        await database.Query(viewsQuery, value);
+        res.status(200).json({ message: 'Successfully deleted users' });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 
