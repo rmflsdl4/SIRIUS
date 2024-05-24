@@ -53,7 +53,17 @@ app.use(
 );
 server.listen(port, () => console.log(`Listening on port ${port}`));
 
-// 아두이노
+// 토큰으로 아이디 가져오기
+async function GetUserID(token){
+  try{
+    const session = await sessionStore.get(token);
+
+    if(!session) return session.userID;
+  }
+  catch(error){
+    return error;
+  }
+}
 
 // App 영역
 
@@ -87,19 +97,13 @@ app.post("/login", async (req, res) => {
     });
   }
 });
-const getSessionAsync = util.promisify(sessionStore.get).bind(sessionStore);
 app.post("/addrReq", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
   // 세션 스토어에서 토큰으로 세션을 가져오기
   try {
-    const session = await getSessionAsync(token);
-    if (!session) {
-      return res
-        .status(401)
-        .json({ success: false, message: "유효하지 않은 토큰입니다." });
-    }
-
-    const userID = session.userID;
+    //const session = await getSessionAsync(token);
+    const userID = GetUserID(token);
+    //const userID = session.userID;
     const addr = await returnData.GetAddr(userID);
     if (addr) res.status(200).json({ success: true, address: addr });
     else
