@@ -3,7 +3,7 @@ const axios = require('axios');
 
 let openWeatherMapApiKey = process.env.OPENWEATHERMAP_API_KEY;
 let tavilyApiKey = process.env.TAVILY_API_KEY;
-
+console.log(tavilyApiKey);
 const weatherDescriptionMap = {
     'clear sky': '맑은 하늘',
     'few clouds': '구름 조금',
@@ -155,6 +155,8 @@ const getClosestForecast = (forecasts, specificTime) => {
   };
   const getAnswerFromTavily = async (message) => {
     try {
+
+      console.log(tavilyApiKey);
       const response = await axios.post(
         'https://api.tavily.com/v1/query',
         { query: message },
