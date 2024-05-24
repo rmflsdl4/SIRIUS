@@ -102,7 +102,7 @@ app.post("/addrReq", async (req, res) => {
   // 세션 스토어에서 토큰으로 세션을 가져오기
   try {
     //const session = await getSessionAsync(token);
-    const userID = GetUserID(token);
+    const userID = await GetUserID(token);
     //const userID = session.userID;
     const addr = await returnData.GetAddr(userID);
     if (addr) res.status(200).json({ success: true, address: addr });
