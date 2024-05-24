@@ -5,6 +5,7 @@ const MySQLStore = require("express-mysql-session")(session);
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
+require('dotenv').config();
 
 const port = process.env.PORT || 8001;
 const cors = require("cors");
