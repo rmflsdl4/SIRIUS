@@ -769,6 +769,7 @@ app.post('/chat', async (req, res) => {
   }
 
   try {
+    console.log("세션메세지 " + session.messages);
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
