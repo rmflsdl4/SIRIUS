@@ -5,10 +5,10 @@ let pool = null;
 function DB_Connect() {
   pool = mysql.createPool({
     connectionLimit: 200,
-    host: "azza.gwangju.ac.kr",
+    host: "siriusdb.cmf8kaym3rs4.ap-northeast-2.rds.amazonaws.com",
     user: "dbuser192352",
-    password: "ce1234",
-    database: "db192352",
+    password: "ce123456",
+    database: "siriusDB",
     port: "3306",
     charset: "UTF8MB4",
   });
