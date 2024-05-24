@@ -164,5 +164,4 @@ module.exports = {
     getCurrentWeatherByCityWithMessage : getCurrentWeatherByCityWithMessage,
     getWeatherForecastByLocationWithMessage : getWeatherForecastByLocationWithMessage,
     getCurrentWeatherByLocationWithMessage : getCurrentWeatherByLocationWithMessage,
-    getAnswerFromTavily:getAnswerFromTavily
 };
