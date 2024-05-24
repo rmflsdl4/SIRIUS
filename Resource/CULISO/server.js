@@ -99,11 +99,10 @@ app.post("/login", async (req, res) => {
 });
 app.post("/addrReq", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
-  // 세션 스토어에서 토큰으로 세션을 가져오기
+  
   try {
-    //const session = await getSessionAsync(token);
     const userID = await GetUserID(token);
-    //const userID = session.userID;
+
     const addr = await returnData.GetAddr(userID);
     if (addr) res.status(200).json({ success: true, address: addr });
     else
@@ -121,14 +120,8 @@ app.post("/sexReq", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
   // 세션 스토어에서 토큰으로 세션을 가져오기
   try {
-    const session = await getSessionAsync(token);
-    if (!session) {
-      return res
-        .status(401)
-        .json({ success: false, message: "유효하지 않은 토큰입니다." });
-    }
+    const userID = await GetUserID(token);
 
-    const userID = session.userID;
     const sex = await returnData.GetSex(userID);
     if (sex) res.status(200).json({ success: true, sex: sex });
     else
@@ -146,14 +139,8 @@ app.post("/nameReq", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
   // 세션 스토어에서 토큰으로 세션을 가져오기
   try {
-    const session = await getSessionAsync(token);
-    if (!session) {
-      return res
-        .status(401)
-        .json({ success: false, message: "유효하지 않은 토큰입니다." });
-    }
+    const userID = await GetUserID(token);
 
-    const userID = session.userID;
     const name = await returnData.GetName(userID);
     if (name) res.status(200).json({ success: true, name: name });
     else
@@ -171,14 +158,8 @@ app.post("/updateProfile", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
   const {pw} = req.body;
   try {
-    const session = await getSessionAsync(token);
-    if (!session) {
-      return res
-        .status(401)
-        .json({ success: false, message: "유효하지 않은 토큰입니다." });
-    }
-
-    const userID = session.userID;
+    const userID = await GetUserID(token);
+    
     const result = await profile.InUpdatePage(userID, pw);
     res.status(200).json({success: true, flag: result});
   } catch (error) {
@@ -192,14 +173,8 @@ app.post("/getUserData", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
 
   try {
-    const session = await getSessionAsync(token);
-    if (!session) {
-      return res
-        .status(401)
-        .json({ success: false, message: "유효하지 않은 토큰입니다." });
-    }
+    const userID = await GetUserID(token);
 
-    const userID = session.userID;
     const result = await profile.GetInfo(userID);
     res.status(200).json({success: true, row: result});
   } catch (error) {
@@ -213,13 +188,8 @@ app.post("/updateProfileData", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
   const data = req.body;
   try {
-    const session = await getSessionAsync(token);
-    if (!session) {
-      return res
-        .status(401)
-        .json({ success: false, message: "유효하지 않은 토큰입니다." });
-    }
-    const userID = session.userID;
+    const userID = await GetUserID(token);
+    
     const result = profile.UpdateInfo(
       data.name,
       data.nickName,
@@ -689,8 +659,7 @@ app.post('/chat', async (req, res) => {
 
   const token = req.headers.authorization.replace("Bearer ", "");
   // 세션 스토어에서 토큰으로 세션을 가져오기
-  const sessionToken = await getSessionAsync(token);
-  const userID = sessionToken.userID;
+  const userID = await GetUserID(token);
 
   session.messages.push({ role: 'user', content: message });
   const cityMatch = message.match(/서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주/);
@@ -825,8 +794,7 @@ app.post("/getChatLog", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
   // 세션 스토어에서 토큰으로 세션을 가져오기
   try {
-    const session = await getSessionAsync(token);
-    const userID = session.userID;
+    const userID = await GetUserID(token);
 
     const logData = await returnData.GetChatLog(userID);
     res.status(200).json({success: true, log : logData});
