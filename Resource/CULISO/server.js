@@ -15,6 +15,7 @@ const ChatGPT = require("./ChatGPT.js");
 const axios = require('axios');
 const findingID = require('./FindingID.js');
 const findingPW = require('./FindingPW.js');
+const path = require('path');
 
 // 웹앱 테스트
 app.use(express.static(path.join(__dirname, './application/build')));
@@ -843,7 +844,6 @@ const multer = require('multer');
 
 // **이미지 파일 폴더에 저장**
 var fs = require('fs');
-const path = require('path');
 let folderHeadUrl = "./application/public/uploadFile";
 let folder;
 
