@@ -673,29 +673,7 @@ app.post("/insertTable", async (req, res) => {
 
 
 let openaiApiKey = process.env.OPENAI_API_KEY;
-let tavilyApiKey = process.env.TAVILY_API_KEY;
 
-const getAnswerFromTavily = async (message) => {
-  try {
-
-    console.log(tavilyApiKey);
-    const response = await axios.post(
-      'https://api.tavily.com/v1/query',
-      { query: message },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${tavilyApiKey}`
-        }
-      }
-    );
-
-    return response.data.answer;
-  } catch (error) {
-    console.error('Error fetching data from Tavily:', error.response ? error.response.data : error.message);
-    throw new Error('Tavily API 정보를 가져오는 데 문제가 발생했습니다.');
-  }
-}
 
 app.post('/chat', async (req, res) => {
   const { message, latitude, longitude } = req.body;
@@ -811,14 +789,6 @@ app.post('/chat', async (req, res) => {
     res.json({ response: botMessage });
   } catch (error) {
     console.error('Error with OpenAI API:', error);
-    try {
-      const tavilyMessage = await getAnswerFromTavily(message);
-      session.messages.push({ role: 'assistant', content: tavilyMessage });
-      res.json({ response: tavilyMessage });
-    } catch (tavilyError) {
-      console.error('Error with Tavily API:', tavilyError);
-      res.status(500).send('오픈AI 및 타빌리 API 사용에 문제가 발생했습니다.');
-    }
   }
 
 
