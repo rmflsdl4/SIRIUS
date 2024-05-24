@@ -59,7 +59,7 @@ const getClosestForecast = (forecasts, specificTime) => {
 const getWeatherForecastByCityWithMessage = async (city, specificTime) => {
   try {
     const cityName = cityMap[city] || city;
-    const response = await axios.get(
+    const response = await axios.post(
       `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(cityName)}&appid=${openWeatherMapApiKey}&units=metric`
     );
     const forecast = response.data;
@@ -92,7 +92,7 @@ const getWeatherForecastByCityWithMessage = async (city, specificTime) => {
 const getCurrentWeatherByCityWithMessage = async (city) => {
   try {
     const cityName = cityMap[city] || city;
-    const response = await axios.get(
+    const response = await axios.post(
       `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)}&appid=${openWeatherMapApiKey}&units=metric`
     );
     const weather = response.data;
@@ -108,7 +108,7 @@ const getCurrentWeatherByCityWithMessage = async (city) => {
 
 const getWeatherForecastByLocationWithMessage = async (latitude, longitude, specificTime) => {
   try {
-    const response = await axios.get(
+    const response = await axios.post(
       `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${openWeatherMapApiKey}&units=metric`
     );
     const forecast = response.data;
@@ -140,7 +140,7 @@ const getWeatherForecastByLocationWithMessage = async (latitude, longitude, spec
 
 const getCurrentWeatherByLocationWithMessage = async (latitude, longitude) => {
   try {
-    const response = await axios.get(
+    const response = await axios.post(
       `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${openWeatherMapApiKey}&units=metric`
     );
     const weather = response.data;
