@@ -674,6 +674,8 @@ app.post("/insertTable", async (req, res) => {
 let openaiApiKey = process.env.OPENAI_API_KEY;
 let tavilyApiKey = process.env.TAVILY_API_KEY;
 
+
+
 app.post('/chat', async (req, res) => {
   const { message, latitude, longitude } = req.body;
   const session = req.session;

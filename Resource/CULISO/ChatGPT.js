@@ -152,6 +152,25 @@ const getClosestForecast = (forecasts, specificTime) => {
       throw new Error('현재 날씨 정보를 가져오는 데 문제가 발생했습니다.');
     }
   };
+  const getAnswerFromTavily = async (message) => {
+    try {
+      const response = await axios.post(
+        'https://api.tavily.com/v1/query',
+        { query: message },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${tavilyApiKey}`
+          }
+        }
+      );
+  
+      return response.data.answer;
+    } catch (error) {
+      console.error('Error fetching data from Tavily:', error.response ? error.response.data : error.message);
+      throw new Error('Tavily API 정보를 가져오는 데 문제가 발생했습니다.');
+    }
+  }
 
 
 
@@ -160,5 +179,6 @@ module.exports = {
     getWeatherForecastByCityWithMessage : getWeatherForecastByCityWithMessage,
     getCurrentWeatherByCityWithMessage : getCurrentWeatherByCityWithMessage,
     getWeatherForecastByLocationWithMessage : getWeatherForecastByLocationWithMessage,
-    getCurrentWeatherByLocationWithMessage : getCurrentWeatherByLocationWithMessage
+    getCurrentWeatherByLocationWithMessage : getCurrentWeatherByLocationWithMessage,
+    getAnswerFromTavily:getAnswerFromTavily
 };
