@@ -58,7 +58,7 @@ async function GetUserID(token){
   try{
     const session = await sessionStore.get(token);
     console.log("요청한 아이디: " + session.userID);
-    if(!session) return session.userID;
+    if(session) return session.userID;
   }
   catch(error){
     return error;
