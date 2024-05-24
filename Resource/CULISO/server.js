@@ -57,7 +57,7 @@ server.listen(port, () => console.log(`Listening on port ${port}`));
 async function GetUserID(token){
   try{
     const session = await sessionStore.get(token);
-
+    console.log("요청한 아이디: " + session.userID);
     if(!session) return session.userID;
   }
   catch(error){
