@@ -2,6 +2,7 @@ require('dotenv').config();
 const axios = require('axios');
 
 let openWeatherMapApiKey = process.env.OPENWEATHERMAP_API_KEY;
+let tavilyApiKey = process.env.TAVILY_API_KEY;
 
 const weatherDescriptionMap = {
     'clear sky': '맑은 하늘',
