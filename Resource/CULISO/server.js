@@ -3,6 +3,9 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
 const app = express();
+const http = require("http");
+const server = http.createServer(app);
+
 const port = process.env.PORT || 8001;
 const cors = require("cors");
 const util = require("util");
@@ -16,7 +19,6 @@ const axios = require('axios');
 const findingID = require('./FindingID.js');
 const findingPW = require('./FindingPW.js');
 const path = require('path');
-
 // 웹앱 테스트
 app.use(express.static(path.join(__dirname, './application/build')));
 
@@ -48,7 +50,7 @@ app.use(
     store: sessionStore,
   })
 );
-app.listen(port, () => console.log(`Listening on port ${port}`));
+server.listen(port, () => console.log(`Listening on port ${port}`));
 
 // 아두이노
 
