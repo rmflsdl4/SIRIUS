@@ -8,7 +8,7 @@ const https = require("https");
 const expressSanitizer = require("express-sanitizer");
 require('dotenv').config();
 
-const port = process.env.PORT || 8001;
+const port = process.env.PORT || 443;
 const cors = require("cors");
 const util = require("util");
 const database = require("./database.js");
