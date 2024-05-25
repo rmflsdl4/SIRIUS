@@ -51,7 +51,8 @@ export async function LoginDataSend(event) {
       } else {
         alert(response.message);
       }
-    });
+    })
+    .catch(err => console.log(err));
 }
 export async function RequestUserData(path, data = null) {
   const token = cookies.get("token");
