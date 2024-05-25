@@ -20,7 +20,8 @@
   "scripts": {
     "app": "cd application && npm run start",
     "web": "cd web && npm run start",
-    "server": "nodemon server.js",
+    "devServer" : "nodemon server.js",
+    "server": "node server.js",
     "all": "concurrently \"cd application && npm run start\" \"cd web && npm run start\" \"npm run server\""
   },
   "devDependencies": {
