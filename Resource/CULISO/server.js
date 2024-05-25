@@ -8,7 +8,7 @@ const https = require("https");
 const expressSanitizer = require("express-sanitizer");
 require('dotenv').config();
 
-const port = process.env.PORT || 443;
+const port = process.env.PORT || 8001;
 const cors = require("cors");
 const util = require("util");
 const database = require("./database.js");
@@ -70,7 +70,7 @@ app.use(
   })
 );
 if (options.key && options.cert) {
-  https.createServer(options, app).listen(port, () => {
+  https.createServer(options, app).listen(() => {
     console.log(`HTTPS Listening on port ${port}`);
   });
 }
