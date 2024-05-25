@@ -180,7 +180,7 @@ export const ContentUpload = () => {
               // 받아온 데이터를 상태로 설정
               setContentData(data.contentsResult);
               // 서버에서 받은 파일 경로를 포함한 객체로 설정
-              const files = data.fileResult.map(file => ({fileUrl: `${file.fileUrl}${file.fileName}`}));
+              const files = data.fileResult.map(file => ({fileUrl: `http://13.209.80.79:8001/${file.fileUrl}${file.fileName}`}));
               setRelatedFiles(files);
 
               // 여기서 console.log로 값을 찍어봅니다.

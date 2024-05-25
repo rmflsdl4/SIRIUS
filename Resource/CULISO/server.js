@@ -4,7 +4,7 @@ const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
 const app = express();
 const http = require("http");
-const server = http.createServer(app);
+const expressSanitizer = require("express-sanitizer");
 require('dotenv').config();
 
 const port = process.env.PORT || 8001;
@@ -21,9 +21,15 @@ const findingID = require('./FindingID.js');
 const findingPW = require('./FindingPW.js');
 const path = require('path');
 const multer = require('multer');
-
-// **이미지 파일 폴더에 저장**
 var fs = require('fs');
+
+
+// private key 가져오기
+const options = {
+  key: fs.readFileSync("./config/cert.key"),
+  cert: fs.readFileSync("./config/cert.crt"),
+};
+// **이미지 파일 폴더에 저장**
 const imagePath = './application/public/';
 // 정적 파일 제공 설정
 app.use(express.static(imagePath));
@@ -37,6 +43,7 @@ database.Connect();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressSanitizer());
 // 세션 설정
 const sessionStore = new MySQLStore({
   host: "siriusdb.cmf8kaym3rs4.ap-northeast-2.rds.amazonaws.com",
@@ -58,7 +65,15 @@ app.use(
     store: sessionStore,
   })
 );
-server.listen(port, () => console.log(`Listening on port ${port}`));
+if (fs.existsSync(sslKeyPath) && fs.existsSync(sslCertPath)) {
+  server.createServer(options, app).listen(port, () => {
+    console.log(`HTTPS Listening on port ${port}`);
+  });
+}
+else{
+  server.listen(port, () => console.log(`HTTP Listening on port ${port}`));
+}
+
 
 // 토큰으로 아이디 가져오기
 async function GetUserID(token){
