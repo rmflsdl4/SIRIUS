@@ -24,6 +24,9 @@ const multer = require('multer');
 
 // **이미지 파일 폴더에 저장**
 var fs = require('fs');
+const imagePath = './application/public/';
+// 정적 파일 제공 설정
+app.use(express.static(imagePath));
 // 웹앱 테스트
 app.use(express.static(path.join(__dirname, './application/build')));
 

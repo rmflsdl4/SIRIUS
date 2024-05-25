@@ -216,7 +216,7 @@ export const ContentsComponent = () => {
                                     {relatedFiles.map((file, fileIndex) => (
                                         <ImageContainer key={fileIndex}>
                                             <Image 
-                                                src={GetIcon(`${file.fileUrl}${file.fileName}`)} 
+                                                src={`http://13.209.80.79:8001/${file.fileUrl}${file.fileName}`} 
                                                 alt={`${file.fileName}`} 
                                             />
                                         </ImageContainer>
