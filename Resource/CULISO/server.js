@@ -27,8 +27,8 @@ var fs = require('fs');
 
 // private key 가져오기
 const options = {
-  key: fs.readFileSync("./config/cert.key"),
-  cert: fs.readFileSync("./config/cert.crt"),
+  key: fs.readFileSync("./config/ca.key"),
+  cert: fs.readFileSync("./config/ca.crt"),
 };
 // **이미지 파일 폴더에 저장**
 const imagePath = './application/public/';
