@@ -42,7 +42,8 @@ app.use(express.static(path.join(__dirname, './application/build')));
 database.Connect();
 // app 설정
 app.use(cors({
-  origin: '*'
+  origin: '*',
+  credentials: true
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
