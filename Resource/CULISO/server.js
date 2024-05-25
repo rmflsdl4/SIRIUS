@@ -26,10 +26,10 @@ var fs = require('fs');
 
 
 // private key 가져오기
-const options = {
-  key: fs.readFileSync(null), //"./config/key.pem"
-  cert: fs.readFileSync("./config/cert.pem"),
-};
+// const options = {
+//   key: fs.readFileSync("./config/key.pem"),
+//   cert: fs.readFileSync("./config/cert.pem"),
+// };
 // **이미지 파일 폴더에 저장**
 const imagePath = './application/public/';
 // 정적 파일 제공 설정
@@ -69,16 +69,13 @@ app.use(
     store: sessionStore,
   })
 );
-if (options.key && options.cert) {
-  https.createServer(options, app).listen(() => {
-    console.log(`HTTPS Listening on port ${port}`);
-  });
-}
-else{
-  http.createServer(app).listen(port, () => {
-    console.log(`HTTPS Listening on port ${port}`);
-  });
-}
+// https.createServer(options, app).listen(() => {
+//   console.log(`HTTPS Listening on port ${port}`);
+// });
+
+http.createServer(app).listen(port, () => {
+  console.log(`HTTPS Listening on port ${port}`);
+});
 
 
 // 토큰으로 아이디 가져오기
