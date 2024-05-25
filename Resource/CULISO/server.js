@@ -4,6 +4,7 @@ const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
 const app = express();
 const http = require("http");
+const https = require("https");
 const expressSanitizer = require("express-sanitizer");
 require('dotenv').config();
 
@@ -65,13 +66,15 @@ app.use(
     store: sessionStore,
   })
 );
-if (fs.existsSync(sslKeyPath) && fs.existsSync(sslCertPath)) {
-  server.createServer(options, app).listen(port, () => {
+if (options.key && options.cert) {
+  https.createServer(options, app).listen(port, () => {
     console.log(`HTTPS Listening on port ${port}`);
   });
 }
 else{
-  server.listen(port, () => console.log(`HTTP Listening on port ${port}`));
+  http.createServer(app).listen(port, () => {
+    console.log(`HTTPS Listening on port ${port}`);
+  });
 }
 
 
