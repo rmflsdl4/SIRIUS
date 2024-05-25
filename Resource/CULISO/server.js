@@ -1000,7 +1000,8 @@ app.post("/BoardContentsValue", async (req, res) => {
             contentsResult: contentsResult,
             commentResult: commentResult,
             fileResult: fileResult,
-            contentsRecommendResult: contentsRecommendResult
+            contentsRecommendResult: contentsRecommendResult,
+            sessionUserID: { userID: userID },
         });
     } catch (error) {
         console.error('Error executing queries:', error);
