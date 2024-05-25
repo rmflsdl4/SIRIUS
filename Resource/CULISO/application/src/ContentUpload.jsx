@@ -40,9 +40,13 @@ const MainTitle = styled.div`
 
 const CenterBox = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
+  padding: 0px 20px 20px 20px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto; /* 세로 스크롤 가능하도록 설정 */
 `;
 
 const OptionBox = styled.div`
@@ -64,35 +68,33 @@ const Input = styled.input`
 
 const BG = styled.div`
   display: flex;
-  align-items: center;
   flex-direction: column;
-  
+  align-items: center;
   background: #ffffff;
-  width: 360px;
-  height: 730px;
+  width: 100%;
+  height: 100vh;
 `;
 const TextArea = styled.textarea`
   width: 100%;
-  height: 150px;
   padding: 10px;
   margin-top: 10px;
   border: none;
   resize: none;
+  height: 300px;
 `;
 
 const PhotoButton = styled.button`
   background: none;
   border-radius: 20px;
   padding: 20px;
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 370px;
-  margin-right: 250px;
   font-size: 15px;
-  cursor: pointer;
+  margin-right: 10px; /* ContentsImgBox와 간격을 두기 위해 추가 */
 `;
 
 const ContentsImgBox = styled.div`
@@ -106,6 +108,22 @@ const ImageContainer = styled.div`
   margin-right: 10px;
   position: relative;
 `;
+
+const PhotoUploadBox = styled.div`
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%; /* 부모 요소의 최대 너비 설정 */
+  background: #f8f8f8;
+  padding: 10px;
+  border-radius: 10px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%; /* 전체 너비를 차지하도록 설정 */
+`;
+
 
 export const ContentUpload = () => {
   const navigate = useNavigate();
@@ -309,7 +327,7 @@ export const ContentUpload = () => {
 
 
   return (
-    <div className="div">
+    <div className="CommunicationDiv">
       <TopBar>
         <TopImg onClick={() => Navigate("CommunicationMain")}><img src={GetIcon("closed3.png")} alt="back" /></TopImg>
         {prevPage === "CommunicationMain" && (
@@ -341,8 +359,6 @@ export const ContentUpload = () => {
           {/* 게시글 수정 */}
           {prevPage === "ContentsComponent" && (
             <>
-              {/* <Input type="text" placeholder="제목" defaultValue={contentData[0]?.contentsTitle} />
-              <TextArea placeholder="내용을 입력하세요." defaultValue={contentData[0]?.content} /> */}
               <Input
                 className='contentsTitle'
                 type="text"
@@ -359,11 +375,6 @@ export const ContentUpload = () => {
                 defaultValue={contentData[0]?.content}
               />
 
-              <PhotoButton onClick={()=> handleImageButtonClick()}>
-                <img src={GetIcon("camera.png")} alt="back" />
-                <br/>{relatedFiles.length}/10
-              </PhotoButton>
-
               <input
                 type="file"
                 style={{ display: 'none' }}
@@ -373,21 +384,26 @@ export const ContentUpload = () => {
                 onChange={handleFileChange}
               />
 
-              {relatedFiles.length > 0 && (
-                <ContentsImgBox>
-                  {relatedFiles.map((file, fileIndex) => (
-                    <ImageContainer key={fileIndex}>
-                      <img
-                        src={file instanceof File ? URL.createObjectURL(file) : file.fileUrl}
-                        alt={file instanceof File ? file.name : file.fileName}
-                        style={{ width: "50px" }}
-                      />
-                      <ImgCloseBtn onClick={() => handleRemoveFile(fileIndex)}>&times;</ImgCloseBtn>
-                    </ImageContainer>
-                  ))}
-                </ContentsImgBox>
-              )}
+              <PhotoUploadBox>
+                <PhotoButton onClick={()=> handleImageButtonClick()}>
+                  <img src={GetIcon("camera.png")} alt="back" />
+                </PhotoButton>
 
+                {relatedFiles.length > 0 && (
+                  <ContentsImgBox>
+                    {relatedFiles.map((file, fileIndex) => (
+                      <ImageContainer key={fileIndex}>
+                        <img
+                          src={file instanceof File ? URL.createObjectURL(file) : file.fileUrl}
+                          alt={file instanceof File ? file.name : file.fileName}
+                          style={{ width: "50px", height: "50px"}}
+                        />
+                        <ImgCloseBtn onClick={() => handleRemoveFile(fileIndex)}>&times;</ImgCloseBtn>
+                      </ImageContainer>
+                    ))}
+                  </ContentsImgBox>
+                )}
+                </PhotoUploadBox>
             </>
           )}
 
@@ -419,25 +435,26 @@ export const ContentUpload = () => {
                 onChange={handleFileChange}
               />
 
-              <PhotoButton onClick={()=> handleImageButtonClick()}>
-                <img src={GetIcon("camera.png")} alt="back" />
-                <br/>{relatedFiles.length}/10
-              </PhotoButton>
+              <PhotoUploadBox>
+                <PhotoButton onClick={()=> handleImageButtonClick()}>
+                  <img src={GetIcon("camera.png")} alt="back" />
+                </PhotoButton>
 
-              {relatedFiles.length > 0 && (
-                <ContentsImgBox>
-                  {relatedFiles.map((file, fileIndex) => (
-                    <ImageContainer key={fileIndex}>
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={file.fileName}
-                        style={{ width: "50px" }}
-                      />
-                      <ImgCloseBtn onClick={() => handleRemoveFile(fileIndex)}>&times;</ImgCloseBtn>
-                    </ImageContainer>
-                  ))}
-                </ContentsImgBox>
-              )}
+                {relatedFiles.length > 0 && (
+                  <ContentsImgBox>
+                    {relatedFiles.map((file, fileIndex) => (
+                      <ImageContainer key={fileIndex}>
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={file.fileName}
+                          style={{ width: "50px", height: "50px"}}
+                        />
+                        <ImgCloseBtn onClick={() => handleRemoveFile(fileIndex)}>&times;</ImgCloseBtn>
+                      </ImageContainer>
+                    ))}
+                  </ContentsImgBox>
+                )}
+              </PhotoUploadBox>
             </>
           )}
         </CenterBox>

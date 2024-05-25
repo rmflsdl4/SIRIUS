@@ -49,7 +49,7 @@ export const MainTitle = styled.div`
 `;
 
 export const BoardCommunityContents = styled.div`
-  width: 320px;
+  width: 100%;
   height: auto;
   border-radius: 15px;
   background-color: white;
@@ -237,9 +237,11 @@ export const DropdownItem = styled.div`
 `;
 
 export const ContentsImgBox = styled.div`
-    display: flex;
-    overflow-x: auto;
-    white-space: nowrap;
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%; /* 부모 요소의 최대 너비 설정 */
+  margin-top: 20px;
 `;
 
 export const ImageContainer = styled.div`
@@ -250,6 +252,7 @@ export const ImageContainer = styled.div`
 export const Image = styled.img`
     width: 300px;
     height: 300px;
+    margin-right: 15px;
 `;
 
 export const ImgCloseBtn = styled.button`

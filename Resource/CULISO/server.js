@@ -20,6 +20,10 @@ const axios = require('axios');
 const findingID = require('./FindingID.js');
 const findingPW = require('./FindingPW.js');
 const path = require('path');
+const multer = require('multer');
+
+// **이미지 파일 폴더에 저장**
+var fs = require('fs');
 // 웹앱 테스트
 app.use(express.static(path.join(__dirname, './application/build')));
 
@@ -807,22 +811,20 @@ app.post("/getChatLog", async (req, res) => {
 });
 // ************커뮤니티************
 // 커뮤니티 메인 메뉴
-const multer = require('multer');
-
 // **이미지 파일 폴더에 저장**
-var fs = require('fs');
 let folderHeadUrl = "./application/public/uploadFile";
 let folder;
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
+    destination: async (req, file, cb) => {
         const date = new Date();
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 +1이 필요하며, 두 자리로 포맷
         const day = date.getDate().toString().padStart(2, '0'); // 일은 두 자리로 포맷
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
-        const userId = "user1";
+        const token = req.headers.authorization.replace("Bearer ", "");
+        const userId = await GetUserID(token);
         
         folder = `${folderHeadUrl}/${userId}/`;
 
@@ -868,7 +870,9 @@ app.post("/MenuBarValue", async (req, res) => {
 
 // 유저 정보 select
 app.post("/UserInfoValue", async (req, res) => {
-    let userID = "user1";
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const userID = await GetUserID(token);
+    
     const query = `select 
                         userID,
                         userName,
@@ -934,7 +938,9 @@ app.post("/ContentsValue", async (req, res) => {
 // 커뮤니티 게시글 select
 app.post("/BoardContentsValue", async (req, res) => {
     const { contentsNum } = req.body;
-    const userID = 'user1';
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const userID = await GetUserID(token);
+    console.log("userID : " + userID);
 
     const contentsQuery = `select 
                                 u.userID as userID,
@@ -1032,7 +1038,9 @@ app.post("/CommentSelectValue", async (req, res) => {
 // 커뮤니티 게시글 댓글 insert
 app.post("/CommentInsertValue", async (req, res) => {
     const { comment, contentsNum } = req.body;
-    let userID = 'user1';
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const userID = await GetUserID(token);
+    console.log("userID : " + userID);
 
     const query = `insert into comment(commentContent, userID, contentsNum)
                     values(?, ?, ?)`;
@@ -1051,7 +1059,9 @@ app.post("/CommentInsertValue", async (req, res) => {
 // 커뮤니티 게시글 댓글 delete
 app.post("/CommentDeleteValue", async (req, res) => {
     const { commentNum } = req.body;
-    let userID = 'user1';
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const userID = await GetUserID(token);
+    console.log("userID : " + userID);
 
     const query = `delete from comment
                     where commentNum = ?`;
@@ -1128,9 +1138,13 @@ app.post("/CheckBoard", async (req, res) => {
 app.post("/ContentsUpdate", upload.array('images', 10), async (req, res) => {
     const { title, contents, contentsNum, imgUrl, delImgName } = req.body;
     const files = req.files;
-    const userID = 'user1';
-    const fileUrl = `uploadFile/${userID}/`;
+    let fileUrl;
     let dirname = "./application/public/uploadFile/";
+
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const userID = await GetUserID(token);
+    fileUrl = `uploadFile/${userID}/`;
+    console.log("userID : " + userID);
 
     console.log("title, contents, contentsNum, imgUrl === " + title + ", " + contents + ", " + contentsNum + ", " + imgUrl);
     console.log("imgUrl === " + imgUrl + " | ");
@@ -1202,13 +1216,15 @@ app.post("/ContentsUpdate", upload.array('images', 10), async (req, res) => {
 });
 
 
-
 // 커뮤니티 게시글 삽입
 app.post("/ContentsInsert", upload.array('images', 10), async (req, res) => {
     const { title, contents, boardID } = req.body;
     const files = req.files;
-    const userID = 'user1';
-    const fileUrl = `uploadFile/${userID}/`;
+    let fileUrl;
+
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const userID = await GetUserID(token);
+    fileUrl = `uploadFile/${userID}/`;
 
     console.log("title, contents, boardID === " + title + ", " + contents + ", " + boardID);
     console.log("Number of files uploaded: " + files.length);
@@ -1289,7 +1305,10 @@ app.post("/ContentsDeleteValue", async (req, res) => {
 app.post("/RecommendClicked", async (req, res) => {
     const { check, contentsNum } = req.body;
     let recommendQuery
-    const userID = 'user1';
+    
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const userID = await GetUserID(token);
+    console.log("userID : " + userID);
 
     console.log("check : " + check);
 
@@ -1329,7 +1348,9 @@ app.post("/RecommendClicked", async (req, res) => {
 // 조회수 올리기
 app.post("/IncrementViews", async (req, res) => {
     const { contentsNum } = req.body;
-    const userID = 'user1';
+    
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const userID = await GetUserID(token);
 
     // 조회수 쿼리
     const viewsQuery = `update contents

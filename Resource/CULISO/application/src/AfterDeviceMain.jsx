@@ -102,12 +102,12 @@ const DeviceIcon = styled.img`
 `;
 
 const devicesData = [
-  { name: '전등', iconOn: 'lighting-on.png', iconOff: 'lighting-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
+  { name: '침실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
+  { name: '거실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
   { name: '에어컨', iconOn: 'air-conditioner-on.png', iconOff: 'air-conditioner-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
   { name: '커튼', iconOn: 'curtain-on.png', iconOff: 'curtain-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
   { name: '보일러', iconOn: 'water-heater-on.png', iconOff: 'water-heater-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
   { name: 'TV', iconOn: 'tv-on.png', iconOff: 'tv-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
-  { name: '로봇 청소기', iconOn: 'cleaner-on.png', iconOff: 'cleaner-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
 ];
 
 const cookies = new Cookies();
@@ -144,7 +144,7 @@ export const AfterDeviceMain = () => {
 
   return (
     <div className="afterdeviceMain">
-      <div className="div">
+      <div className="deviceMainDiv">
         <CenterBox align="space-between" top="50px">
           <Label>
             <Text

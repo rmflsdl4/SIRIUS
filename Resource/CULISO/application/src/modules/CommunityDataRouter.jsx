@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { Cookies } from "react-cookie";
 
-const host = 'http://43.201.82.237'; // 추후에 Let's Encrypt 와 같은 사이트에서 SSL 발급받아서 https로 접근해서 보안을 강화해야 함
+const host = 'http://13.209.80.79'; // 추후에 Let's Encrypt 와 같은 사이트에서 SSL 발급받아서 https로 접근해서 보안을 강화해야 함
 const port = '8001';
 const url = host + ":" + port + "/";
+const cookies = new Cookies();
 
 export const MenuBarValue = () => {
     return new  Promise((resolve, reject) => {
@@ -31,11 +33,20 @@ export const MenuBarValue = () => {
 
 export const UserInfoValue = () => {
     return new  Promise((resolve, reject) => {
+        const token = cookies.get("token");
+
+        if (!token) {
+            console.log("토큰 없음");
+            return;
+        }
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // 쿠키 값을 Authorization 헤더에 포함하여 전송
+        };
+
         fetch(url + "UserInfoValue", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: headers,
         })
         .then(response => {
             if (!response.ok) {
@@ -82,11 +93,20 @@ export const ContentsValue = (boardID) => {
 
 export const BoardContentsValue = (contentsNum) => {
     return new  Promise((resolve, reject) => {
+        const token = cookies.get("token");
+
+        if (!token) {
+            console.log("토큰 없음");
+            return;
+        }
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // 쿠키 값을 Authorization 헤더에 포함하여 전송
+        };
+
         fetch(url + "BoardContentsValue", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: headers,
             body: JSON.stringify({ contentsNum })
         })
         .then(response => {
@@ -134,11 +154,20 @@ export const CommentSelectValue = (contentsNum) => {
 
 export const CommentInsertValue = (comment, contentsNum) => {
     return new  Promise((resolve, reject) => {
+        const token = cookies.get("token");
+
+        if (!token) {
+            console.log("토큰 없음");
+            return;
+        }
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // 쿠키 값을 Authorization 헤더에 포함하여 전송
+        };
+
         fetch(url + "CommentInsertValue", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: headers,
             body: JSON.stringify({ comment, contentsNum })
         })
         .then(response => {
@@ -160,11 +189,20 @@ export const CommentInsertValue = (comment, contentsNum) => {
 
 export const CommentDeleteValue = (commentNum) => {
     return new  Promise((resolve, reject) => {
+        const token = cookies.get("token");
+
+        if (!token) {
+            console.log("토큰 없음");
+            return;
+        }
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // 쿠키 값을 Authorization 헤더에 포함하여 전송
+        };
+
         fetch(url + "CommentDeleteValue", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: headers,
             body: JSON.stringify({ commentNum })
         })
         .then(response => {
@@ -237,11 +275,22 @@ export const CheckBoard = () => {
 
 export const ContentsControl = (path, formData) => {
     return new  Promise((resolve, reject) => {
+        const token = cookies.get("token");
+
+        if (!token) {
+            console.log("토큰 없음");
+            return;
+        }
+        const headers = {
+            "Authorization": `Bearer ${token}`, // 쿠키 값을 Authorization 헤더에 포함하여 전송
+        };
+
         console.log(path);
         console.log(formData);
 
         fetch(url + path, {
             method: 'POST',
+            headers: headers,
             body: formData
         })
         .then(response => {
@@ -289,11 +338,20 @@ export const ContentsDeleteValue = (contentsNum) => {
 
 export const RecommendClicked = (check, contentsNum) => {
     return new  Promise((resolve, reject) => {
+        const token = cookies.get("token");
+
+    if (!token) {
+        console.log("토큰 없음");
+        return;
+    }
+    const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, // 쿠키 값을 Authorization 헤더에 포함하여 전송
+    };
+
         fetch(url + "RecommendClicked", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: headers,
             body: JSON.stringify({ check, contentsNum })
         })
         .then(response => {
@@ -315,11 +373,20 @@ export const RecommendClicked = (check, contentsNum) => {
 
 export const IncrementViews = (contentsNum) => {
     return new  Promise((resolve, reject) => {
+        const token = cookies.get("token");
+
+        if (!token) {
+            console.log("토큰 없음");
+            return;
+        }
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // 쿠키 값을 Authorization 헤더에 포함하여 전송
+        };
+
         fetch(url + "IncrementViews", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: headers,
             body: JSON.stringify({ contentsNum })
         })
         .then(response => {

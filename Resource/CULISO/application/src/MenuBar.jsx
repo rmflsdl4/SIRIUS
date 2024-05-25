@@ -11,7 +11,7 @@ const MenuBox = styled.div`
   position: fixed;
   bottom: 0;
   padding: 10px 0;
-  margin-bottom: 15px;
+  margin-bottom: 15px; 
   
 `;
 
@@ -23,16 +23,16 @@ export const MenuBar = () => {
     return (
         <MenuBox>
             <MenuItem>
-                <MenuButton iconName={"home-white2.png"} dFlag={false} />
+                <MenuButton name={"우리집"} iconName={"home-white2.png"} dFlag={false} />
             </MenuItem>
             <MenuItem>
-                <MenuButton iconName={"community-white.png"} dFlag={false} />
+                <MenuButton name={"게시판"} iconName={"community-white2.png"} dFlag={true} path={"communicationMain"} />
             </MenuItem>
             <MenuItem>
-                <MenuButton iconName={"robot-white.png"} dFlag={true} path={"culi"} />
+                <MenuButton name={"큐리챗"} iconName={"chatbot-white7.png"} dFlag={true} path={"culi"} />
             </MenuItem>
             <MenuItem>
-                <MenuButton iconName={"profile-white2.png"} dFlag={true} path={"myPage"} />
+                <MenuButton name={"내정보"} iconName={"profile-white3.png"} dFlag={true} path={"myPage"} />
             </MenuItem>
         </MenuBox>
     );

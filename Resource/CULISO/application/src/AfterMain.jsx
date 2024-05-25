@@ -78,7 +78,7 @@ function LogOut() {
   alert("다음에도 큐리소를 이용해 주세요 !");
   window.location.href = "/login";
 }
-export const AfterMain = () => {
+export const AfterMain = () => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
   const [address, setAddress] = useState();
 
   useEffect(() => {

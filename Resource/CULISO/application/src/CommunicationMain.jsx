@@ -16,6 +16,7 @@ const MenuBar = styled.div`
   height: 7%;
   padding: 0 50px;  // 양쪽 패딩 추가
 `;
+
 const MenuText = styled.span`
   font-size: 0.8em;
   color: white;
@@ -26,6 +27,7 @@ const CenterBox  = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  width: 100%;
   height: 79%;
   overflow-y: scroll; /* 부모 요소에 가로 스크롤 활성화 */
   scrollbar-width: none;
@@ -66,11 +68,11 @@ export const CommunicationMain = () => {
     };
 
     return (
-        <div className="div">
+        <div className="CommunicationDiv">
           <TopBar>
-            <TopImg><img src={GetIcon("backArrow.png")}></img></TopImg>
+            <TopImg><img src={GetIcon("backArrow.png")} onClick={() => goToPage("afterMain")}></img></TopImg>
             <MainTitle>CULISO</MainTitle>
-            <TopImg><img src={GetIcon("alarm.png")}></img></TopImg>
+            <TopImg><img src={GetIcon("alarm.png")} style={{ width: "22px" }}></img></TopImg>
           </TopBar>
 
           <TopBar>

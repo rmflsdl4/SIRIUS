@@ -7,9 +7,10 @@ import { ContentsComponent } from "./ContentsComponent";
 
 const CommunityContentsBox = styled.div`
   margin: 10px 0;
+  width: 100%;
 `;
 const CommunityContents = styled.div`
-  width: 320px;
+  width: 100%;
   height: 150px;
   border-radius: 15px;
   background-color: white;
@@ -110,7 +111,7 @@ export const AllContents = ({ boardID }) => {
     }
 
     return(
-        <div className="communityBoard">
+        <div className="communityBoard" style={{ width: "100%" }}>
             {contents.map((board, index) => (
                 <CommunityContentsBox key={index}>
                     {boardID === 1 && (

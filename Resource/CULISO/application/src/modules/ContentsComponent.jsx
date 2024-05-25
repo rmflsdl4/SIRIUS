@@ -38,6 +38,7 @@ export const ContentsComponent = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);    // 게시글 수정, 삭제 드롭다운 메뉴
     const [isRecommendClicked, setIsRecommendClicked] = useState(false);    // 좋아요 클릭
     const [like, setLike] = useState();                             // 좋아요 값 초기화
+    const [sessionUserID, setSessionUserID] = useState();
 
     // GET 방식으로 contentsNum 가져오기
     const query = new URLSearchParams(useLocation().search);
@@ -68,6 +69,10 @@ export const ContentsComponent = () => {
                 setNewContents(data.contentsResult);
                 setComment(data.commentResult);
                 setRelatedFiles(data.fileResult);
+                setSessionUserID(data.sessionUserID.userID);
+
+                console.log("setSessionUserID : " + data.sessionUserID.userID);
+                console.log("sessionUserID : " + sessionUserID);
                 
                 if (data.contentsResult.length > 0) {
                     setLike(data.contentsResult[0].recommend);
@@ -163,15 +168,24 @@ export const ContentsComponent = () => {
     };
 
     return (
-        <div className="div" onClick={() => screenTouch()}>
+        <div className="CommunicationDiv" onClick={() => screenTouch()}>
             <TopBar>
                 <LeftContainer>
                     <TopImg><img src={GetIcon("backArrow.png")} onClick={()=> goToPage("CommunicationMain")}></img></TopImg>
                     <MainTitle style={{ marginLeft: "15px" }}>{newContents[0]?.boardName}</MainTitle>
                 </LeftContainer>
                 <RightContainer>
-                    <TopImg style={{ marginRight: "15px" }}><img src={GetIcon("alarm.png")}></img></TopImg>
-                    <TopImg onClick={toggleDropdown}><img src={GetIcon("dropdown.png")}></img></TopImg>
+                    <TopImg style={{ marginRight: "15px" }}><img src={GetIcon("alarm.png")} style={{ width: "22px" }}></img></TopImg>
+                    {newContents.map((content, index) => (
+                        <div key={index}>
+                            {content.userID === sessionUserID && (
+                                <TopImg onClick={toggleDropdown}>
+                                    <img src={GetIcon("dropdown.png")} alt="Dropdown Icon" />
+                                </TopImg>
+                            )}
+                        </div>
+                    ))}
+
                     {isDropdownOpen && (
                         <DropdownMenu>
                             <DropdownItem onClick={() => goToPage(`contentUpload?contentsNum=${sendContentsNum}&prevPage=ContentsComponent`)}>게시글 수정하기</DropdownItem>
@@ -245,14 +259,16 @@ export const ContentsComponent = () => {
                                             </UserInfo>
                                             <Comment>{comment.commentContent}</Comment>
                                         </TableCell>
-                                        <TableCell>
-                                            <img 
-                                                src={GetIcon("closed4.png")} 
-                                                alt="Closed Icon" 
-                                                style={{ width: "13px" }} 
-                                                onClick={()=> {openModal(); setDeleteComment(comment.commentNum)}}
-                                            />
-                                        </TableCell>
+                                        {comment.userID === sessionUserID && (
+                                            <TableCell>
+                                                <img 
+                                                    src={GetIcon("closed4.png")} 
+                                                    alt="Closed Icon" 
+                                                    style={{ width: "13px" }} 
+                                                    onClick={() => { openModal(); setDeleteComment(comment.commentNum) }}
+                                                />
+                                            </TableCell>
+                                        )}
                                     </TableRow>
                                 ))}
                             </CommentTable>
