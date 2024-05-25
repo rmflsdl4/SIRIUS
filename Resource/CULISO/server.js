@@ -41,10 +41,6 @@ app.use(express.static(path.join(__dirname, './application/build')));
 // 데이터베이스 연결
 database.Connect();
 // app 설정
-app.use(cors({
-  origin: '*',
-  credentials: true
-}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressSanitizer());
