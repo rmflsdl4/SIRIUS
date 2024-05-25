@@ -21,7 +21,7 @@
   "scripts": {
     "app": "cd application && npm run start",
     "web": "cd web && npm run start",
-    "devServer": "nodemon server.js",
+    "devServer": "nodemon server.js --ssl --ssl-key rootca.key --ssl-cert rootca.crt",
     "server": "node server.js",
     "all": "concurrently \"cd application && npm run start\" \"cd web && npm run start\" \"npm run server\""
   },
