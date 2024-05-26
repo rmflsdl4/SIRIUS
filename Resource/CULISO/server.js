@@ -71,7 +71,7 @@ app.use(
     store: sessionStore,
   })
 );
-https.createServer(options, app).listen(() => {
+https.createServer(options, app).listen(port, () => {
   console.log(`HTTPS Listening on port ${port}`);
 });
 
