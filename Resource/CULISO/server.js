@@ -27,12 +27,12 @@ const path = require('path');
 const multer = require('multer');
 var fs = require('fs');
 const flag = false;
-const keyPath = flag ? "./config/key.pem" : null;
-const certPath = flag ? "./config/cert.pem" : null;
+const keyPath = flag ? fs.readFileSync("./config/key.pem") : null;
+const certPath = flag ? fs.readFileSync("./config/cert.pem") : null;
 // private key 가져오기
 const options = {
-  key: fs.readFileSync(keyPath),
-  cert: fs.readFileSync(certPath),
+  key: keyPath,
+  cert: certPath,
 };
 // **이미지 파일 폴더에 저장**
 const imagePath = './application/public/';
