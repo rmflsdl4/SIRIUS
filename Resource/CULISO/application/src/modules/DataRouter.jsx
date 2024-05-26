@@ -40,6 +40,7 @@ export async function LoginDataSend(event) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+    mode: 'no-cors'
   })
     .then((response) => response.json())
     .then((response) => {
