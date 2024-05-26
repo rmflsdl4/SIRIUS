@@ -1,3 +1,6 @@
+// 환경 변수에서 HTTPS 인증서 검증 비활성화 (개발 환경에서만 사용)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
@@ -23,7 +26,6 @@ const findingPW = require('./FindingPW.js');
 const path = require('path');
 const multer = require('multer');
 var fs = require('fs');
-
 
 // private key 가져오기
 const options = {

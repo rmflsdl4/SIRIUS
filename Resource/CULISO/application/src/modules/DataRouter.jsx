@@ -2,7 +2,7 @@ import { Cookies } from "react-cookie";
 import moment from 'moment';
 
 const host = "https://13.209.80.79"; // 추후에 Let's Encrypt 와 같은 사이트에서 SSL 발급받아서 https로 접근해서 보안을 강화해야 함
-const port = "8001";
+const port = "443";
 const url = host + ":" + port + "/";
 const cookies = new Cookies();
 
@@ -40,7 +40,6 @@ export async function LoginDataSend(event) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-    mode: 'no-cors'
   })
     .then((response) => response.json())
     .then((response) => {
