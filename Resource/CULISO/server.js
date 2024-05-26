@@ -1,5 +1,3 @@
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -27,7 +25,7 @@ const path = require('path');
 const multer = require('multer');
 var fs = require('fs');
 
-// 플래구로 https 설정
+// 플래그로 https 설정
 const flag = true;
 const keyPath = flag ? fs.readFileSync("./config/privkey.pem") : null;
 const certPath = flag ? fs.readFileSync("./config/fullchain.pem") : null;
@@ -36,6 +34,7 @@ const options = {
   key: keyPath,
   cert: certPath,
 };
+app.use(cors());
 // **이미지 파일 폴더에 저장**
 const imagePath = './application/public/';
 // 정적 파일 제공 설정
@@ -47,7 +46,6 @@ app.use(express.static(path.join(__dirname, './application/build')));
 // 데이터베이스 연결
 database.Connect();
 // app 설정
-app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressSanitizer());
