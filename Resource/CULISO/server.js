@@ -26,7 +26,7 @@ const multer = require('multer');
 var fs = require('fs');
 
 // 플래그로 https 설정
-const flag = true;
+const flag = false;
 const keyPath = flag ? fs.readFileSync("./config/privkey.pem") : null;
 const certPath = flag ? fs.readFileSync("./config/fullchain.pem") : null;
 // private key 가져오기
