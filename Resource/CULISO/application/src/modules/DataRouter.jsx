@@ -3,8 +3,8 @@ import moment from 'moment';
 
 //13.209.80.79
 const host = "http://culiso.duckdns.org"; // 추후에 Let's Encrypt 와 같은 사이트에서 SSL 발급받아서 https로 접근해서 보안을 강화해야 함
-const port = "8001";
-const url = host + ":" + port + "/";
+const port = "8000";
+const url = host + "/";
 const cookies = new Cookies();
 
 export function SignUpDataSend(data) {

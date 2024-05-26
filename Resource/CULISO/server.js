@@ -28,10 +28,10 @@ const multer = require('multer');
 var fs = require('fs');
 
 // private key 가져오기
-const options = {
-  key: fs.readFileSync("./config/key.pem"),
-  cert: fs.readFileSync("./config/cert.pem"),
-};
+// const options = {
+//   key: fs.readFileSync("./config/key.pem"),
+//   cert: fs.readFileSync("./config/cert.pem"),
+// };
 // **이미지 파일 폴더에 저장**
 const imagePath = './application/public/';
 // 정적 파일 제공 설정
@@ -43,12 +43,7 @@ app.use(express.static(path.join(__dirname, './application/build')));
 // 데이터베이스 연결
 database.Connect();
 // app 설정
-app.use(cors({
-  origin: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressSanitizer());
