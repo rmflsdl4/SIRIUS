@@ -73,15 +73,15 @@ app.use(
   })
 );
 if(options.key && options.cert){
-  const server = https.createServer(options, app).listen(port, () => {
+  https.createServer(options, app).listen(port, hostname, () => {
     const address = server.address();
-    console.log(`HTTPS Listening on ${address.address}:${address.port}`);
+    console.log(`HTTPS Listening on ${ }:${address.port}`);
   });
 }
 else{
-  const server = http.createServer(app).listen(port, () => {
+  http.createServer(app).listen(port, hostname, () => {
     const address = server.address();
-    console.log(`HTTP Listening on ${address.address}:${address.port}`);
+    console.log(`HTTP Listening on ${hostname}:${address.port}`);
   });
 }
 
@@ -99,7 +99,9 @@ async function GetUserID(token){
 }
 
 // App 영역
-
+app.get("/",function(req,res){
+  res.render('index');
+});
 app.post("/signUp", (req) => {
   const data = req.body;
   signUp.Add_NewUser(
