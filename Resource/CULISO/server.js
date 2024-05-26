@@ -26,12 +26,14 @@ const findingPW = require('./FindingPW.js');
 const path = require('path');
 const multer = require('multer');
 var fs = require('fs');
-
+const flag = false;
+const keyPath = flag ? "./config/key.pem" : null;
+const certPath = flag ? "./config/cert.pem" : null;
 // private key 가져오기
-// const options = {
-//   key: fs.readFileSync("./config/key.pem"),
-//   cert: fs.readFileSync("./config/cert.pem"),
-// };
+const options = {
+  key: fs.readFileSync(keyPath),
+  cert: fs.readFileSync(certPath),
+};
 // **이미지 파일 폴더에 저장**
 const imagePath = './application/public/';
 // 정적 파일 제공 설정
