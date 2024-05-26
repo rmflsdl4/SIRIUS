@@ -74,12 +74,12 @@ app.use(
 );
 if(options.key && options.cert){
   https.createServer(options, app).listen(port, () => {
-    console.log(`HTTPS Listening on ${address.port}`);
+    console.log(`HTTPS Listening on ${port}`);
   });
 }
 else{
   http.createServer(app).listen(port, () => {
-    console.log(`HTTP Listening on ${address.port}`);
+    console.log(`HTTP Listening on ${port}`);
   });
 }
 
