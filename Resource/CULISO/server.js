@@ -75,7 +75,7 @@ app.use(
 if(options.key && options.cert){
   https.createServer(options, app).listen(port, hostname, () => {
     const address = server.address();
-    console.log(`HTTPS Listening on ${ }:${address.port}`);
+    console.log(`HTTPS Listening on ${hostname}:${address.port}`);
   });
 }
 else{
