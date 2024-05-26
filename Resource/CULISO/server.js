@@ -26,7 +26,9 @@ const findingPW = require('./FindingPW.js');
 const path = require('path');
 const multer = require('multer');
 var fs = require('fs');
-const flag = false;
+
+// 플래구로 https 설정
+const flag = true;
 const keyPath = flag ? fs.readFileSync("./config/key.pem") : null;
 const certPath = flag ? fs.readFileSync("./config/cert.pem") : null;
 // private key 가져오기
