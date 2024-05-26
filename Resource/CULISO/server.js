@@ -1,6 +1,3 @@
-// 환경 변수에서 HTTPS 인증서 검증 비활성화 (개발 환경에서만 사용)
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
@@ -11,7 +8,7 @@ const https = require("https");
 const expressSanitizer = require("express-sanitizer");
 require('dotenv').config();
 
-const port = process.env.PORT || 443;
+const port = process.env.PORT || 8001;
 const cors = require("cors");
 const util = require("util");
 const database = require("./database.js");
@@ -28,10 +25,10 @@ const multer = require('multer');
 var fs = require('fs');
 
 // private key 가져오기
-const options = {
-  key: fs.readFileSync("./config/key.pem"),
-  cert: fs.readFileSync("./config/cert.pem"),
-};
+// const options = {
+//   key: fs.readFileSync("./config/key.pem"),
+//   cert: fs.readFileSync("./config/cert.pem"),
+// };
 // **이미지 파일 폴더에 저장**
 const imagePath = './application/public/';
 // 정적 파일 제공 설정
@@ -73,13 +70,13 @@ app.use(
     store: sessionStore,
   })
 );
-https.createServer(options, app).listen(port, () => {
-  console.log(`HTTPS Listening on port ${port}`);
-});
-
-// http.createServer(app).listen(port, () => {
-//   console.log(`HTTP Listening on port ${port}`);
+// https.createServer(options, app).listen(port, () => {
+//   console.log(`HTTPS Listening on port ${port}`);
 // });
+
+http.createServer(app).listen(port, () => {
+  console.log(`HTTP Listening on port ${port}`);
+});
 
 
 // 토큰으로 아이디 가져오기
