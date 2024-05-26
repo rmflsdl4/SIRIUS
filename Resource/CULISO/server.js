@@ -29,8 +29,8 @@ var fs = require('fs');
 
 // 플래구로 https 설정
 const flag = true;
-const keyPath = flag ? fs.readFileSync("./config/key.pem") : null;
-const certPath = flag ? fs.readFileSync("./config/cert.pem") : null;
+const keyPath = flag ? fs.readFileSync("/etc/letsencrypt/live/culiso.duckdns.org/privkey.pem") : null;
+const certPath = flag ? fs.readFileSync("/etc/letsencrypt/live/culiso.duckdns.org/fullchain.pem") : null;
 // private key 가져오기
 const options = {
   key: keyPath,
