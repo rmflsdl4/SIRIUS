@@ -73,15 +73,15 @@ app.use(
   })
 );
 if(options.key && options.cert){
-  https.createServer(options, app).listen(port, hostname, () => {
+  https.createServer(options, app).listen(port, () => {
     const address = server.address();
-    console.log(`HTTPS Listening on ${hostname}:${address.port}`);
+    console.log(`HTTPS Listening on ${address.port}`);
   });
 }
 else{
-  http.createServer(app).listen(port, hostname, () => {
+  http.createServer(app).listen(port, () => {
     const address = server.address();
-    console.log(`HTTP Listening on ${hostname}:${address.port}`);
+    console.log(`HTTP Listening on ${address.port}`);
   });
 }
 
