@@ -74,13 +74,13 @@ app.use(
   })
 );
 if(options.key && options.cert){
-  https.createServer(options, app).listen(port, () => {
+  const server = https.createServer(options, app).listen(port, () => {
     const address = server.address();
     console.log(`HTTPS Listening on ${address.address}:${address.port}`);
   });
 }
 else{
-  http.createServer(app).listen(port, () => {
+  const server = http.createServer(app).listen(port, () => {
     const address = server.address();
     console.log(`HTTP Listening on ${address.address}:${address.port}`);
   });
