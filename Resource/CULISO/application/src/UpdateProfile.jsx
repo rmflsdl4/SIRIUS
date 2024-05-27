@@ -12,6 +12,7 @@ const CenterBox = styled.div`
     flex-direction: column;
     margin-top: 30px;
 `;
+
 const CuliImg = styled.img`
     height: 51px;
     left: 155px;
@@ -101,8 +102,8 @@ const Input = ({ icon, t, n, ph, v, onChange, readFlag, max  }) => {
 };
 const Culi = () => {
     return (
-        <div>
-            <CuliImg src={GetIcon("robot-white.png")} />
+        <CenterBox>
+            <CuliImg src={GetIcon("chatbot-white7.png")} />
             <CuliMsg>
                 <div className="overlap-group-wrapper">
                     <div className="overlap-group-2">
@@ -113,7 +114,7 @@ const Culi = () => {
                     </div>
                 </div>
             </CuliMsg>
-        </div>
+        </CenterBox>
     )
 }
 
@@ -199,7 +200,7 @@ export const UpdateProfile = () => {
             <div className="div">
                 <CenterBox>
                     {!flag ? (
-                        <div>
+                        <div className="nanda">
                             <Culi/>
                             <Form onSubmit={InfoOn} method="post" top="250px">
                                 <EmptyContainer top="30px">

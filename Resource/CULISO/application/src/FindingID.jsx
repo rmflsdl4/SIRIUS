@@ -235,7 +235,7 @@ export const FindingID = () => {
                             <Polygon src="polygon.png" alt="Polygon" />
                             <div className="text-wrapper-7">회원님의 아이디를 찾았어요!</div>
                         </Overlap>
-                        <Robot src="robot-white.png" alt="Robot" />
+                        <Robot src="chatbot-white7.png" alt="Robot" />
                     </div>
                 </div>
             ) : (

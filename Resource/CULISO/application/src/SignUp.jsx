@@ -673,7 +673,7 @@ export const SignUp = () => {
               />
               <span id="signUpText">{msg}</span>
             </div>
-            <img className="robot" alt="Robot" src={GetIcon("robot-white.png")} />
+            <img className="robot" alt="Robot" src={GetIcon("chatbot-white7.png")} />
           </div>
           <div className="box">
             {isForm && (

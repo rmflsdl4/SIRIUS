@@ -8,10 +8,10 @@ import { BackButton, UpdateButton } from "./modules/Navigate";
 // css
 const CenterBox = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 100px;
+  width: 100%;
+  height: 80%;
 `;
 const Text = styled.span`
   height: ${(props) => props.height};

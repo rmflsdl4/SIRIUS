@@ -62,7 +62,7 @@ const Text = styled.span`
 const Culi = () => {
   return (
       <CuliBox>
-          <CuliImg src={GetIcon("robot-white.png")} />
+          <CuliImg src={GetIcon("chatbot-white7.png")} />
           <CuliMsg>
               <div className="overlap-group-wrapper">
                   <div className="overlap-group-2">
