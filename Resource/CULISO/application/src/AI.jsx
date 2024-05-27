@@ -228,6 +228,10 @@ export function AI() {
     const stopListeningIndicator = () => {
         setChatLog((prevChatLog) => prevChatLog.filter((message) => message.text !== '음성 인식 중'));
     };
+    const transcript = (event) => {
+        const transcript = event.results[0][0].transcript;
+        getLocationAndSendMessage(transcript);
+    }
     return (
         <div className="ai">
             <div className='aiDiv'>
@@ -254,19 +258,22 @@ export function AI() {
                             ))}
                         </div>
                     </div>
-                    <div className="chat-input">
-                    <input
-                        type="text"
-                        value={message}
-                        onChange={handleInputChange}
-                        onKeyPress={handleKeyPress}
-                        placeholder="메시지를 입력하세요.."
-                    />
-                    <img src={GetIcon("send-blue.png")} width="30px"onClick={getLocationAndSendMessage} alt=''/>
-                    {listening ? 
-                    '듣는 중...': 
-                    <img src={GetIcon("voice-blue.png")} width="30px" alt='' onMouseDown={startListening} onMouseUp={stopListening} disabled={listening}/>}
+                    <div className='chat-box'>
+                        <div className="chat-input">
+                            <input
+                                type="text"
+                                value={message}
+                                onChange={handleInputChange}
+                                onKeyPress={handleKeyPress}
+                                placeholder="메시지를 입력하세요.."
+                            />
+                            <img src={GetIcon("send-blue.png")} style={{right: '0', marginRight: '60px'}} width="30px"onClick={transcript} alt=''/>
+                            {listening ? 
+                            '듣는 중...': 
+                            <img src={GetIcon("voice-blue.png")} style={{right: '0', marginRight: '15px'}} width="30px" alt='' onMouseDown={startListening} onMouseUp={stopListening} disabled={listening}/>}
+                        </div>
                     </div>
+                    
                 </div>
             </div>
         </div>

@@ -919,47 +919,69 @@ app.post("/UserInfoValue", async (req, res) => {
 
 // 커뮤니티 select
 app.post("/ContentsValue", async (req, res) => {
-    const { boardID } = req.body;
-    let result;
+  const { boardID } = req.body;
+  let result;
 
-    if(boardID === 1){
-        const query = `SELECT 
-                        b.boardName as boardName, 
-                        c.contentsNum as contentsNum, 
-                        c.contentsTitle as contentsTitle, 
-                        c.content as content, 
-                        c.recommend as recommend, 
-                        c.views as views
-                    FROM board AS b
-                    INNER JOIN contents AS c ON b.boardID = c.boardID
-                    INNER JOIN (
-                        SELECT b.boardName, MAX(c.recommend) AS max_recommend
-                        FROM board AS b
-                        INNER JOIN contents AS c ON b.boardID = c.boardID
-                        GROUP BY b.boardName
-                    ) AS maxContents 
-                        ON b.boardName = maxContents.boardName AND c.recommend = maxContents.max_recommend`;
-        
-        result = await database.Query(query);
-    }
-    else {
-        const query = `select 
-                            c.contentsNum as contentsNum, 
-                            b.boardName as boardName,
-                            c.contentsTitle as contentsTitle, 
-                            c.content as content, 
-                            c.recommend as recommend, 
-                            c.views as views
-                        from board as b inner join contents as c
-                            on b.boardID = c.boardID
-                        where b.boardID = ?`;
+  if(boardID === 1){
+      const query = `SELECT 
+                      b.boardName as boardName, 
+                      c.contentsNum as contentsNum, 
+                      c.contentsTitle as contentsTitle, 
+                      c.content as content, 
+                      c.recommend as recommend, 
+                      c.views as views,
+                      c.contentsDate as contentsDate
+                  FROM board AS b
+                  INNER JOIN contents AS c ON b.boardID = c.boardID
+                  INNER JOIN (
+                      SELECT b.boardName, MAX(c.recommend) AS max_recommend
+                      FROM board AS b
+                      INNER JOIN contents AS c ON b.boardID = c.boardID
+                      GROUP BY b.boardName
+                  ) AS maxContents 
+                      ON b.boardName = maxContents.boardName AND c.recommend = maxContents.max_recommend
+                  order by contentsDate desc`;
+      
+      result = await database.Query(query);
+  }
+  else {
+      const query = `select 
+                          c.contentsNum as contentsNum, 
+                          b.boardName as boardName,
+                          c.contentsTitle as contentsTitle, 
+                          c.content as content, 
+                          c.recommend as recommend, 
+                          c.views as views,
+                          c.contentsDate as contentsDate
+                      from board as b inner join contents as c
+                          on b.boardID = c.boardID
+                      where b.boardID = ?
+                      order by contentsDate desc`;
 
-        const value = [boardID];
-        result = await database.Query(query, value);
-        }
+      const value = [boardID];
+      result = await database.Query(query, value);
+  }
 
-    // JSON 형식으로 데이터를 반환
-    res.json(result);
+  for (let i = 0; i < result.length; i++) {
+      const contentsNum = result[i].contentsNum;
+      const fileQuery = `SELECT fileUrl, fileName 
+                          FROM file 
+                          WHERE contentsNum = ? 
+                          ORDER BY fileUploadNum ASC 
+                          LIMIT 1`;
+      const fileResult = await database.Query(fileQuery, [contentsNum]);
+
+      if (fileResult.length > 0) {
+          result[i].fileUrl = fileResult[0].fileUrl;
+          result[i].fileName = fileResult[0].fileName;
+      } else {
+          result[i].fileUrl = null;
+          result[i].fileName = null;
+      }
+  }
+
+  // JSON 형식으로 데이터를 반환
+  res.json(result);
 });
 
 

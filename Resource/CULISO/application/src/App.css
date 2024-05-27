@@ -92,12 +92,19 @@
   margin-left: 20px; /* 들여쓰기 적용 */
 }
 
+.chat-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
 .chat-input {
   display: flex;
   align-items: center;
   background-color: white;
   border-radius: 7px;
-  margin: 20px;
+  width: 90%;
+  position: relative;
 }
 
 .chat-input input {
@@ -120,6 +127,7 @@
 }
 .chat-input img{
   margin: 0 7px;
+  position: absolute;
 }
 .chat-input button:hover {
   background-color: #0056b3;

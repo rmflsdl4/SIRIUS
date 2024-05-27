@@ -6,18 +6,17 @@ import { useNavigate } from "react-router-dom";
 import { ContentsComponent } from "./ContentsComponent";
 
 const CommunityContentsBox = styled.div`
-  margin: 10px 0;
-  width: 100%;
+  margin: 10px 20px 20px 20px;
+  width: calc(100% - 40px); // 전체 너비에서 좌우 마진 20px을 뺀 값
 `;
 const CommunityContents = styled.div`
-  width: 100%;
+  display: flex;
+  width: 100%; // 전체 너비에서 좌우 마진 20px을 뺀 값
   height: 150px;
   border-radius: 15px;
   background-color: white;
-  display: flex;
-  flex-direction: column;
-  margin: 0 0 10px 0;
-  box-sizing: border-box;  // 패딩을 포함한 너비와 높이를 계산
+  margin: 10px 0; // 왼쪽과 오른쪽에 각각 10px의 마진 추가
+  box-sizing: border-box; // 패딩을 포함한 너비와 높이를 계산
 `;
 
 const ContentsTitle = styled.div`
@@ -37,6 +36,8 @@ const Contents = styled.div`
   white-space: normal;
   word-wrap: break-word;
   box-sizing: border-box;  // 패딩을 포함한 너비와 높이를 계산
+  word-wrap: break-word;
+  overflow: hidden;
 `;
 
 const Element = styled.div`
@@ -69,6 +70,25 @@ const TitleLeft = styled.div`
   display: flex;
   align-items: center;
   font-size: inherit;  
+`;
+
+const CommunityContentsLeft = styled.div`
+  flex: 3; // 더 넓게 설정
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; // 내용물이 상하로 고르게 배치되도록 설정
+  box-sizing: border-box;
+  width: 60%;
+`;
+const CommunityContentsRight = styled.div`
+  flex: 1; // 더 좁게 설정
+  display: flex;
+  justify-content: center; // 중앙 정렬
+  align-items: center; // 중앙 정렬
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 15px;
+  width: 40%;
 `;
 
 // const TitleRight = styled.span`
@@ -110,6 +130,16 @@ export const AllContents = ({ boardID }) => {
       }
     }
 
+    const truncateText = (text, maxLength) => {
+      if (!text) {
+        return '';
+      }
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
+      }
+      return text;
+    };
+
     return(
         <div className="communityBoard" style={{ width: "100%" }}>
             {contents.map((board, index) => (
@@ -125,14 +155,25 @@ export const AllContents = ({ boardID }) => {
                         </MenuTitle>
                     )}
                     <CommunityContents onClick={()=> {goToPage(`contentsComponent?contentsNum=${board.contentsNum}`); viewsCount(board.contentsNum)}}>
+                      <CommunityContentsLeft style={{ width: board.fileUrl && board.fileName ? '60%' : '100%' }}>
                         <ContentsTitle>{board.contentsTitle}</ContentsTitle>
-                        <Contents>{board.content}</Contents> 
+                        <Contents>{truncateText(board.content, 120)}</Contents> 
                         <Element>
                             <RecommendAndContentsNum><img src={GetIcon("recommend.png")} alt="Recommend Icon" /></RecommendAndContentsNum>
                             <RecommendAndContentsNum>{board.recommend}</RecommendAndContentsNum>
                             <RecommendAndContentsNum><img src={GetIcon("views2.png")} alt="Comments Icon" /></RecommendAndContentsNum>
                             <RecommendAndContentsNum>{board.views}</RecommendAndContentsNum>
                         </Element>
+                      </CommunityContentsLeft>
+                      {board.fileUrl && board.fileName && (
+                        <CommunityContentsRight>
+                          <img 
+                            src={GetIcon(`https://culiso.duckdns.org/${board.fileUrl}${board.fileName}`)} 
+                            alt={`${board.fileName}`}
+                            style={{ width: '90px', height: '90px' }}
+                          />
+                        </CommunityContentsRight>
+                      )}
                     </CommunityContents>
                 </CommunityContentsBox>
             ))}

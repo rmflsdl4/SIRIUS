@@ -81,6 +81,7 @@ export const ContentsValue = (boardID) => {
             return response.json(); // JSON 데이터로 응답을 파싱
         })
         .then(data => {
+            console.log(data[0]);
             resolve(data);
             // 성공적으로 데이터를 받았을 때 처리
             // console.log("Result: ", data);

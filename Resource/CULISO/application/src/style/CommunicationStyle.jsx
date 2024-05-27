@@ -49,15 +49,16 @@ export const MainTitle = styled.div`
 `;
 
 export const BoardCommunityContents = styled.div`
-  width: 100%;
+  width: calc(100% - 40px);
   height: auto;
   border-radius: 15px;
   background-color: white;
   display: flex;
   flex-direction: column;
-  margin: 0 0 20px 0;
+  margin: 0 20px 20px 20px;
   box-sizing: border-box;  // 패딩을 포함한 너비와 높이를 계산
 `;
+
 
 export const ContentsTitle = styled.div`
   width: 100%;
@@ -237,22 +238,22 @@ export const DropdownItem = styled.div`
 `;
 
 export const ContentsImgBox = styled.div`
-  display: flex;
+  /* display: flex;
   overflow-x: auto;
-  white-space: nowrap;
-  max-width: 100%; /* 부모 요소의 최대 너비 설정 */
+  white-space: nowrap; */
+  /* max-width: 100%; 부모 요소의 최대 너비 설정 */
   margin-top: 20px;
 `;
 
 export const ImageContainer = styled.div`
-    display: inline-block;
-    margin-right: 10px;
+    /* display: inline-block;
+    margin-right: 10px; */
 `;
 
 export const Image = styled.img`
     width: 300px;
     height: 300px;
-    margin-right: 15px;
+    /* margin-right: 20px; */
 `;
 
 export const ImgCloseBtn = styled.button`

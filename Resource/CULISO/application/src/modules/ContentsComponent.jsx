@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import GetIcon from "./GetIcon";
 import styled from 'styled-components';
-import { AllContents } from "./getCommunityMainData";
 import { TopBar, BoardCenterBox, ProfileBox, ProfileImg, ProfileCon, UserName, SubText, TopImg, MainTitle,
         BoardCommunityContents, ContentsTitle, Contents, Element, RecommendAndContentsNum, LeftContainer,
         RightContainer, CommentTable, TableRow, TableCell, UserInfo, Comment, UserNick, WriteDate, CommentWriteBox,
@@ -10,14 +9,24 @@ import { TopBar, BoardCenterBox, ProfileBox, ProfileImg, ProfileCon, UserName, S
 } from "../style/CommunicationStyle";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BoardContentsValue, CommentInsertValue, CommentSelectValue, CommentDeleteValue, ContentsDeleteValue, RecommendClicked, IncrementViews } from "./CommunityDataRouter";
-import Modal from "react-modal"
-import { CustomStyles } from "./ModalComponent"
+import Modal from "react-modal";
+import { CustomStyles } from "./ModalComponent";
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+import 'swiper/css';
 import "../style.css";
 
 Modal.setAppElement('#root'); // 'root'는 React 앱의 루트 요소의 ID입니다.
 
 const ClickableImg  = styled.img`
     filter: ${({ clicked }) => (clicked ? 'invert(50%) sepia(100%) saturate(500%) hue-rotate(150deg)' : 'none')};
+`;
+
+const StyledSwiperSlide = styled(SwiperSlide)`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 `;
 
 export const ContentsComponent = () => {
@@ -213,14 +222,21 @@ export const ContentsComponent = () => {
                             {content.content}
                             {relatedFiles.length > 0 && (
                                 <ContentsImgBox>
-                                    {relatedFiles.map((file, fileIndex) => (
-                                        <ImageContainer key={fileIndex}>
-                                            <Image 
-                                                src={`https://culiso.duckdns.org/${file.fileUrl}${file.fileName}`} 
-                                                alt={`${file.fileName}`} 
-                                            />
-                                        </ImageContainer>
-                                    ))}
+                                    <Swiper
+                                        spaceBetween={50}
+                                        slidesPerView={1}
+                                        onSlideChange={() => console.log('slide change')}
+                                        onSwiper={(swiper) => console.log(swiper)}
+                                    >
+                                        {relatedFiles.map((file, fileIndex) => (
+                                            <StyledSwiperSlide key={fileIndex}>
+                                                <Image 
+                                                    src={`https://culiso.duckdns.org/${file.fileUrl}${file.fileName}`} 
+                                                    alt={`${file.fileName}`}
+                                                />
+                                            </StyledSwiperSlide>
+                                        ))}
+                                    </Swiper>
                                 </ContentsImgBox>
                             )}
                         </Contents> 
