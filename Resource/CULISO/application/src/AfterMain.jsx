@@ -7,6 +7,8 @@ import styled from "styled-components";
 import "./style.css";
 import { useState, useEffect } from "react";
 import { GetAddress, RequestAddress } from "./modules/DataRouter";
+import { Plugins } from '@capacitor/core';
+const { Geolocation, Permissions } = Plugins;
 // css
 const CenterBox = styled.div`
   display: flex;
@@ -73,6 +75,9 @@ const MenuBox = styled.div`
 `;
 const cookies = new Cookies();
 
+
+
+
 function LogOut() {
   cookies.remove("token");
   alert("다음에도 큐리소를 이용해 주세요 !");
@@ -80,7 +85,7 @@ function LogOut() {
 }
 export const AfterMain = () => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
   const [address, setAddress] = useState();
-
+  const [flag, setFlag] = useState(true);
   useEffect(() => {
     // 주소 얻는 메소드
     const GetAddr = async () => {
@@ -91,7 +96,117 @@ export const AfterMain = () => {
 
     GetAddr();
   }, []);
+  useEffect(() => {
+    //requestPermissions();
+    checkPermissions();
+  }, []);
 
+  // 권한 확인 및 요청
+  const checkPermissions = async () => {
+    try {
+      // 현재 권한 상태 확인
+      const microphonePermission = await checkMicrophonePermission();
+      const locationPermission = await checkLocationPermission();
+
+      // 권한이 허용되지 않은 경우에만 요청
+      if (!microphonePermission) {
+        await requestMicrophonePermission();
+      }
+
+      if (!locationPermission) {
+        await requestLocationPermission();
+      }
+    } catch (error) {
+      console.error('권한 확인 및 요청 중 오류가 발생했습니다:', error);
+    }
+  };
+  // // 위치 및 음성 권한 요청
+  // const requestPermissions = async () => {
+  //   try {
+  //     if(flag){
+  //       checkPermissions();
+  //       await requestMicrophonePermission();
+  //       await requestLocationPermission();
+  //     }
+
+  //     setFlag(false);
+  //   } catch (error) {
+  //     console.error('권한 요청 중 오류가 발생했습니다:', error);
+  //   }
+  // };
+
+// 음성 권한 요청
+const requestMicrophonePermission = async () => {
+  try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log('마이크 권한이 부여되었습니다.');
+      return true;
+  } catch (error) {
+      console.error('마이크 권한을 요청하는 중 오류가 발생했습니다:', error);
+      return false;
+  }
+};
+
+// 위치 권한 요청
+const requestLocationPermission = () => {
+  return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+              (position) => {
+                  console.log('위치 정보:', position);
+                  resolve(position);
+              },
+              (error) => {
+                  console.error('위치 정보를 가져오는 중 오류 발생:', error);
+                  reject(error);
+              },
+              {
+                  enableHighAccuracy: true,
+                  timeout: 5000,
+                  maximumAge: 0
+              }
+          );
+      } else {
+          console.error('이 브라우저는 위치 정보를 지원하지 않습니다.');
+          reject(new Error('이 브라우저는 위치 정보를 지원하지 않습니다.'));
+      }
+  });
+};
+  // 음성 권한 확인
+  const checkMicrophonePermission = async () => {
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log('마이크 권한이 이미 부여되었습니다.');
+      return true;
+    } catch (error) {
+      console.log('마이크 권한이 부여되지 않았습니다.');
+      return false;
+    }
+  };
+
+  // 위치 권한 확인
+  const checkLocationPermission = () => {
+    return new Promise((resolve, reject) => {
+      if (navigator.permissions) {
+        navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+          if (result.state === 'granted') {
+            console.log('위치 정보 권한이 이미 부여되었습니다.');
+            resolve(true);
+          } else {
+            console.log('위치 정보 권한이 부여되지 않았습니다.');
+            resolve(false);
+          }
+        }).catch((error) => {
+          console.error('위치 정보 권한 확인 중 오류 발생:', error);
+          reject(error);
+        });
+      } else {
+        console.error('이 브라우저는 위치 정보를 지원하지 않습니다.');
+        reject(new Error('이 브라우저는 위치 정보를 지원하지 않습니다.'));
+      }
+    });
+  };
+  
   return (
     <div className="afterMain">
       <div className="afterMainDiv">

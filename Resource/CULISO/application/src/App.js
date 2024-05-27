@@ -17,6 +17,7 @@ import { AfterDeviceMain } from "./AfterDeviceMain";
 import { CommunicationMain } from "./CommunicationMain";
 import { ContentsComponent } from "./modules/ContentsComponent";
 import { ContentUpload } from "./ContentUpload";
+
 // 스타일 파일 가져오기
 import "./style.css";
 // Screen 컴포넌트를 렌더링하는 함수
