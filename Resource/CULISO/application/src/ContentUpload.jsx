@@ -143,6 +143,8 @@ export const ContentUpload = () => {
   const [checkItemsIsOpen, setCheckItemsIsOpen] = useState(false);                    // 입력 요소 팝업 상태
   const fileInputRef = useRef(null);
   const [checkedBoardIDs, setCheckedBoardIDs] = useState([]);
+  const [defaultTitle, setDefaultTitle] = useState(contentData[0]?.contentsTitle || '');            // 수정 제목 입력 디폴트 값
+  const [defaultContents, setDefaultContents] = useState(contentData[0]?.content || '');            // 수정 내용 입력 디폴트 값
   const [sendContents, setSendContents] = useState({
     boardID: '',
     title: '',
@@ -183,6 +185,10 @@ export const ContentUpload = () => {
               const files = data.fileResult.map(file => ({fileUrl: `https://culiso.duckdns.org/${file.fileUrl}${file.fileName}`}));
               setRelatedFiles(files);
 
+              // 수정 전 입력 요소들 저장
+              setDefaultTitle(data.contentsResult[0]?.contentsTitle);
+              setDefaultContents(data.contentsResult[0]?.content);
+
               // 여기서 console.log로 값을 찍어봅니다.
               console.log("Related files:", files);
             }
@@ -203,8 +209,24 @@ export const ContentUpload = () => {
       console.log("완료 버튼 클릭 - 업데이트 함수");
       try {
         const formData = new FormData();
-        formData.append('title', sendContents.title);
-        formData.append('contents', sendContents.contents);
+
+        if(sendContents.title === '' && sendContents.contents !== '') {
+          formData.append('title', defaultTitle);
+          formData.append('contents', sendContents.contents);
+        }
+        else if(sendContents.title !== '' && sendContents.contents === '') {
+          formData.append('title', sendContents.title);
+          formData.append('contents', defaultContents);
+        }
+        else if(sendContents.title === '' && sendContents.contents === '') {
+          formData.append('title', defaultTitle);
+          formData.append('contents', defaultContents);
+        }
+        else {
+          formData.append('title', sendContents.title);
+          formData.append('contents', sendContents.contents);
+        }
+
         formData.append('contentsNum', sendContentsNum);
 
         relatedFiles.forEach((file, index) => {

@@ -588,3 +588,11 @@ input[type="reset"] {
   text-align: center;
   top: 30px;
 }
+
+
+.nanda{
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

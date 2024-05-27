@@ -10,21 +10,19 @@ const CenterBox = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-top: 30px;
 `;
 
 const CuliImg = styled.img`
     height: 51px;
     left: 155px;
     object-fit: cover;
-    position: absolute;
     top: 150px;
     width: 50px;
+    margin-bottom: 7px;
 `;
 const CuliMsg = styled.div`
     height: 66px;
     left: 43px;
-    position: absolute;
     top: 201px;
     width: 276px;
 `;
@@ -202,7 +200,7 @@ export const UpdateProfile = () => {
                     {!flag ? (
                         <div className="nanda">
                             <Culi/>
-                            <Form onSubmit={InfoOn} method="post" top="250px">
+                            <Form onSubmit={InfoOn} method="post" top="50px">
                                 <EmptyContainer top="30px">
                                     <InContainer>
                                         <Input icon={"closed-padlock-gray.png"} t={"password"} n={"pw"} ph={"비밀번호"}/>

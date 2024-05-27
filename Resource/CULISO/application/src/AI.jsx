@@ -26,9 +26,6 @@ export function AI() {
             if (typingIntervalRef.current) {
                 clearInterval(typingIntervalRef.current);
             }
-            if (recognitionRef.current) {
-                recognitionRef.current.stop();
-            }
         };
     }, []);
     useEffect(() => {
@@ -59,9 +56,21 @@ export function AI() {
             didCancel = true;
         };
     }, []);
-    const startListening = () => {
+
+    const requestMicrophonePermission = async () => {
+        try {
+            await navigator.mediaDevices.getUserMedia({ audio: true });
+            console.log('마이크 권한이 부여되었습니다.');
+        } catch (error) {
+            console.error('마이크 권한을 요청하는 중 오류가 발생했습니다:', error);
+        }
+    };
+    
+    const startListening = async () => {
         if (!('webkitSpeechRecognition' in window)) return;
     
+        await requestMicrophonePermission();
+        
         const recognition = new window.webkitSpeechRecognition();
         recognitionRef.current = recognition;
         recognition.lang = 'ko-KR';
@@ -76,49 +85,59 @@ export function AI() {
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
             setMessage(transcript);
-            updateChatLog({ sender: 'user', text: transcript });
-            getLocationAndSendMessage(transcript);
+            sendMessage(transcript);
             setListening(false);
-            stopListeningIndicator();
         };
+    
     
         recognition.onerror = (event) => {
             console.error('음성 인식 오류:', event.error);
             setListening(false);
-            stopListeningIndicator();
         };
     
         recognition.onend = () => {
-            setListening(false);
-            stopListeningIndicator();
+        setListening(false);
+        setChatLog((prevChatLog) => prevChatLog.filter((message) => message.text !== '음성 인식 중...'));
         };
+    
     
         recognition.start();
     };
     const stopListening = () => {
         if (recognitionRef.current) {
-          recognitionRef.current.stop();
-          recognitionRef.current = null;
+        recognitionRef.current.stop();
         }
-      };
-      const getLocationAndSendMessage = (transcript) => {
+    }
+
+    const getLocationPermission = () => {
         if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
+            navigator.geolocation.getCurrentPosition(
             (position) => {
-              const { latitude, longitude } = position.coords;
-              sendMessageWithLocation(transcript, latitude, longitude);
+                const { latitude, longitude } = position.coords;
+                console.log('위치 정보:', position);
+                sendMessageWithLocation(message, latitude, longitude);
             },
             (error) => {
-              console.error('위치 정보를 가져오는 중 오류 발생:', error);
-              sendMessage(transcript, false);
+                console.error('위치 정보를 가져오는 중 오류 발생:', error);
+                sendMessage(message);
             },
-            { timeout: 10000, enableHighAccuracy: true } // 타임아웃 및 고정밀도 설정
-          );
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            }
+            );
         } else {
-          console.error('이 브라우저는 위치 정보를 지원하지 않습니다.');
-          sendMessage(transcript, false);
+            console.error('이 브라우저는 위치 정보를 지원하지 않습니다.');
+            sendMessage(message);
         }
-      };
+    };
+    
+    const getLocationAndSendMessage = () => {
+        getLocationPermission();
+    };
+    
+
 
     const sendMessageWithLocation = async (msg, latitude, longitude) => {
         if (!msg.trim()) return;
@@ -126,30 +145,29 @@ export function AI() {
         updateChatLog({ sender: 'user', text: msg });
 
         try {
-        startTypingIndicator();
+            startTypingIndicator();
 
-        const token = cookies.get("token");
+            const token = cookies.get("token");
 
-        if (!token) {
-            console.log("토큰 없음");
-            return false; // 토큰이 없을 때 false 반환
-        }
+            if (!token) {
+                console.log("토큰 없음");
+                return false; // 토큰이 없을 때 false 반환
+            }
 
-        const response = await axios.post('https://culiso.duckdns.org/chat', { message: msg, latitude, longitude }, {headers : {"Authorization": `Bearer ${token}`}});
-        stopTypingIndicator();
-        handleBotResponse(response.data.response);
+            const response = await axios.post('https://culiso.duckdns.org/chat', { message: msg, latitude, longitude }, {headers : {"Authorization": `Bearer ${token}`}});
+            stopTypingIndicator();
+            handleBotResponse(response.data.response);
         } catch (error) {
-        stopTypingIndicator();
-        console.error('위치 정보를 포함하여 메시지를 보내는 중 오류 발생:', error);
-        alert('위치 정보를 포함하여 메시지를 보내는 중 오류가 발생했습니다.');
+            stopTypingIndicator();
+            console.error('위치 정보를 포함하여 메시지를 보내는 중 오류 발생:', error);
+            alert('위치 정보를 포함하여 메시지를 보내는 중 오류가 발생했습니다.');
         }
     };
 
-    const sendMessage = async (msg, isVoice = false) => {
+    const sendMessage = async (msg) => {
         if (!msg.trim()) return;
-        if (!isVoice) {
-            updateChatLog({ sender: 'user', text: msg });
-        }
+
+        updateChatLog({ sender: 'user', text: msg });
 
         try {
             startTypingIndicator();
@@ -276,7 +294,6 @@ export function AI() {
                                     onMouseUp={stopListening}
                                     onTouchStart={startListening} 
                                     onTouchEnd={stopListening}
-                                    onTouchCancel={stopListening}
                                     />
                                 )
                             }
