@@ -74,6 +74,7 @@ const BG = styled.div`
   width: 100%;
   height: 100vh;
 `;
+
 const TextArea = styled.textarea`
   width: 100%;
   padding: 10px;
@@ -133,8 +134,6 @@ export const ContentUpload = () => {
       navigate(url);
   }
 
-  const [shareInfo, setShareInfo] = useState(true);
-  const [socialSquare, setSocialSquare] = useState(false);
   const [contentData, setContentData] = useState([]);
   const [boardData, setBoardData] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
@@ -142,9 +141,10 @@ export const ContentUpload = () => {
   const [isOpen, setIsOpen] = useState(false);                                        // 팝업 상태
   const [checkItemsIsOpen, setCheckItemsIsOpen] = useState(false);                    // 입력 요소 팝업 상태
   const fileInputRef = useRef(null);
-  const [checkedBoardIDs, setCheckedBoardIDs] = useState([]);
   const [defaultTitle, setDefaultTitle] = useState(contentData[0]?.contentsTitle || '');            // 수정 제목 입력 디폴트 값
   const [defaultContents, setDefaultContents] = useState(contentData[0]?.content || '');            // 수정 내용 입력 디폴트 값
+  const [changeTitle, setChangeTitle] = useState(false);                              // 수정 제목 변경 시
+  const [changeContents, setChangeContents] = useState(false);                        // 수정 내용 변경 시
   const [sendContents, setSendContents] = useState({
     boardID: '',
     title: '',
@@ -210,15 +210,15 @@ export const ContentUpload = () => {
       try {
         const formData = new FormData();
 
-        if(sendContents.title === '' && sendContents.contents !== '') {
-          formData.append('title', defaultTitle);
-          formData.append('contents', sendContents.contents);
-        }
-        else if(sendContents.title !== '' && sendContents.contents === '') {
+        if(changeTitle === true && changeContents === false) {
           formData.append('title', sendContents.title);
           formData.append('contents', defaultContents);
         }
-        else if(sendContents.title === '' && sendContents.contents === '') {
+        else if(changeTitle === false && changeContents === true) {
+          formData.append('title', defaultTitle);
+          formData.append('contents', sendContents.contents);
+        }
+        else if(changeTitle === false && changeContents === false) {
           formData.append('title', defaultTitle);
           formData.append('contents', defaultContents);
         }
@@ -305,6 +305,13 @@ export const ContentUpload = () => {
       ...prevState,
       [name]: value
     }));
+
+    // 제목, 내용 입력했는지 파악
+    if (name === 'title') {
+      setChangeTitle(true);
+    } else if (name === 'contents') {
+      setChangeContents(true);
+    }
   };
 
   // 글 생성 게시판 선택

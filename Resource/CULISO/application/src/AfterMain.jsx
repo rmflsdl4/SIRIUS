@@ -95,7 +95,7 @@ export const AfterMain = () => {
   return (
     <div className="afterMain">
       <div className="afterMainDiv">
-        <CenterBox align="space-between" top="50px">
+        <CenterBox align="space-between" top="15px">
           <Label>
             <Text
               size="12px"
@@ -128,8 +128,8 @@ export const AfterMain = () => {
             />
           </RightContainer>
         </CenterBox>
-        <CenterBox align="center" top="200px">
-          <EmptyContainer>
+        <CenterBox align="center" style={{width:"100vw", height:"100vh"}}>
+          <EmptyContainer style={{marginBottom:"35.28px"}}>
             <Img src={GetIcon("home.png")} width={"134px"} top={"25px"} />
             <br />
             <br />
