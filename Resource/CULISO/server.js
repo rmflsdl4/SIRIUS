@@ -112,6 +112,7 @@ app.post("/signUp", (req) => {
   );
 });
 app.post("/login", async (req, res) => {
+  console.log("로그인 경로 ");
   const data = req.body;
   const result = await login.Check(data.id, data.pw);
   if (result) {
