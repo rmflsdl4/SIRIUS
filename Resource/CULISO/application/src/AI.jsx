@@ -17,7 +17,7 @@ export function AI() {
 
     useEffect(() => {
         if (!('webkitSpeechRecognition' in window)) {
-        alert('이 브라우저는 음성 인식을 지원하지 않습니다. 구글 크롬을 사용해주세요.');
+            alert('이 브라우저는 음성 인식을 지원하지 않습니다. 구글 크롬을 사용해주세요.');
         }
     }, []);
 
@@ -28,6 +28,7 @@ export function AI() {
             }
         };
     }, []);
+
     useEffect(() => {
         const chatLogElement = document.querySelector('.chat-log');
         chatLogElement.scrollTop = chatLogElement.scrollHeight;
@@ -35,19 +36,19 @@ export function AI() {
         let didCancel = false;
 
         const fetchChatLog = async () => {
-        try {
-            const data = await GetChatLog();
-            console.log(data);
-            if (!didCancel) {
-                for(let i = 0; i < data.length; i++){
-                    updateChatLog({ sender: data[i].senderType === 'U' ? 'user' : 'bot', text: data[i].userChatContext });
+            try {
+                const data = await GetChatLog();
+                console.log(data);
+                if (!didCancel) {
+                    for (let i = 0; i < data.length; i++) {
+                        updateChatLog({ sender: data[i].senderType === 'U' ? 'user' : 'bot', text: data[i].userChatContext });
+                    }
+                }
+            } catch (error) {
+                if (!didCancel) {
+                    console.error('Failed to fetch chat log:', error);
                 }
             }
-        } catch (error) {
-            if (!didCancel) {
-                console.error('Failed to fetch chat log:', error);
-            }
-        }
         };
 
         fetchChatLog();
@@ -65,79 +66,95 @@ export function AI() {
             console.error('마이크 권한을 요청하는 중 오류가 발생했습니다:', error);
         }
     };
-    
+
     const startListening = async () => {
         if (!('webkitSpeechRecognition' in window)) return;
-    
+
         await requestMicrophonePermission();
-        
+
         const recognition = new window.webkitSpeechRecognition();
         recognitionRef.current = recognition;
         recognition.lang = 'ko-KR';
         recognition.continuous = false;
         recognition.interimResults = false;
-    
+
         recognition.onstart = () => {
             setListening(true);
             startListeningIndicator();
         };
-    
-        recognition.onresult = (event) => {
+
+        recognition.onresult = async (event) => {
             const transcript = event.results[0][0].transcript;
             setMessage(transcript);
-            sendMessage(transcript);
+
+            try {
+                const position = await getLocationPermission();
+                sendMessageWithLocation(transcript, position.latitude, position.longitude);
+            } catch (error) {
+                console.error('위치 정보를 가져오는 데 실패했습니다:', error);
+                sendMessage(transcript);
+            }
+
             setListening(false);
         };
-    
-    
+
         recognition.onerror = (event) => {
             console.error('음성 인식 오류:', event.error);
             setListening(false);
+            stopListeningIndicator();
         };
-    
+
         recognition.onend = () => {
-        setListening(false);
-        setChatLog((prevChatLog) => prevChatLog.filter((message) => message.text !== '음성 인식 중...'));
+            setListening(false);
+            stopListeningIndicator();
         };
-    
-    
+
         recognition.start();
     };
+
     const stopListening = () => {
         if (recognitionRef.current) {
-        recognitionRef.current.stop();
+            recognitionRef.current.stop();
         }
-    }
+        setListening(false);
+        stopListeningIndicator();
+    };
 
     const getLocationPermission = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                console.log('위치 정보:', position);
-                sendMessageWithLocation(message, latitude, longitude);
-            },
-            (error) => {
-                console.error('위치 정보를 가져오는 중 오류 발생:', error);
-                sendMessage(message);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
+        return new Promise((resolve, reject) => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        console.log('위치 정보:', position);
+                        resolve({ latitude, longitude });
+                    },
+                    (error) => {
+                        console.error('위치 정보를 가져오는 중 오류 발생:', error);
+                        reject(error);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                console.error('이 브라우저는 위치 정보를 지원하지 않습니다.');
+                reject(new Error('이 브라우저는 위치 정보를 지원하지 않습니다.'));
             }
-            );
-        } else {
-            console.error('이 브라우저는 위치 정보를 지원하지 않습니다.');
-            sendMessage(message);
+        });
+    };
+
+    const getLocationAndSendMessage = async (msg) => {
+        try {
+            const position = await getLocationPermission();
+            sendMessageWithLocation(msg, position.latitude, position.longitude);
+        } catch (error) {
+            console.error('위치 정보를 가져오는 데 실패했습니다:', error);
+            sendMessage(msg);
         }
     };
-    
-    const getLocationAndSendMessage = () => {
-        getLocationPermission();
-    };
-    
-
 
     const sendMessageWithLocation = async (msg, latitude, longitude) => {
         if (!msg.trim()) return;
@@ -154,7 +171,7 @@ export function AI() {
                 return false; // 토큰이 없을 때 false 반환
             }
 
-            const response = await axios.post('https://culiso.duckdns.org/chat', { message: msg, latitude, longitude }, {headers : {"Authorization": `Bearer ${token}`}});
+            const response = await axios.post('https://culiso.duckdns.org/chat', { message: msg, latitude, longitude }, { headers: { "Authorization": `Bearer ${token}` } });
             stopTypingIndicator();
             handleBotResponse(response.data.response);
         } catch (error) {
@@ -172,7 +189,6 @@ export function AI() {
         try {
             startTypingIndicator();
 
-
             const token = cookies.get("token");
 
             if (!token) {
@@ -180,9 +196,7 @@ export function AI() {
                 return false; // 토큰이 없을 때 false 반환
             }
 
-        
-
-            const response = await axios.post('https://culiso.duckdns.org/chat', { message: msg }, {headers : {"Authorization": `Bearer ${token}`}});
+            const response = await axios.post('https://culiso.duckdns.org/chat', { message: msg }, { headers: { "Authorization": `Bearer ${token}` } });
             stopTypingIndicator();
             handleBotResponse(response.data.response);
         } catch (error) {
@@ -193,7 +207,7 @@ export function AI() {
     };
 
     const handleBotResponse = (response) => {
-        const cleanedResponse = response.replace(/\*\*|###|####/g, ''); // '**'와 '###' 제거
+        const cleanedResponse = response.replace(/\*\*|###|####/g, ''); // '**', '###' 및 '####' 제거
         updateChatLog({ sender: 'bot', text: cleanedResponse });
     };
 
@@ -214,17 +228,17 @@ export function AI() {
 
     const formatMessage = (text) => {
         return text.split('\n').map((line, index) => {
-        if (line.startsWith('  ')) { // 들여쓰기 적용할 부분 감지
-            return <div key={index} className="formatted-line indented">{line}</div>;
-        }
-        return <div key={index} className="formatted-line">{line}</div>;
+            if (line.startsWith('  ')) { // 들여쓰기 적용할 부분 감지
+                return <div key={index} className="formatted-line indented">{line}</div>;
+            }
+            return <div key={index} className="formatted-line">{line}</div>;
         });
     };
 
     const startTypingIndicator = () => {
         setTypingMessage('입력 중');
         typingIntervalRef.current = setInterval(() => {
-        setTypingMessage(prev => prev.length < 9 ? prev + '.' : '입력 중');
+            setTypingMessage(prev => prev.length < 9 ? prev + '.' : '입력 중');
         }, 500);
 
         updateChatLog({ sender: 'bot', text: '입력 중' });
@@ -232,20 +246,22 @@ export function AI() {
 
     const stopTypingIndicator = () => {
         if (typingIntervalRef.current) {
-        clearInterval(typingIntervalRef.current);
-        typingIntervalRef.current = null;
+            clearInterval(typingIntervalRef.current);
+            typingIntervalRef.current = null;
         }
 
         // Remove the typing indicator
         setChatLog((prevChatLog) => prevChatLog.filter((message, index) => index !== prevChatLog.length - 1));
     };
+
     const startListeningIndicator = () => {
-        updateChatLog({ sender: 'bot', text: '음성 인식 중' });
+        updateChatLog({ sender: 'system', text: '음성 인식 중' });
     };
-    
+
     const stopListeningIndicator = () => {
         setChatLog((prevChatLog) => prevChatLog.filter((message) => message.text !== '음성 인식 중'));
     };
+
     return (
         <div className="ai">
             <div className='aiDiv'>
@@ -257,18 +273,18 @@ export function AI() {
                     <div className="chat-log">
                         <div>
                             {chatLog.map((entry, index) => (
-                            <div>
-                                {entry.sender === 'bot' && 
-                                <div className="culiBox">
-                                    <img className="culi" src={GetIcon("chatbot-white7.png")} alt="bot" />
-                                    <div><span>큐리</span></div>
-                                </div>}
-                                <div className={`chat-box ${entry.sender}`}>
-                                    <div key={index} className={`chat-message ${entry.sender}`}>
-                                        {entry.sender === 'bot' && entry.text === '입력 중' ? typingMessage : formatMessage(entry.text)}
+                                <div key={index}>
+                                    {entry.sender === 'bot' && 
+                                    <div className="culiBox">
+                                        <img className="culi" src={GetIcon("chatbot-white7.png")} alt="bot" />
+                                        <div><span>큐리</span></div>
+                                    </div>}
+                                    <div className={`chat-box ${entry.sender}`}>
+                                        <div className={`chat-message ${entry.sender}`}>
+                                            {entry.sender === 'bot' && entry.text === '입력 중' ? typingMessage : formatMessage(entry.text)}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             ))}
                         </div>
                     </div>
@@ -281,9 +297,9 @@ export function AI() {
                                 onKeyPress={handleKeyPress}
                                 placeholder="메시지를 입력하세요.."
                             />
-                            <img src={GetIcon("send-blue.png")} style={{right: '0', marginRight: '60px'}} width="30px"onClick={()=> getLocationAndSendMessage(message)} alt=''/>
+                            <img src={GetIcon("send-blue.png")} style={{right: '0', marginRight: '60px'}} width="30px" onClick={() => getLocationAndSendMessage(message)} alt='' />
                             {listening ? (
-                                alert('듣는 중...')
+                                '듣는 중...'
                             ) : (
                                 <img 
                                     src={GetIcon("voice-blue.png")} 
@@ -294,12 +310,10 @@ export function AI() {
                                     onMouseUp={stopListening}
                                     onTouchStart={startListening} 
                                     onTouchEnd={stopListening}
-                                    />
-                                )
-                            }
+                                />
+                            )}
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>
