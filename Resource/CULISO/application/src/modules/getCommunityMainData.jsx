@@ -167,8 +167,8 @@ export const AllContents = ({ boardID }) => {
                       </CommunityContentsLeft>
                       {board.fileUrl && board.fileName && (
                         <CommunityContentsRight>
-                          <img 
-                            src={GetIcon(`https://culiso.duckdns.org/${board.fileUrl}${board.fileName}`)} 
+                          <img
+                            src={`https://culiso.duckdns.org/${board.fileUrl}${board.fileName}`} 
                             alt={`${board.fileName}`}
                             style={{ width: '90px', height: '90px' }}
                           />

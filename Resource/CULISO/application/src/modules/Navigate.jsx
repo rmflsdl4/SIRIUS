@@ -115,7 +115,7 @@ export const MenuButton = ({path = null, name, iconName, dFlag}) => {
   return(
     <ImgBox onClick={()=>dFlag ? menu() : alert("아직 구현되지 않은 기능입니다.")}>
         <Img src={GetIcon(iconName)} width={"37px"} />
-        <Text align="center" size="12px" color="white" style={{ marginTop: "5px" }}>{name}</Text>
+        <Text align="center" size="12px" color="white" style={{ marginTop: "5px", whiteSpace: 'nowrap'}}>{name}</Text>
     </ImgBox>
   )
 }

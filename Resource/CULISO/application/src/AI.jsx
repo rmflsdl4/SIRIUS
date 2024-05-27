@@ -228,10 +228,6 @@ export function AI() {
     const stopListeningIndicator = () => {
         setChatLog((prevChatLog) => prevChatLog.filter((message) => message.text !== '음성 인식 중'));
     };
-    const transcript = (event) => {
-        const transcript = event.results[0][0].transcript;
-        getLocationAndSendMessage(transcript);
-    }
     return (
         <div className="ai">
             <div className='aiDiv'>
@@ -246,7 +242,7 @@ export function AI() {
                             <div>
                                 {entry.sender === 'bot' && 
                                 <div className="culiBox">
-                                    <img className="culi" src={GetIcon("robot-white.png")} alt="bot" />
+                                    <img className="culi" src={GetIcon("chatbot-white7.png")} alt="bot" />
                                     <div><span>큐리</span></div>
                                 </div>}
                                 <div className={`chat-box ${entry.sender}`}>
@@ -267,10 +263,23 @@ export function AI() {
                                 onKeyPress={handleKeyPress}
                                 placeholder="메시지를 입력하세요.."
                             />
-                            <img src={GetIcon("send-blue.png")} style={{right: '0', marginRight: '60px'}} width="30px"onClick={transcript} alt=''/>
-                            {listening ? 
-                            '듣는 중...': 
-                            <img src={GetIcon("voice-blue.png")} style={{right: '0', marginRight: '15px'}} width="30px" alt='' onMouseDown={startListening} onMouseUp={stopListening} disabled={listening}/>}
+                            <img src={GetIcon("send-blue.png")} style={{right: '0', marginRight: '60px'}} width="30px"onClick={()=> getLocationAndSendMessage(message)} alt=''/>
+                            {listening ? (
+                                alert('듣는 중...')
+                            ) : (
+                                <img 
+                                    src={GetIcon("voice-blue.png")} 
+                                    style={{right: '0', marginRight: '15px'}} 
+                                    width="30px"
+                                    alt='' 
+                                    onMouseDown={startListening} 
+                                    onMouseUp={stopListening}
+                                    onTouchStart={startListening} 
+                                    onTouchEnd={stopListening}
+                                    onTouchCancel={stopListening}
+                                    />
+                                )
+                            }
                         </div>
                     </div>
                     
