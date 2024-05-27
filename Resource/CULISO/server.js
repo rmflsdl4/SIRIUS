@@ -978,8 +978,8 @@ app.post("/ContentsValue", async (req, res) => {
           result[i].fileUrl = null;
           result[i].fileName = null;
       }
+      console.log(result[i].fileUrl);
   }
-
   // JSON 형식으로 데이터를 반환
   res.json(result);
 });
