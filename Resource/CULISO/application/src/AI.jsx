@@ -135,7 +135,7 @@ export function AI() {
             return false; // 토큰이 없을 때 false 반환
         }
 
-        const response = await axios.post('https://13.209.80.79:8001/chat', { message: msg, latitude, longitude }, {headers : {"Authorization": `Bearer ${token}`}});
+        const response = await axios.post('https://culiso.duckdns.org/chat', { message: msg, latitude, longitude }, {headers : {"Authorization": `Bearer ${token}`}});
         stopTypingIndicator();
         handleBotResponse(response.data.response);
         } catch (error) {
@@ -164,7 +164,7 @@ export function AI() {
 
         
 
-            const response = await axios.post('https://13.209.80.79:8001/chat', { message: msg }, {headers : {"Authorization": `Bearer ${token}`}});
+            const response = await axios.post('https://culiso.duckdns.org/chat', { message: msg }, {headers : {"Authorization": `Bearer ${token}`}});
             stopTypingIndicator();
             handleBotResponse(response.data.response);
         } catch (error) {

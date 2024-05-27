@@ -41,7 +41,6 @@ export async function LoginDataSend(event) {
     headers: {
       "Content-Type": "application/json",
     },
-    mode: 'no-cors',
     body: JSON.stringify(data),
   })
     .then((response) => response.json())
