@@ -2,13 +2,11 @@
 import { MenuBar } from "./MenuBar";
 import GetIcon from "./modules/GetIcon";
 import { Cookies } from "react-cookie";
-import { Navigate } from "./modules/Navigate";
 import styled from "styled-components";
 import "./style.css";
 import { useState, useEffect } from "react";
-import { GetAddress, RequestAddress } from "./modules/DataRouter";
-import { Plugins } from '@capacitor/core';
-const { Geolocation, Permissions } = Plugins;
+import { GetAddress } from "./modules/DataRouter";
+import { Geolocation } from '@capacitor/geolocation';
 // css
 const CenterBox = styled.div`
   display: flex;
@@ -24,14 +22,6 @@ const Text = styled.span`
   font-family: ${(props) => props.font};
 `;
 
-const ImgBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin: 0 15px;
-  cursor: pointer;
-`;
 const Img = styled.img`
   width: ${(props) => props.width};
   margin-top: ${(props) => props.top};
@@ -66,13 +56,6 @@ const Button = styled.input`
   border-radius: 8px;
   font-size: 16px;
 `;
-const MenuBox = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 150px;
-`;
 const cookies = new Cookies();
 
 
@@ -86,6 +69,7 @@ function LogOut() {
 export const AfterMain = () => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
   const [address, setAddress] = useState();
   const [flag, setFlag] = useState(true);
+
   useEffect(() => {
     // 주소 얻는 메소드
     const GetAddr = async () => {
@@ -96,13 +80,17 @@ export const AfterMain = () => {
 
     GetAddr();
   }, []);
+
   useEffect(() => {
     //requestPermissions();
-    checkPermissions();
+    if(flag){
+      CheckPermissions();
+      setFlag(false);
+    }
   }, []);
 
   // 권한 확인 및 요청
-  const checkPermissions = async () => {
+  const CheckPermissions = async () => {
     try {
       // 현재 권한 상태 확인
       const microphonePermission = await checkMicrophonePermission();
@@ -110,101 +98,79 @@ export const AfterMain = () => {
 
       // 권한이 허용되지 않은 경우에만 요청
       if (!microphonePermission) {
-        await requestMicrophonePermission();
+        await RequestMicrophonePermission();
       }
 
       if (!locationPermission) {
-        await requestLocationPermission();
+        await RequestLocationPermission();
       }
     } catch (error) {
       console.error('권한 확인 및 요청 중 오류가 발생했습니다:', error);
     }
   };
-  // // 위치 및 음성 권한 요청
-  // const requestPermissions = async () => {
-  //   try {
-  //     if(flag){
-  //       checkPermissions();
-  //       await requestMicrophonePermission();
-  //       await requestLocationPermission();
-  //     }
-
-  //     setFlag(false);
-  //   } catch (error) {
-  //     console.error('권한 요청 중 오류가 발생했습니다:', error);
-  //   }
-  // };
-
-// 음성 권한 요청
-const requestMicrophonePermission = async () => {
-  try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      console.log('마이크 권한이 부여되었습니다.');
-      return true;
-  } catch (error) {
-      console.error('마이크 권한을 요청하는 중 오류가 발생했습니다:', error);
-      return false;
-  }
-};
-
-// 위치 권한 요청
-const requestLocationPermission = () => {
-  return new Promise((resolve, reject) => {
-      if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-              (position) => {
-                  console.log('위치 정보:', position);
-                  resolve(position);
-              },
-              (error) => {
-                  console.error('위치 정보를 가져오는 중 오류 발생:', error);
-                  reject(error);
-              },
-              {
-                  enableHighAccuracy: true,
-                  timeout: 5000,
-                  maximumAge: 0
-              }
-          );
+  // 음성 권한 요청
+  const RequestMicrophonePermission = async () => {
+    try {
+      const status = await Permissions.request({ name: 'microphone' });
+      if (status.granted) {
+        console.log('마이크 권한이 부여되었습니다.');
       } else {
-          console.error('이 브라우저는 위치 정보를 지원하지 않습니다.');
-          reject(new Error('이 브라우저는 위치 정보를 지원하지 않습니다.'));
+        console.log('마이크 권한이 거부되었습니다.');
       }
-  });
-};
+    } catch (error) {
+      console.error('마이크 권한 요청 중 오류 발생:', error);
+    }
+  };
+
+  // 위치 권한 요청
+  const RequestLocationPermission = async () => {
+    try {
+      const coordinates = await Geolocation.getCurrentPosition();
+      console.log('Current position:', coordinates);
+      return coordinates;
+    } catch (error) {
+      console.error('위치 정보를 가져오는 중 오류 발생:', error);
+      return false;
+    }
+  };
   // 음성 권한 확인
   const checkMicrophonePermission = async () => {
     try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      console.log('마이크 권한이 이미 부여되었습니다.');
-      return true;
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (stream) {
+        console.log('마이크 권한이 이미 부여되었습니다.');
+        return true;
+      } else {
+        console.log('마이크 권한이 부여되지 않았습니다.');
+        return false;
+      }
     } catch (error) {
-      console.log('마이크 권한이 부여되지 않았습니다.');
+      console.error('마이크 권한 확인 중 오류 발생:', error);
       return false;
     }
   };
 
   // 위치 권한 확인
-  const checkLocationPermission = () => {
-    return new Promise((resolve, reject) => {
-      if (navigator.permissions) {
-        navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-          if (result.state === 'granted') {
-            console.log('위치 정보 권한이 이미 부여되었습니다.');
-            resolve(true);
-          } else {
-            console.log('위치 정보 권한이 부여되지 않았습니다.');
-            resolve(false);
-          }
-        }).catch((error) => {
-          console.error('위치 정보 권한 확인 중 오류 발생:', error);
-          reject(error);
-        });
+  const checkLocationPermission = async () => {
+    try {
+      const status = await Geolocation.checkPermissions();
+      if (status.location !== 'granted') {
+        const permission = await Geolocation.requestPermissions();
+        if (permission.location !== 'granted') {
+          throw new Error('Location permission not granted');
+        }
+        else{
+          console.log("위치 정보 권한이 승인되었습니다.");
+        }
+        return true;
       } else {
-        console.error('이 브라우저는 위치 정보를 지원하지 않습니다.');
-        reject(new Error('이 브라우저는 위치 정보를 지원하지 않습니다.'));
+        console.log('위치 정보 권한이 부여되지 않았습니다.');
+        return false;
       }
-    });
+    } catch (error) {
+      console.error('위치 정보 권한 확인 중 오류 발생:', error);
+      return false;
+    }
   };
   
   return (
