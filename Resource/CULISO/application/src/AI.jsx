@@ -6,6 +6,7 @@ import GetIcon from './modules/GetIcon';
 import { GetChatLog } from './modules/DataRouter';
 import { BackButton } from "./modules/Navigate";
 import { Geolocation } from '@capacitor/geolocation';
+import { useSpeechRecognition } from "react-speech-kit";
 const cookies = new Cookies();
 
 export function AI() {
@@ -158,11 +159,8 @@ export function AI() {
             alert('음성 인식을 지원하지 않는 브라우저입니다.');
             return;
         }
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
+        const recognition = new window.webkitSpeechRecognition();
         await requestMicrophonePermission();
-
-        //const recognition = new window.webkitSpeechRecognition();
         recognitionRef.current = recognition;
         recognition.lang = 'ko-KR';
         recognition.continuous = false;
@@ -352,6 +350,14 @@ export function AI() {
         setChatLog((prevChatLog) => prevChatLog.filter((message) => message.text !== '음성 인식 중'));
     };
 
+    // const [value, setValue] = useState("");
+    // const { listen, listening, stop } = useSpeechRecognition({
+    //   onResult: result => {
+    //     // 음성인식 결과가 value에 저장
+    //     setValue(result);
+    //     console.log("사용자 음성 결과-" + value);
+    //   }
+    // });
     return (
         <div className="ai">
             <div className='aiDiv'>
@@ -389,17 +395,22 @@ export function AI() {
                             />
                             <img src={GetIcon("send-blue.png")} style={{right: '0', marginRight: '60px'}} width="30px" onClick={() => getLocationAndSendMessage(message)} alt='' />
                             {listening ? (
-                                '듣는 중...'
+                                <img 
+                                    src={GetIcon("listening-blue.png")} 
+                                    style={{right: '0', marginRight: '15px'}} 
+                                    width="30px"
+                                    alt='' 
+                                    onClick={stopListening} 
+                                />
                             ) : (
                                 <img 
                                     src={GetIcon("voice-blue.png")} 
                                     style={{right: '0', marginRight: '15px'}} 
                                     width="30px"
                                     alt='' 
-                                    onMouseDown={startListening} 
-                                    onMouseUp={stopListening}
-                                    onTouchStart={startListening} 
-                                    onTouchEnd={stopListening}
+                                    // onMouseDown={startListening} 
+                                    // onMouseUp={stopListening}
+                                    onClick={startListening} 
                                 />
                             )}
                         </div>

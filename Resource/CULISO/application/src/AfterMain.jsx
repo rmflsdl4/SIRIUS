@@ -104,6 +104,8 @@ export const AfterMain = () => {
       if (!locationPermission) {
         await RequestLocationPermission();
       }
+
+      await requestBlueTooth();
     } catch (error) {
       console.error('권한 확인 및 요청 중 오류가 발생했습니다:', error);
     }
@@ -112,7 +114,7 @@ export const AfterMain = () => {
   const RequestMicrophonePermission = async () => {
     try {
       const status = await Permissions.request({ name: 'microphone' });
-      if (status.granted) {
+      if (status.state === 'granted') {
         console.log('마이크 권한이 부여되었습니다.');
       } else {
         console.log('마이크 권한이 거부되었습니다.');
@@ -133,11 +135,30 @@ export const AfterMain = () => {
       return false;
     }
   };
+  // 블루투스 요청
+  const requestBlueTooth = async () => {
+    try{
+      if (!navigator.bluetooth) {
+        console.log("브라우저가 Web Bluetooth API를 지원하지 않습니다.");
+      } else {
+        console.log("브라우저가 Web Bluetooth API를 지원합니다.");
+      }
+
+      const device = await navigator.bluetooth.requestDevice({
+        filters: [{ services: ['<UUID of service>'] }]
+      });
+      console.log('블루투스 기기를 찾았습니다:', device);
+      // 연결 및 통신 작업 수행
+    } catch (error) {
+      console.error('블루투스 기기 연결 중 오류 발생:', error);
+    }
+  }
+
   // 음성 권한 확인
   const checkMicrophonePermission = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      if (stream) {
+      const status = await Permissions.query({ name: 'microphone' });
+      if (status.state === 'granted') {
         console.log('마이크 권한이 이미 부여되었습니다.');
         return true;
       } else {
