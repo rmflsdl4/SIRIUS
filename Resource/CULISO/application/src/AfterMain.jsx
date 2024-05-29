@@ -104,8 +104,6 @@ export const AfterMain = () => {
       if (!locationPermission) {
         await RequestLocationPermission();
       }
-
-      await requestBlueTooth();
     } catch (error) {
       console.error('권한 확인 및 요청 중 오류가 발생했습니다:', error);
     }
@@ -140,12 +138,10 @@ export const AfterMain = () => {
     try{
       if (!navigator.bluetooth) {
         console.log("브라우저가 Web Bluetooth API를 지원하지 않습니다.");
-      } else {
-        console.log("브라우저가 Web Bluetooth API를 지원합니다.");
       }
 
       const device = await navigator.bluetooth.requestDevice({
-        filters: [{ services: ['<UUID of service>'] }]
+        acceptAllDevices: true
       });
       console.log('블루투스 기기를 찾았습니다:', device);
       // 연결 및 통신 작업 수행
@@ -240,7 +236,7 @@ export const AfterMain = () => {
               등록된 기기가 없으신가요?
             </Text>
 
-            <Button type="button" value={"등록하기"} />
+            <Button type="button" value={"등록하기"} onClick={() => requestBlueTooth()} />
           </EmptyContainer>
         </CenterBox>
         {/* 메뉴바 */}
