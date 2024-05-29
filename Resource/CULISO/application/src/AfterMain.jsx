@@ -143,7 +143,10 @@ export const AfterMain = () => {
       const device = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true
       });
-      console.log('블루투스 기기를 찾았습니다:', device);
+      if(device){
+        console.log('블루투스 기기를 찾았습니다:', device);
+        window.location.href = "/AfterDeviceMain.jsx";
+      }
       // 연결 및 통신 작업 수행
     } catch (error) {
       console.error('블루투스 기기 연결 중 오류 발생:', error);
