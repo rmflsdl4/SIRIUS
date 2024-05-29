@@ -145,7 +145,7 @@ export const AfterMain = () => {
       });
       if(device){
         console.log('블루투스 기기를 찾았습니다:', device);
-        window.location.href = "/AfterDeviceMain.jsx";
+        window.location.href = "/afterDeviceMain";
       }
       // 연결 및 통신 작업 수행
     } catch (error) {
