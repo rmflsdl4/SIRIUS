@@ -7,6 +7,8 @@ import "./style.css";
 import { useState, useEffect } from "react";
 import { GetAddress } from "./modules/DataRouter";
 import { Geolocation } from '@capacitor/geolocation';
+import { AfterDeviceMain } from './AfterDeviceMain';
+
 // css
 const CenterBox = styled.div`
   display: flex;
@@ -69,6 +71,7 @@ function LogOut() {
 export const AfterMain = () => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
   const [address, setAddress] = useState();
   const [flag, setFlag] = useState(true);
+  const [bluetoothFlag, setBluetoothFlag] = useState(false);
 
   useEffect(() => {
     // 주소 얻는 메소드
@@ -145,7 +148,21 @@ export const AfterMain = () => {
       });
       if(device){
         console.log('블루투스 기기를 찾았습니다:', device);
-        window.location.href = "/afterDeviceMain";
+        // GATT 서버에 연결
+        const server = await device.gatt.connect();
+        // GATT 서버에서 제공하는 서비스 검색
+        const services = await server.getPrimaryServices();
+        // 각 서비스에 속한 특성 찾기
+        for (const service of services) {
+          const characteristics = await service.getCharacteristics();
+          for (const characteristic of characteristics) {
+              console.log('찾은 특성:', characteristic.uuid);
+              // 이제 찾은 특성을 사용하여 데이터를 읽거나 쓸 수 있습니다.
+          }
+        }
+        // // 데이터 쓰기
+        // const dataToWrite = new Uint8Array([97]);
+        setBluetoothFlag(true);
       }
       // 연결 및 통신 작업 수행
     } catch (error) {
@@ -194,57 +211,64 @@ export const AfterMain = () => {
   };
   
   return (
-    <div className="afterMain">
-      <div className="afterMainDiv">
-        <CenterBox align="space-between" top="15px">
-          <Label>
-            <Text
-              size="12px"
-              style={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                maxWidth: "100px",
-              }}
-            >
-              {address}
-            </Text>
-            <Img
-              src={GetIcon("mypage-modify.png")}
-              width={"13px"}
-              style={{ marginLeft: "5px" }}
-            />
-          </Label>
-          <RightContainer>
-            <Img src={GetIcon("logout.png")} width={"17px"} onClick={LogOut} />
-            <Img
-              src={GetIcon("inform-black.png")}
-              width={"15px"}
-              style={{ marginLeft: "20px" }}
-            />
-            <Img
-              src={GetIcon("dropdown.png")}
-              width={"15px"}
-              style={{ marginLeft: "20px" }}
-            />
-          </RightContainer>
-        </CenterBox>
-        <CenterBox align="center" style={{width:"100vw", height:"100vh"}}>
-          <EmptyContainer style={{marginBottom:"35.28px"}}>
-            <Img src={GetIcon("home.png")} width={"134px"} top={"25px"} />
-            <br />
-            <br />
-            <br />
-            <Text size="20px" font="SejonghospitalBold">
-              등록된 기기가 없으신가요?
-            </Text>
-
-            <Button type="button" value={"등록하기"} onClick={() => requestBlueTooth()} />
-          </EmptyContainer>
-        </CenterBox>
-        {/* 메뉴바 */}
-        <MenuBar/>
-      </div>
+    <div>
+      {bluetoothFlag ? (
+        <AfterDeviceMain/>
+      ) : (
+        <div className="afterMain">
+          <div className="afterMainDiv">
+            <CenterBox align="space-between" top="15px">
+              <Label>
+                <Text
+                  size="12px"
+                  style={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "100px",
+                  }}
+                >
+                  {address}
+                </Text>
+                <Img
+                  src={GetIcon("mypage-modify.png")}
+                  width={"13px"}
+                  style={{ marginLeft: "5px" }}
+                />
+              </Label>
+              <RightContainer>
+                <Img src={GetIcon("logout.png")} width={"17px"} onClick={LogOut} />
+                <Img
+                  src={GetIcon("inform-black.png")}
+                  width={"15px"}
+                  style={{ marginLeft: "20px" }}
+                />
+                <Img
+                  src={GetIcon("dropdown.png")}
+                  width={"15px"}
+                  style={{ marginLeft: "20px" }}
+                />
+              </RightContainer>
+            </CenterBox>
+            
+            <CenterBox align="center" style={{width:"100vw", height:"100vh"}}>
+              <EmptyContainer style={{marginBottom:"35.28px"}}>
+                <Img src={GetIcon("home.png")} width={"134px"} top={"25px"} />
+                <br />
+                <br />
+                <br />
+                <Text size="20px" font="SejonghospitalBold">
+                  등록된 기기가 없으신가요?
+                </Text>
+                <Button type="button" value={"등록하기"} onClick={() => requestBlueTooth()} />
+              </EmptyContainer>
+            </CenterBox>
+            {/* 메뉴바 */}
+            <MenuBar/>
+          </div>
+        </div>
+      )}
     </div>
+    
   );
 };
