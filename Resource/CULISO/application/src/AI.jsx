@@ -6,7 +6,6 @@ import GetIcon from './modules/GetIcon';
 import { GetChatLog } from './modules/DataRouter';
 import { BackButton } from "./modules/Navigate";
 import { Geolocation } from '@capacitor/geolocation';
-import { useSpeechRecognition } from "react-speech-kit";
 const cookies = new Cookies();
 
 export function AI() {
