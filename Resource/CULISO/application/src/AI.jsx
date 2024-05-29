@@ -69,22 +69,22 @@ export function AI() {
     
     // 권한 확인 및 요청
     const CheckPermissions = async () => {
-    try {
-        // 현재 권한 상태 확인
-        const microphonePermission = await checkMicrophonePermission();
-        const locationPermission = await checkLocationPermission();
+        try {
+            // 현재 권한 상태 확인
+            const microphonePermission = await checkMicrophonePermission();
+            const locationPermission = await checkLocationPermission();
 
-        // 권한이 허용되지 않은 경우에만 요청
-        if (!microphonePermission) {
-        await RequestMicrophonePermission();
-        }
+            // 권한이 허용되지 않은 경우에만 요청
+            if (!microphonePermission) {
+            await RequestMicrophonePermission();
+            }
 
-        if (!locationPermission) {
-        await RequestLocationPermission();
+            if (!locationPermission) {
+            await RequestLocationPermission();
+            }
+        } catch (error) {
+            console.error('권한 확인 및 요청 중 오류가 발생했습니다:', error);
         }
-    } catch (error) {
-        console.error('권한 확인 및 요청 중 오류가 발생했습니다:', error);
-    }
     };
     // 음성 권한 요청
     const RequestMicrophonePermission = async () => {
@@ -154,12 +154,11 @@ export function AI() {
     };
 
     const startListening = async () => {
-        if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-            alert('음성 인식을 지원하지 않는 브라우저입니다.');
-            return;
-        }
-        const recognition = new window.webkitSpeechRecognition();
+        if (!('webkitSpeechRecognition' in window)) return;
+
         await requestMicrophonePermission();
+
+        const recognition = new window.webkitSpeechRecognition();
         recognitionRef.current = recognition;
         recognition.lang = 'ko-KR';
         recognition.continuous = false;
@@ -167,36 +166,28 @@ export function AI() {
 
         recognition.onstart = () => {
             setListening(true);
-            startListeningIndicator();
+            updateChatLog({ sender: 'system', text: '음성 인식 중...' });
         };
 
-        recognition.onresult = async (event) => {
-            const transcript = event.results[0][0].transcript;
+        recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
             setMessage(transcript);
-
-            try {
-                const position = await getLocationPermission();
-                sendMessageWithLocation(transcript, position.latitude, position.longitude);
-            } catch (error) {
-                console.error('위치 정보를 가져오는 데 실패했습니다:', error);
-                sendMessage(transcript);
-            }
-
+            sendMessage(transcript);
             setListening(false);
         };
 
         recognition.onerror = (event) => {
             console.error('음성 인식 오류:', event.error);
             setListening(false);
-            stopListeningIndicator();
         };
 
         recognition.onend = () => {
             setListening(false);
-            stopListeningIndicator();
+            setChatLog((prevChatLog) => prevChatLog.filter((message) => message.text !== '음성 인식 중...'));
         };
 
         recognition.start();
+
     };
 
     const stopListening = () => {
