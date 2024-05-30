@@ -25,20 +25,20 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Intro />} />
-        <Route path="/main" element={<Main />} />
-        <Route path="/signUp" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/afterMain" element={<AfterMain />} />
-        <Route path="/myPage" element={<MyPage />} />
-        <Route path="/updateProfile" element={<UpdateProfile />} />
-        <Route path="/culi" element={<AI />} />
-        <Route path="/findingID" element={<FindingID/>} />
-        <Route path="/findingPW" element={<FindingPW/>} />
-        <Route path="/afterDeviceMain" element={<AfterDeviceMain/>} />
-        <Route path="/communicationMain" element={<CommunicationMain/>} />
-        <Route path="/contentsComponent" element={<ContentsComponent/>} />
-        <Route path="/contentUpload" element={<ContentUpload/>} />
+        <Route path="/api" element={<Intro />} />
+        <Route path="/api/main" element={<Main />} />
+        <Route path="/api/signUp" element={<SignUp />} />
+        <Route path="/api/login" element={<Login />} />
+        <Route path="/api/afterMain" element={<AfterMain />} />
+        <Route path="/api/myPage" element={<MyPage />} />
+        <Route path="/api/updateProfile" element={<UpdateProfile />} />
+        <Route path="/api/culi" element={<AI />} />
+        <Route path="/api/findingID" element={<FindingID/>} />
+        <Route path="/api/findingPW" element={<FindingPW/>} />
+        <Route path="/api/afterDeviceMain" element={<AfterDeviceMain/>} />
+        <Route path="/api/communicationMain" element={<CommunicationMain/>} />
+        <Route path="/api/contentsComponent" element={<ContentsComponent/>} />
+        <Route path="/api/contentUpload" element={<ContentUpload/>} />
       </Routes>
     </BrowserRouter>
   );
