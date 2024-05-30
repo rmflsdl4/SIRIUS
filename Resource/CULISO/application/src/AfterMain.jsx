@@ -140,14 +140,14 @@ export const AfterMain = () => {
   const requestBlueTooth = async () => {
     try{
       if (!navigator.bluetooth) {
-        console.log("브라우저가 Web Bluetooth API를 지원하지 않습니다.");
+        alert("브라우저가 Web Bluetooth API를 지원하지 않습니다.");
       }
 
       const device = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true
       });
       if(device){
-        console.log('블루투스 기기를 찾았습니다:', device);
+        alert('블루투스 기기를 찾았습니다:', device);
         // GATT 서버에 연결
         const server = await device.gatt.connect();
         // GATT 서버에서 제공하는 서비스 검색
@@ -156,7 +156,8 @@ export const AfterMain = () => {
         for (const service of services) {
           const characteristics = await service.getCharacteristics();
           for (const characteristic of characteristics) {
-              console.log('찾은 특성:', characteristic.uuid);
+            alert('찾은 특성:', characteristic.uuid);
+              
               // 이제 찾은 특성을 사용하여 데이터를 읽거나 쓸 수 있습니다.
           }
         }
