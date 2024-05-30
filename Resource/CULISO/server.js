@@ -7,6 +7,7 @@ const app = express();
 const http = require("http");
 const https = require("https");
 const expressSanitizer = require("express-sanitizer");
+const { createProxyMiddleware } = require('http-proxy-middleware');
 require('dotenv').config();
 
 const port = process.env.PORT || 443;
@@ -42,7 +43,16 @@ app.use(express.static(imagePath));
 // 웹앱 테스트
 app.use(express.static(path.join(__dirname, './application/build')));
 
+// 리액트 빌드 파일을 서빙
+app.use(express.static(path.join(__dirname, 'build')));
 
+// API 요청을 리액트 서버로 프록시
+app.use('/api', createProxyMiddleware({ target: 'http://localhost:3000', changeOrigin: true }));
+
+// 나머지 요청을 리액트 애플리케이션으로 전달
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 // 데이터베이스 연결
 database.Connect();
 // app 설정
