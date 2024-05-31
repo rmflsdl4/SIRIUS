@@ -94,8 +94,8 @@ else{
 async function GetUserID(token){
   try{
     console.log("토큰: "+token); 
-    const session = await sessionStore.get(token);
     console.log("세션: "+session); 
+    const session = await sessionStore.get(token);
     console.log("요청한 아이디: " + session.userID);
     if(session) return session.userID;
   }
@@ -141,7 +141,7 @@ app.post("/login", async (req, res) => {
 });
 app.post("/addrReq", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
-  
+  console.log("테스트: " + req.session.userID);
   try {
     const userID = await GetUserID(token);
 
