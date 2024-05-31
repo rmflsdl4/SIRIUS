@@ -61,6 +61,7 @@ app.use('/api', createProxyMiddleware({
   } 
 }));
 app.get('*', (req, res) => {
+  console.log(__dirname , 'application/build');
   res.sendFile(path.join(__dirname, 'application/build', 'index.html'));
 });
 // 나머지 요청을 리액트 애플리케이션으로 전달
