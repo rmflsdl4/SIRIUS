@@ -217,8 +217,8 @@ export const FindingID = () => {
                                         )}
                                     </div>
                                 </TextWrapper>
-                            <div className="view" onClick={() => Navigate("login")} />
-                            <Group onClick={() => Navigate("login")}>
+                            <div className="view" onClick={() => Navigate("Login")} />
+                            <Group onClick={() => Navigate("Login")}>
                                 <div className="text-wrapper-4">
                                     CULISO 로그인
                                 </div>

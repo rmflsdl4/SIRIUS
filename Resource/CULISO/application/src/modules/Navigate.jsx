@@ -66,7 +66,7 @@ export const BackButton = ({left}) => {
 export const UpdateButton = () => {
   const navigate = useNavigate();
   const update = () => {
-    navigate("/updateProfile");
+    navigate("/UpdateProfile");
   };
   return(
     <button 
@@ -131,10 +131,10 @@ const NewButton = ({path, name}) => {
 export const SmallTextMenus = ({login, signUp, findID, findPW}) => {
   return(
     <div className="aDiv">
-      {login && (<NewButton path={"login"} name={"로그인"}/>)}
-      {signUp && (<NewButton path={"signUp"} name={"계정 생성"}/>)}
-      {findID && (<NewButton path={"findingID"} name={"아이디 찾기"}/>)}
-      {findPW && (<NewButton path={"findingPW"} name={"비밀번호 찾기"}/>)}
+      {login && (<NewButton path={"Login"} name={"로그인"}/>)}
+      {signUp && (<NewButton path={"SignUp"} name={"계정 생성"}/>)}
+      {findID && (<NewButton path={"FindingID"} name={"아이디 찾기"}/>)}
+      {findPW && (<NewButton path={"FindingPW"} name={"비밀번호 찾기"}/>)}
     </div>
   )
 }

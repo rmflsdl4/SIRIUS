@@ -90,8 +90,8 @@ export const Main = () => {
       <div className="div">
           <CenterBox>
           <Culi/>
-            <ButtonContainer path={"login"} imgName={"white-padlock.png"} text={"CULISO 로그인"} bg={"#67acff"}/>
-            <ButtonContainer path={"signUp"} imgName={"join.png"} text={"회원가입"} bg={"#4b93ff"}/>
+            <ButtonContainer path={"Login"} imgName={"white-padlock.png"} text={"CULISO 로그인"} bg={"#67acff"}/>
+            <ButtonContainer path={"SignUp"} imgName={"join.png"} text={"회원가입"} bg={"#4b93ff"}/>
           </CenterBox>
       </div>
     </div>

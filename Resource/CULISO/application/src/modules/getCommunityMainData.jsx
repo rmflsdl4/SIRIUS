@@ -154,7 +154,7 @@ export const AllContents = ({ boardID }) => {
                             </TitleLeft>
                         </MenuTitle>
                     )}
-                    <CommunityContents onClick={()=> {goToPage(`contentsComponent?contentsNum=${board.contentsNum}`); viewsCount(board.contentsNum)}}>
+                    <CommunityContents onClick={()=> {goToPage(`ContentsComponent?contentsNum=${board.contentsNum}`); viewsCount(board.contentsNum)}}>
                       <CommunityContentsLeft style={{ width: board.fileUrl && board.fileName ? '60%' : '100%' }}>
                         <ContentsTitle>{board.contentsTitle}</ContentsTitle>
                         <Contents>{truncateText(board.content, 120)}</Contents> 

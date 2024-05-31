@@ -197,7 +197,7 @@ export const ContentsComponent = () => {
 
                     {isDropdownOpen && (
                         <DropdownMenu>
-                            <DropdownItem onClick={() => goToPage(`contentUpload?contentsNum=${sendContentsNum}&prevPage=ContentsComponent`)}>게시글 수정하기</DropdownItem>
+                            <DropdownItem onClick={() => goToPage(`ContentUpload?contentsNum=${sendContentsNum}&prevPage=ContentsComponent`)}>게시글 수정하기</DropdownItem>
                             <DropdownItem onClick={() => contentOpenModal() }>게시글 삭제하기</DropdownItem>
                         </DropdownMenu>
                     )}

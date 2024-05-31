@@ -26,13 +26,13 @@ export const MenuBar = () => {
                 <MenuButton name={"우리집"} iconName={"home-white2.png"} dFlag={false} />
             </MenuItem>
             <MenuItem>
-                <MenuButton name={"게시판"} iconName={"community-white2.png"} dFlag={true} path={"communicationMain"} />
+                <MenuButton name={"게시판"} iconName={"community-white2.png"} dFlag={true} path={"CommunicationMain"} />
             </MenuItem>
             <MenuItem>
-                <MenuButton name={"큐리챗"} iconName={"chatbot-white7.png"} dFlag={true} path={"culi"} />
+                <MenuButton name={"큐리챗"} iconName={"chatbot-white7.png"} dFlag={true} path={"Culi"} />
             </MenuItem>
             <MenuItem>
-                <MenuButton name={"내정보"} iconName={"profile-white3.png"} dFlag={true} path={"myPage"} />
+                <MenuButton name={"내정보"} iconName={"profile-white3.png"} dFlag={true} path={"MyPage"} />
             </MenuItem>
         </MenuBox>
     );

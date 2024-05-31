@@ -70,7 +70,7 @@ export const CommunicationMain = () => {
     return (
         <div className="CommunicationDiv">
           <TopBar>
-            <TopImg><img src={GetIcon("backArrow.png")} onClick={() => goToPage("afterMain")}></img></TopImg>
+            <TopImg><img src={GetIcon("backArrow.png")} onClick={() => goToPage("AfterMain")}></img></TopImg>
             <MainTitle>CULISO</MainTitle>
             <TopImg><img src={GetIcon("alarm.png")} style={{ width: "22px" }}></img></TopImg>
           </TopBar>
@@ -84,7 +84,7 @@ export const CommunicationMain = () => {
               </ProfileCon>
             </ProfileBox>
             <TopImg>
-              <img src={GetIcon("plus2.png")} alt="Plus Icon" onClick={() => goToPage("contentUpload?prevPage=CommunicationMain")} />
+              <img src={GetIcon("plus2.png")} alt="Plus Icon" onClick={() => goToPage("ContentUpload?prevPage=CommunicationMain")} />
             </TopImg>
           </TopBar>
 
