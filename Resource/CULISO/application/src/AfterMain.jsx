@@ -95,121 +95,114 @@ export const AfterMain = () => {
   // 권한 확인 및 요청
   const CheckPermissions = async () => {
     try {
-      // 현재 권한 상태 확인
-      const microphonePermission = await checkMicrophonePermission();
-      const locationPermission = await checkLocationPermission();
+        // 현재 권한 상태 확인
+        const microphonePermission = await checkMicrophonePermission();
+        const locationPermission = await checkLocationPermission();
 
-      // 권한이 허용되지 않은 경우에만 요청
-      if (!microphonePermission) {
+        // 권한이 허용되지 않은 경우에만 요청
+        if (!microphonePermission) {
         await RequestMicrophonePermission();
-      }
+        }
 
-      if (!locationPermission) {
+        if (!locationPermission) {
         await RequestLocationPermission();
-      }
+        }
     } catch (error) {
-      console.error('권한 확인 및 요청 중 오류가 발생했습니다:', error);
+        console.error('권한 확인 및 요청 중 오류가 발생했습니다:', error);
     }
-  };
-  // 음성 권한 요청
-  const RequestMicrophonePermission = async () => {
-    try {
-      const status = await Permissions.request({ name: 'microphone' });
-      if (status.state === 'granted') {
-        console.log('마이크 권한이 부여되었습니다.');
-      } else {
-        console.log('마이크 권한이 거부되었습니다.');
-      }
-    } catch (error) {
-      console.error('마이크 권한 요청 중 오류 발생:', error);
+};
+// 음성 권한 요청
+const RequestMicrophonePermission = async () => {
+try {
+    const status = await Permissions.request({ name: 'microphone' });
+    if (status.granted) {
+    console.log('마이크 권한이 부여되었습니다.');
+    } else {
+    console.log('마이크 권한이 거부되었습니다.');
     }
-  };
+} catch (error) {
+    console.error('마이크 권한 요청 중 오류 발생:', error);
+}
+};
 
-  // 위치 권한 요청
-  const RequestLocationPermission = async () => {
-    try {
-      const coordinates = await Geolocation.getCurrentPosition();
-      console.log('Current position:', coordinates);
-      return coordinates;
-    } catch (error) {
-      console.error('위치 정보를 가져오는 중 오류 발생:', error);
-      return false;
+// 위치 권한 요청
+const RequestLocationPermission = async () => {
+try {
+    const position = await Geolocation.getCurrentPosition();
+    console.log('위치 정보:', position);
+    return true;
+} catch (error) {
+    console.error('위치 정보를 가져오는 중 오류 발생:', error);
+    return false;
+}
+};
+// 음성 권한 확인
+const checkMicrophonePermission = async () => {
+try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    if (stream) {
+    console.log('마이크 권한이 이미 부여되었습니다.');
+    return true;
+    } else {
+    console.log('마이크 권한이 부여되지 않았습니다.');
+    return false;
     }
-  };
+} catch (error) {
+    console.error('마이크 권한 확인 중 오류 발생:', error);
+    return false;
+}
+};
+
+// 위치 권한 확인
+const checkLocationPermission = async () => {
+try {
+    const status = await Geolocation.checkPermissions();
+    if (status.location === 'granted') {
+    console.log('위치 정보 권한이 이미 부여되었습니다.');
+    return true;
+    } else {
+    console.log('위치 정보 권한이 부여되지 않았습니다.');
+    return false;
+    }
+} catch (error) {
+    console.error('위치 정보 권한 확인 중 오류 발생:', error);
+    return false;
+}
+};
   // 블루투스 요청
   const requestBlueTooth = async () => {
-    try{
+    try {
       if (!navigator.bluetooth) {
         alert("브라우저가 Web Bluetooth API를 지원하지 않습니다.");
+        return;
       }
-
+  
       const device = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true
       });
-      if(device){
-        alert('블루투스 기기를 찾았습니다:', device);
+  
+      if (device) {
+        alert(`블루투스 기기를 찾았습니다: ${device.name}`);
         // GATT 서버에 연결
         const server = await device.gatt.connect();
         // GATT 서버에서 제공하는 서비스 검색
         const services = await server.getPrimaryServices();
-        // 각 서비스에 속한 특성 찾기
+  
         for (const service of services) {
           const characteristics = await service.getCharacteristics();
           for (const characteristic of characteristics) {
-            alert('찾은 특성:', characteristic.uuid);
-              
-              // 이제 찾은 특성을 사용하여 데이터를 읽거나 쓸 수 있습니다.
+            alert(`찾은 특성: ${characteristic.uuid}`);
+            // 이제 찾은 특성을 사용하여 데이터를 읽거나 쓸 수 있습니다.
           }
         }
-        // // 데이터 쓰기
-        // const dataToWrite = new Uint8Array([97]);
         setBluetoothFlag(true);
       }
-      // 연결 및 통신 작업 수행
     } catch (error) {
       console.error('블루투스 기기 연결 중 오류 발생:', error);
     }
-  }
-
-  // 음성 권한 확인
-  const checkMicrophonePermission = async () => {
-    try {
-      const status = await Permissions.query({ name: 'microphone' });
-      if (status.state === 'granted') {
-        console.log('마이크 권한이 이미 부여되었습니다.');
-        return true;
-      } else {
-        console.log('마이크 권한이 부여되지 않았습니다.');
-        return false;
-      }
-    } catch (error) {
-      console.error('마이크 권한 확인 중 오류 발생:', error);
-      return false;
-    }
   };
 
-  // 위치 권한 확인
-  const checkLocationPermission = async () => {
-    try {
-      const status = await Geolocation.checkPermissions();
-      if (status.location !== 'granted') {
-        const permission = await Geolocation.requestPermissions();
-        if (permission.location !== 'granted') {
-          throw new Error('Location permission not granted');
-        }
-        else{
-          console.log("위치 정보 권한이 승인되었습니다.");
-        }
-        return true;
-      } else {
-        console.log('위치 정보 권한이 부여되지 않았습니다.');
-        return false;
-      }
-    } catch (error) {
-      console.error('위치 정보 권한 확인 중 오류 발생:', error);
-      return false;
-    }
-  };
+  
   
   return (
     <div>
