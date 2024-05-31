@@ -46,7 +46,7 @@ export const TimerNavigate = (ms, name) => {
   //   }, time);
   // }, [nav, name, time]);
   let timer = setTimeout(()=>{
-    window.location.href = "/" + name;
+    window.location.href = "/react/" + name;
   }, time)
 
   return () => {
