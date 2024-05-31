@@ -46,20 +46,7 @@ app.use(express.static(path.join(__dirname, './application/build')));
 // 리액트 빌드 파일을 서빙
 app.use(express.static(path.join(__dirname, 'build')));
 
-// API 요청을 리액트 서버로 프록시
-app.use('/api', createProxyMiddleware({ 
-  target: 'http://localhost:3000', 
-  changeOrigin: true,
-  onProxyReq: (proxyReq, req, res) => {
-    console.log(`Proxying request: ${req.method} ${req.url}`);
-  },
-  onProxyRes: (proxyRes, req, res) => {
-      console.log(`Received response from target: ${proxyRes.statusCode} ${req.url}`);
-  },
-  onError: (err, req, res) => {
-      console.error(`Proxy error: ${err.message}`);
-  } 
-}));
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'application/build', 'index.html'));
 });
