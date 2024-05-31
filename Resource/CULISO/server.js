@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, './application/build')));
 app.use(express.static(path.join(__dirname, 'build')));
 
 // API 요청을 리액트 서버로 프록시
-app.use('/api', createProxyMiddleware({ target: 'http://localhost:3000', changeOrigin: true }));
+app.use('/api', createProxyMiddleware({ target: 'http://localhost:3000/api', changeOrigin: true }));
 
 // 나머지 요청을 리액트 애플리케이션으로 전달
 // 데이터베이스 연결
