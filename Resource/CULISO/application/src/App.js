@@ -25,7 +25,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="" element={<Intro />} />
+        <Route path="Intro" element={<Intro />} />
         <Route path="Main" element={<Main />} />
         <Route path="SignUp" element={<SignUp />} />
         <Route path="Login" element={<Login />} />
