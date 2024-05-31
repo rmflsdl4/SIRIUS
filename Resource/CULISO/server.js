@@ -47,8 +47,22 @@ app.use(express.static(path.join(__dirname, './application/build')));
 app.use(express.static(path.join(__dirname, 'build')));
 
 // API 요청을 리액트 서버로 프록시
-app.use('/api', createProxyMiddleware({ target: 'http://localhost:3000/api', changeOrigin: true }));
-
+app.use('/api', createProxyMiddleware({ 
+  target: 'http://localhost:3000', 
+  changeOrigin: true,
+  onProxyReq: (proxyReq, req, res) => {
+    console.log(`Proxying request: ${req.method} ${req.url}`);
+  },
+  onProxyRes: (proxyRes, req, res) => {
+      console.log(`Received response from target: ${proxyRes.statusCode} ${req.url}`);
+  },
+  onError: (err, req, res) => {
+      console.error(`Proxy error: ${err.message}`);
+  } 
+}));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 // 나머지 요청을 리액트 애플리케이션으로 전달
 // 데이터베이스 연결
 database.Connect();
