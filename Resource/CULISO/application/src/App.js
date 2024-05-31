@@ -25,20 +25,20 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Intro />} />
-        <Route path="/main" element={<Main />} />
-        <Route path="/signUp" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/afterMain" element={<AfterMain />} />
-        <Route path="/myPage" element={<MyPage />} />
-        <Route path="/updateProfile" element={<UpdateProfile />} />
-        <Route path="/culi" element={<AI />} />
-        <Route path="/findingID" element={<FindingID/>} />
-        <Route path="/findingPW" element={<FindingPW/>} />
-        <Route path="/afterDeviceMain" element={<AfterDeviceMain/>} />
-        <Route path="/communicationMain" element={<CommunicationMain/>} />
-        <Route path="/contentsComponent" element={<ContentsComponent/>} />
-        <Route path="/contentUpload" element={<ContentUpload/>} />
+        <Route path="/react/" element={<Intro />} />
+        <Route path="/react/main" element={<Main />} />
+        <Route path="/react/signUp" element={<SignUp />} />
+        <Route path="/react/login" element={<Login />} />
+        <Route path="/react/afterMain" element={<AfterMain />} />
+        <Route path="/react/myPage" element={<MyPage />} />
+        <Route path="/react/updateProfile" element={<UpdateProfile />} />
+        <Route path="/react/culi" element={<AI />} />
+        <Route path="/react/findingID" element={<FindingID/>} />
+        <Route path="/react/findingPW" element={<FindingPW/>} />
+        <Route path="/react/afterDeviceMain" element={<AfterDeviceMain/>} />
+        <Route path="/react/communicationMain" element={<CommunicationMain/>} />
+        <Route path="/react/contentsComponent" element={<ContentsComponent/>} />
+        <Route path="/react/contentUpload" element={<ContentUpload/>} />
       </Routes>
     </BrowserRouter>
   );
