@@ -182,7 +182,6 @@ try {
       });
   
       if (device) {
-        setBluetoothFlag(true);
         alert(`블루투스 기기를 찾았습니다: ${device.name}`);
         
         // GATT 서버에 연결
@@ -196,10 +195,10 @@ try {
             alert(`찾은 특성: ${characteristic.uuid}`);
             // 이제 찾은 특성을 사용하여 데이터를 읽거나 쓸 수 있습니다.
             const value = await characteristic.readValue();
-            console.log(`특성 값: ${value.getUint8(0)}`);
+            alert(`특성 값: ${value.getUint8(0)}`);
           }
         }
-        //setBluetoothFlag(true);
+        setBluetoothFlag(true);
       }
     } catch (error) {
       console.error('블루투스 기기 연결 중 오류 발생:', error);
