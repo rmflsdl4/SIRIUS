@@ -182,8 +182,9 @@ try {
       });
   
       if (device) {
-        alert(`블루투스 기기를 찾았습니다: ${device.name}`);
         setBluetoothFlag(true);
+        alert(`블루투스 기기를 찾았습니다: ${device.name}`);
+        
         // GATT 서버에 연결
         const server = await device.gatt.connect();
         // GATT 서버에서 제공하는 서비스 검색
