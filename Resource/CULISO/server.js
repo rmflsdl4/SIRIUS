@@ -93,8 +93,6 @@ else{
 // 토큰으로 아이디 가져오기
 async function GetUserID(token){
   try{
-    console.log("토큰: "+token); 
-    console.log("세션: "+session); 
     const session = await sessionStore.get(token);
     console.log("요청한 아이디: " + session.userID);
     if(session) return session.userID;
@@ -122,7 +120,6 @@ app.post("/signUp", (req) => {
   );
 });
 app.post("/login", async (req, res) => {
-  console.log("로그인 경로 ");
   const data = req.body;
   const result = await login.Check(data.id, data.pw);
   if (result) {
@@ -141,7 +138,6 @@ app.post("/login", async (req, res) => {
 });
 app.post("/addrReq", async (req, res) => {
   const token = req.headers.authorization.replace("Bearer ", "");
-  console.log("테스트: " + req.session.userID);
   try {
     const userID = await GetUserID(token);
 
