@@ -93,7 +93,9 @@ else{
 // 토큰으로 아이디 가져오기
 async function GetUserID(token){
   try{
+    console.log("토큰: "+token); 
     const session = await sessionStore.get(token);
+    console.log("세션: "+session); 
     console.log("요청한 아이디: " + session.userID);
     if(session) return session.userID;
   }
