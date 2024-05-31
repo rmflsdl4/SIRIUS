@@ -36,11 +36,9 @@ const options = {
   cert: certPath,
 };
 app.use(cors());
-const appPath = './application';
 // **이미지 파일 폴더에 저장**
 const imagePath = './application/public/';
-// 정적 파일 제공 설정
-app.use(express.static(appPath));
+// 정적 파일 제공 설정\
 app.use(express.static(imagePath));
 // 웹앱 테스트
 app.use(express.static(path.join(__dirname, './application/build')));
@@ -49,12 +47,9 @@ app.use(express.static(path.join(__dirname, './application/build')));
 app.use(express.static(path.join(__dirname, 'build')));
 
 // API 요청을 리액트 서버로 프록시
-app.use('/api', createProxyMiddleware({ target: 'http://13.209.80.79:3000', changeOrigin: true }));
+app.use('/api', createProxyMiddleware({ target: 'http://localhost:3000', changeOrigin: true }));
 
 // 나머지 요청을 리액트 애플리케이션으로 전달
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
 // 데이터베이스 연결
 database.Connect();
 // app 설정
