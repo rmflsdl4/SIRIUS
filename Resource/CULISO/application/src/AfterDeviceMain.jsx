@@ -103,7 +103,7 @@ const DeviceIcon = styled.img`
 `;
 
 const devicesData = [
-  { name: '침실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'c' },
+  { name: '침실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'f' },
   { name: '거실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'b' },
   { name: '에어컨', iconOn: 'air-conditioner-on.png', iconOff: 'air-conditioner-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'g' },
   { name: '커튼', iconOn: 'curtain-on.png', iconOff: 'curtain-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'i' },
