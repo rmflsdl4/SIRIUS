@@ -171,37 +171,37 @@ try {
 };
   // 블루투스 요청
   const requestBlueTooth = async () => {
+    if (!navigator.bluetooth) {
+      alert("브라우저가 Web Bluetooth API를 지원하지 않습니다.");
+      return;
+    }
+    let chosenDevice = null;
+    let characteristic = null; // 데이터를 쓸 특성을 저장할 변수
+
     try {
-      if (!navigator.bluetooth) {
-        alert("브라우저가 Web Bluetooth API를 지원하지 않습니다.");
-        return;
-      }
-  
-      const device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true
-      });
-  
-      if (device) {
-        alert(`블루투스 기기를 찾았습니다: ${device.name}`);
-        
-        // GATT 서버에 연결
+        const device = await navigator.bluetooth.requestDevice({
+            filters: [{ services: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e'] }]
+        });
+        console.log('Connecting to GATT Server...');
+        chosenDevice = device;
         const server = await device.gatt.connect();
-        // GATT 서버에서 제공하는 서비스 검색
-        const services = await server.getPrimaryServices();
-  
-        for (const service of services) {
-          const characteristics = await service.getCharacteristics();
-          for (const characteristic of characteristics) {
-            alert(`찾은 특성: ${characteristic.uuid}`);
-            // 이제 찾은 특성을 사용하여 데이터를 읽거나 쓸 수 있습니다.
-            const value = await characteristic.readValue();
-            alert(`특성 값: ${value.getUint8(0)}`);
-          }
-        }
-        setBluetoothFlag(true);
-      }
+        console.log('Getting GATT Service...');
+        const service = await server.getPrimaryService('6e400001-b5a3-f393-e0a9-e50e24dcca9e');
+        console.log('GATT Service received:', service);
+        characteristic = await service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'); // 데이터를 쓸 특성 UUID
+        console.log('Characteristic received:', characteristic);
+
+        // 데이터 쓰기 예제
+        const value = new TextEncoder().encode('i'); // 쓸 데이터
+        await characteristic.writeValue(value);
+        console.log('Data written successfully');
     } catch (error) {
-      console.error('블루투스 기기 연결 중 오류 발생:', error);
+        console.error('Bluetooth error:', error);
+        // 연결이 끊긴 경우 다시 연결 시도
+        if (error.message.includes('GATT Server is disconnected') && chosenDevice) {
+            console.log('Attempting to reconnect...');
+            await chosenDevice.gatt.connect();
+        }
     }
   };
 
