@@ -5,6 +5,7 @@ import styled from "styled-components";
 import "./style.css";
 import { useState, useEffect } from "react";
 import { GetAddress } from "./modules/DataRouter";
+import { test } from "./AfterMain";
 
 const CenterBox = styled.div`
   display: flex;
@@ -136,6 +137,7 @@ export const AfterDeviceMain = () => {
   const toggleDeviceStatus = (index) => {
     const newDevices = [...devices];
     const device = newDevices[index];
+    test('i');
     device.status = device.status === '켜짐' ? '꺼짐' : '켜짐';
     device.icon = device.status === '켜짐' ? device.iconOn : device.iconOff;
     device.powerIcon = device.status === '켜짐' ? device.powerOnIcon : device.powerOffIcon;

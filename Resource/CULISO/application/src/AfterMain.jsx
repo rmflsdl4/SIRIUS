@@ -60,8 +60,13 @@ const Button = styled.input`
 `;
 const cookies = new Cookies();
 
-
-
+let characteristic = null;
+export async function test(str){
+  if(characteristic){
+    const value = new TextEncoder().encode(str); // 쓸 데이터
+    await characteristic.writeValue(value);
+  }
+}
 
 function LogOut() {
   cookies.remove("token");
@@ -176,7 +181,7 @@ try {
       return;
     }
     let chosenDevice = null;
-    let characteristic = null; // 데이터를 쓸 특성을 저장할 변수
+     // 데이터를 쓸 특성을 저장할 변수
 
     try {
         const device = await navigator.bluetooth.requestDevice({
@@ -190,10 +195,8 @@ try {
         console.log('GATT Service received:', service);
         characteristic = await service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'); // 데이터를 쓸 특성 UUID
         console.log('Characteristic received:', characteristic);
-        const value = new TextEncoder().encode('i');
         alert("연결됨");
-        setBluetoothFlag(true); // 쓸 데이터
-        await characteristic.writeValue(value);
+        setBluetoothFlag(true);
         console.log('Data written successfully');
     } catch (error) {
         console.error('Bluetooth error:', error);
