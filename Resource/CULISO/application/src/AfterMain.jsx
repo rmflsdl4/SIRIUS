@@ -190,10 +190,9 @@ try {
         console.log('GATT Service received:', service);
         characteristic = await service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'); // 데이터를 쓸 특성 UUID
         console.log('Characteristic received:', characteristic);
+        const value = new TextEncoder().encode('i');
         alert("연결됨");
-        setBluetoothFlag(true);
-        // 데이터 쓰기 예제
-        const value = new TextEncoder().encode('i'); // 쓸 데이터
+        setBluetoothFlag(true); // 쓸 데이터
         await characteristic.writeValue(value);
         console.log('Data written successfully');
     } catch (error) {
