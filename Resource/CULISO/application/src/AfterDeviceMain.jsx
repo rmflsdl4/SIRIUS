@@ -5,7 +5,7 @@ import styled from "styled-components";
 import "./style.css";
 import { useState, useEffect } from "react";
 import { GetAddress } from "./modules/DataRouter";
-import { test } from "./AfterMain";
+import { BLEController } from "./AfterMain";
 
 const CenterBox = styled.div`
   display: flex;
@@ -103,12 +103,12 @@ const DeviceIcon = styled.img`
 `;
 
 const devicesData = [
-  { name: '침실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
-  { name: '거실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
-  { name: '에어컨', iconOn: 'air-conditioner-on.png', iconOff: 'air-conditioner-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
-  { name: '커튼', iconOn: 'curtain-on.png', iconOff: 'curtain-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
-  { name: '보일러', iconOn: 'water-heater-on.png', iconOff: 'water-heater-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
-  { name: 'TV', iconOn: 'tv-on.png', iconOff: 'tv-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png' },
+  { name: '침실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'c' },
+  { name: '거실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'b' },
+  { name: '에어컨', iconOn: 'air-conditioner-on.png', iconOff: 'air-conditioner-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'g' },
+  { name: '커튼', iconOn: 'curtain-on.png', iconOff: 'curtain-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'i' },
+  { name: '보일러', iconOn: 'water-heater-on.png', iconOff: 'water-heater-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'a' },
+  { name: 'TV', iconOn: 'tv-on.png', iconOff: 'tv-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'h' },
 ];
 
 const cookies = new Cookies();
@@ -137,7 +137,7 @@ export const AfterDeviceMain = () => {
   const toggleDeviceStatus = (index) => {
     const newDevices = [...devices];
     const device = newDevices[index];
-    test('i');
+    BLEController(device.bleCMD);
     device.status = device.status === '켜짐' ? '꺼짐' : '켜짐';
     device.icon = device.status === '켜짐' ? device.iconOn : device.iconOff;
     device.powerIcon = device.status === '켜짐' ? device.powerOnIcon : device.powerOffIcon;

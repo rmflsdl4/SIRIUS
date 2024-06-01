@@ -61,7 +61,7 @@ const Button = styled.input`
 const cookies = new Cookies();
 
 let characteristic = null;
-export async function test(str){
+export async function BLEController(str){
   if(characteristic){
     const value = new TextEncoder().encode(str); // 쓸 데이터
     await characteristic.writeValue(value);
