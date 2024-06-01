@@ -118,16 +118,16 @@ export const AfterMain = () => {
 };
 // 음성 권한 요청
 const RequestMicrophonePermission = async () => {
-try {
-    const status = await Permissions.request({ name: 'microphone' });
-    if (status.granted) {
-    console.log('마이크 권한이 부여되었습니다.');
-    } else {
-    console.log('마이크 권한이 거부되었습니다.');
-    }
-} catch (error) {
-    console.error('마이크 권한 요청 중 오류 발생:', error);
-}
+  try {
+      const status = await Permissions.request({ name: 'microphone' });
+      if (status.granted) {
+        console.log('마이크 권한이 부여되었습니다.');
+      } else {
+        console.log('마이크 권한이 거부되었습니다.');
+      }
+  } catch (error) {
+      console.error('마이크 권한 요청 중 오류 발생:', error);
+  }
 };
 
 // 위치 권한 요청
@@ -160,19 +160,19 @@ try {
 
 // 위치 권한 확인
 const checkLocationPermission = async () => {
-try {
-    const status = await Geolocation.checkPermissions();
-    if (status.location === 'granted') {
-    console.log('위치 정보 권한이 이미 부여되었습니다.');
-    return true;
-    } else {
-    console.log('위치 정보 권한이 부여되지 않았습니다.');
-    return false;
-    }
-} catch (error) {
-    console.error('위치 정보 권한 확인 중 오류 발생:', error);
-    return false;
-}
+  try {
+      const status = await Geolocation.checkPermissions();
+      if (status.location === 'granted') {
+      console.log('위치 정보 권한이 이미 부여되었습니다.');
+      return true;
+      } else {
+      console.log('위치 정보 권한이 부여되지 않았습니다.');
+      return false;
+      }
+  } catch (error) {
+      console.error('위치 정보 권한 확인 중 오류 발생:', error);
+      return false;
+  }
 };
   // 블루투스 요청
   const requestBlueTooth = async () => {
@@ -195,7 +195,6 @@ try {
         console.log('GATT Service received:', service);
         characteristic = await service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'); // 데이터를 쓸 특성 UUID
         console.log('Characteristic received:', characteristic);
-        alert("연결됨");
         setBluetoothFlag(true);
         console.log('Data written successfully');
     } catch (error) {

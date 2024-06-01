@@ -15,7 +15,8 @@ export function AI() {
     const [typingMessage, setTypingMessage] = useState('입력 중');
     const typingIntervalRef = useRef(null);
     const recognitionRef = useRef(null);
-
+    const [flag, setFlag] = useState(true);
+    
     useEffect(() => {
         if (!('webkitSpeechRecognition' in window)) {
             alert('이 브라우저는 음성 인식을 지원하지 않습니다. 구글 크롬을 사용해주세요.');
@@ -59,7 +60,91 @@ export function AI() {
         };
     }, []);
     
+    useEffect(() => {
+        //requestPermissions();
+        if(flag){
+          CheckPermissions();
+          setFlag(false);
+        }
+      }, []);
     
+      // 권한 확인 및 요청
+      const CheckPermissions = async () => {
+        try {
+            // 현재 권한 상태 확인
+            const microphonePermission = await checkMicrophonePermission();
+            const locationPermission = await checkLocationPermission();
+    
+            // 권한이 허용되지 않은 경우에만 요청
+            if (!microphonePermission) {
+            await RequestMicrophonePermission();
+            }
+    
+            if (!locationPermission) {
+            await RequestLocationPermission();
+            }
+        } catch (error) {
+            console.error('권한 확인 및 요청 중 오류가 발생했습니다:', error);
+        }
+      };
+    // 음성 권한 요청
+    const RequestMicrophonePermission = async () => {
+      try {
+          const status = await Permissions.request({ name: 'microphone' });
+          if (status.granted) {
+            console.log('마이크 권한이 부여되었습니다.');
+          } else {
+            console.log('마이크 권한이 거부되었습니다.');
+          }
+      } catch (error) {
+          console.error('마이크 권한 요청 중 오류 발생:', error);
+      }
+    };
+    
+    // 위치 권한 요청
+    const RequestLocationPermission = async () => {
+    try {
+        const position = await Geolocation.getCurrentPosition();
+        console.log('위치 정보:', position);
+        return true;
+    } catch (error) {
+        console.error('위치 정보를 가져오는 중 오류 발생:', error);
+        return false;
+    }
+    };
+    // 음성 권한 확인
+    const checkMicrophonePermission = async () => {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        if (stream) {
+        console.log('마이크 권한이 이미 부여되었습니다.');
+        return true;
+        } else {
+        console.log('마이크 권한이 부여되지 않았습니다.');
+        return false;
+        }
+    } catch (error) {
+        console.error('마이크 권한 확인 중 오류 발생:', error);
+        return false;
+    }
+    };
+    
+    // 위치 권한 확인
+    const checkLocationPermission = async () => {
+      try {
+          const status = await Geolocation.checkPermissions();
+          if (status.location === 'granted') {
+          console.log('위치 정보 권한이 이미 부여되었습니다.');
+          return true;
+          } else {
+          console.log('위치 정보 권한이 부여되지 않았습니다.');
+          return false;
+          }
+      } catch (error) {
+          console.error('위치 정보 권한 확인 중 오류 발생:', error);
+          return false;
+      }
+    };
 
     const startListening = async () => {
         if (!('webkitSpeechRecognition' in window)) return;

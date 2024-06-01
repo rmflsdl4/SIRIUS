@@ -107,7 +107,7 @@ const devicesData = [
   { name: '거실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'b' },
   { name: '에어컨', iconOn: 'air-conditioner-on.png', iconOff: 'air-conditioner-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'g' },
   { name: '커튼', iconOn: 'curtain-on.png', iconOff: 'curtain-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'i' },
-  { name: '보일러', iconOn: 'water-heater-on.png', iconOff: 'water-heater-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'a' },
+  { name: '보일러', iconOn: 'water-heater-on.png', iconOff: 'water-heater-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: null },
   { name: 'TV', iconOn: 'tv-on.png', iconOff: 'tv-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'h' },
 ];
 
