@@ -55,10 +55,9 @@ export const BoardCommunityContents = styled.div`
   background-color: white;
   display: flex;
   flex-direction: column;
-  margin: 0 20px 20px 20px;
+  margin: 0 0 20px 0;
   box-sizing: border-box;  // 패딩을 포함한 너비와 높이를 계산
 `;
-
 
 export const ContentsTitle = styled.div`
   width: 100%;
@@ -163,6 +162,11 @@ export const CommentWriteBox = styled.div`
     border-radius: 15px;
     height: 30px;
     z-index: 10;
+    position: fixed;  // 하단에 고정
+    bottom: 10px;     // 화면 하단에서 10px 위에 위치
+    left: 10px;       // 왼쪽에서 10px
+    right: 10px;      // 오른쪽에서 10px
+    padding: 10px;    // 내부 여백 추가
 `;
 
 export const TextArea = styled.textarea`
@@ -193,8 +197,8 @@ export const DeleteBox = styled.div`
     align-items: center;
     justify-content: center;  /* 중앙 정렬 */
     flex-direction: row;      /* 한 줄로 나란히 */
-    margin-top: 20px;         /* 적절한 상단 여백 */
-    width: 100%;              /* 부모의 너비를 차지하게 설정 */
+    width: calc(100% - 20px);              /* 부모의 너비를 차지하게 설정 */
+    margin: 20px 10px 0 10px;
 `;
 
 export const DeleteImg = styled.span`
@@ -202,7 +206,7 @@ export const DeleteImg = styled.span`
 `;
 
 export const DeleteTitle = styled.span`
-  font-size: 1em;
+  font-size: 0.9em;
 `;
 
 export const DeleteBtnLeft = styled.button`
