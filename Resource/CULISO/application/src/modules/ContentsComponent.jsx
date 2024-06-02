@@ -270,7 +270,7 @@ export const ContentsComponent = () => {
                                         </TableCell>
                                         <TableCell>
                                             <UserInfo>
-                                                <UserNick>{comment.userName}</UserNick>
+                                                <UserNick>{comment.userNickName}</UserNick>
                                                 <WriteDate>{new Date(comment.commentDate).toLocaleString()}</WriteDate>
                                             </UserInfo>
                                             <Comment>{comment.commentContent}</Comment>

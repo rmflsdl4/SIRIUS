@@ -1018,16 +1018,17 @@ app.post("/BoardContentsValue", async (req, res) => {
                           where c.contentsNum = ?`;
 
   const commentQuery = `select 
-                              u.userID as userID,
-                              u.userName as userName,
-                              u.createDate as createDate,
-                              u.profileUrl as profileUrl,
-                              c.commentNum as commentNum,
-                              c.commentContent as commentContent,
-                              c.commentDate as commentDate
-                          from comment as c inner join user as u
-                              on c.userID = u.userID
-                          where c.contentsNum = ?`;
+                          u.userID as userID,
+                          u.userName as userName,
+                          u.userNickName as userNickName,
+                          u.createDate as createDate,
+                          u.profileUrl as profileUrl,
+                          c.commentNum as commentNum,
+                          c.commentContent as commentContent,
+                          c.commentDate as commentDate
+                      from comment as c inner join user as u
+                          on c.userID = u.userID
+                      where c.contentsNum = ?`;
 
   const fileQuery = `select 
                           fileUploadNum,
