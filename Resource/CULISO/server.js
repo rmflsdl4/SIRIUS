@@ -993,73 +993,81 @@ app.post("/ContentsValue", async (req, res) => {
 
 // 커뮤니티 게시글 select
 app.post("/BoardContentsValue", async (req, res) => {
-    const { contentsNum } = req.body;
-    const token = req.headers.authorization.replace("Bearer ", "");
-    const userID = await GetUserID(token);
-    console.log("userID : " + userID);
+  const { contentsNum } = req.body;
+  const token = req.headers.authorization.replace("Bearer ", "");
+  const session = await getSessionAsync(token);
+  if (!session) {
+      return res
+      .status(401)
+      .json({ success: false, message: "유효하지 않은 토큰입니다." });
+  }
 
-    const contentsQuery = `select 
-                                u.userID as userID,
-                                u.userName as userName,
-                                u.createDate as createDate,
-                                u.profileUrl as profileUrl,
-                                c.contentsNum as contentsNum,
-                                c.contentsTitle as contentsTitle,
-                                c.content as content,
-                                c.recommend as recommend,
-                                c.contentsDate as contentsDate,
-                                c.views as views,
-                                b.boardID as boardID,
-                                b.boardName as boardName
-                            from contents as c 
-                            inner join user as u on c.userID = u.userID
-                            inner join board as b on c.boardID = b.boardID
-                            where c.contentsNum = ?`;
+  const userID = session.userID;
+  console.log("userID : " + userID);
 
-    const commentQuery = `select 
-                                u.userID as userID,
-                                u.userName as userName,
-                                u.createDate as createDate,
-                                u.profileUrl as profileUrl,
-                                c.commentNum as commentNum,
-                                c.commentContent as commentContent,
-                                c.commentDate as commentDate
-                            from comment as c inner join user as u
-                                on c.userID = u.userID
-                            where c.contentsNum = ?`;
+  const contentsQuery = `select 
+                              u.userID as userID,
+                              u.userName as userName,
+                              u.userNickName as userNickName,
+                              u.createDate as createDate,
+                              u.profileUrl as profileUrl,
+                              c.contentsNum as contentsNum,
+                              c.contentsTitle as contentsTitle,
+                              c.content as content,
+                              c.recommend as recommend,
+                              c.contentsDate as contentsDate,
+                              c.views as views,
+                              b.boardID as boardID,
+                              b.boardName as boardName
+                          from contents as c 
+                          inner join user as u on c.userID = u.userID
+                          inner join board as b on c.boardID = b.boardID
+                          where c.contentsNum = ?`;
 
-    const fileQuery = `select 
-                            fileUploadNum,
-                            fileUrl,
-                            fileName
-                        from file
-                        where contentsNum = ?`;
+  const commentQuery = `select 
+                              u.userID as userID,
+                              u.userName as userName,
+                              u.createDate as createDate,
+                              u.profileUrl as profileUrl,
+                              c.commentNum as commentNum,
+                              c.commentContent as commentContent,
+                              c.commentDate as commentDate
+                          from comment as c inner join user as u
+                              on c.userID = u.userID
+                          where c.contentsNum = ?`;
 
-    const contentsRecommendQuery = `select count(userID) as count from contentsRecommend
-                                    where userID = ? and contentsNum = ?`;
-    
-    const value = [contentsNum];
-    const contentsRecommendvalue = [userID, contentsNum];
+  const fileQuery = `select 
+                          fileUploadNum,
+                          fileUrl,
+                          fileName
+                      from file
+                      where contentsNum = ?`;
 
-    try {
-        // 두 개의 쿼리를 각각 실행
-        const contentsResult = await database.Query(contentsQuery, value);
-        const commentResult = await database.Query(commentQuery, value);
-        const fileResult = await database.Query(fileQuery, value);
-        const contentsRecommendResult = await database.Query(contentsRecommendQuery, contentsRecommendvalue);
+  const contentsRecommendQuery = `select count(userID) as count from contentsRecommend
+                                  where userID = ? and contentsNum = ?`;
+  
+  const value = [contentsNum];
+  const contentsRecommendvalue = [userID, contentsNum];
 
-        // 두 결과를 객체로 묶어 JSON 형식으로 반환
-        res.json({
-            contentsResult: contentsResult,
-            commentResult: commentResult,
-            fileResult: fileResult,
-            contentsRecommendResult: contentsRecommendResult,
-            sessionUserID: { userID: userID },
-        });
-    } catch (error) {
-        console.error('Error executing queries:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+  try {
+      // 두 개의 쿼리를 각각 실행
+      const contentsResult = await database.Query(contentsQuery, value);
+      const commentResult = await database.Query(commentQuery, value);
+      const fileResult = await database.Query(fileQuery, value);
+      const contentsRecommendResult = await database.Query(contentsRecommendQuery, contentsRecommendvalue);
+
+      // 두 결과를 객체로 묶어 JSON 형식으로 반환
+      res.json({
+          contentsResult: contentsResult,
+          commentResult: commentResult,
+          fileResult: fileResult,
+          contentsRecommendResult: contentsRecommendResult,
+          sessionUserID: { userID: userID }
+      });
+  } catch (error) {
+      console.error('Error executing queries:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // 커뮤니티 게시글 댓글 select

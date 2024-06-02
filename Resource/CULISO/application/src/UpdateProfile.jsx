@@ -35,19 +35,19 @@ const P = styled.p`
     text-align: center;
 `;
 const InputContainer = styled.div`
-  width: 285px;
-  height: 47px;
-  border-radius: 6px;
-  background: ${(props) => props.bg};
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
+    width: ${(props) => props.width};
+    height: 47px;
+    border-radius: 6px;
+    background: ${(props) => props.bg};
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
 `;
 const InputTag = styled.input`
   width: 210px;
   margin-left: 10px;
   border: none;
-  background: ${(props) => props.bg};
+  background: none;
   outline: none;
   color: #939393;
   ${props => props.cursor && `
@@ -90,11 +90,14 @@ const EmptyContainer = styled.div`
     align-items: center;
     flex-direction: column;
 `;
-const Input = ({ icon, t, n, ph, v, onChange, readFlag, max  }) => {
+const PostContainer = styled.div`
+    display: inline-flex;
+`;
+const Input = ({ icon, t, n, ph, v, onChange, readFlag, max, w="285px" }) => {
   return (
-    <InputContainer bg={readFlag === true ? "#FAFAFA" : "#EAE8E8"}>
+    <InputContainer width={w} bg={readFlag === true ? "#FAFAFA" : "#EAE8E8"}>
       <InputImg cursor={readFlag} src={GetIcon(icon)}/>
-      <InputTag type={t} cursor={readFlag} name={n} bg={readFlag === true ? "#FAFAFA" : "#EAE8E8"} value={v} placeholder={ph} onChange={onChange} readOnly={readFlag} maxLength={max} />
+      <InputTag type={t} cursor={readFlag} name={n} value={v} placeholder={ph} onChange={onChange} readOnly={readFlag} maxLength={max} />
     </InputContainer>
   );
 };
@@ -226,11 +229,11 @@ export const UpdateProfile = () => {
                                         <Input icon={"N-gray.png"} t={"text"} v={formValues.nickName} n={"nickName"} ph={"별명"} onChange={handleChange} readFlag={false} />
                                         <br/>
                                         <Input icon={"location-gray.png"} t={"text"} v={formValues.address} n={"address"} ph={"주소"} onChange={handleChange} readFlag={false} />
-                                        <div className="inputBG">
-                                            <img class="inputImg" src="/location-gray.png" alt="" style={{marginLeft: "20px"}}/>
-                                            <input class="inputText" type="text" name="postNum" placeholder="우편번호" maxlength="5" id="iPostNum" value={formValues.postNum}/>
+                                        <PostContainer>
+                                            <Input icon={"location-gray.png"} w={"150px"} t={"text"} v={formValues.postNum} n={"postNum"} ph={"우편번호"} max={5} readFlag={false} />
                                             <input class="postBG" type="button" value="우편번호 찾기" onClick={kakaoHandler.clickButton}/>
-                                        </div>
+                                        </PostContainer>
+                                        
                                         {openPostcode && (
                                             <DaumPostcode
                                             style={{

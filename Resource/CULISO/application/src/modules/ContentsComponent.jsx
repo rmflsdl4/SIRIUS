@@ -197,7 +197,7 @@ export const ContentsComponent = () => {
 
                     {isDropdownOpen && (
                         <DropdownMenu>
-                            <DropdownItem onClick={() => goToPage(`ContentUpload?contentsNum=${sendContentsNum}&prevPage=ContentsComponent`)}>게시글 수정하기</DropdownItem>
+                            <DropdownItem onClick={() => goToPage(`contentUpload?contentsNum=${sendContentsNum}&prevPage=ContentsComponent`)}>게시글 수정하기</DropdownItem>
                             <DropdownItem onClick={() => contentOpenModal() }>게시글 삭제하기</DropdownItem>
                         </DropdownMenu>
                     )}
@@ -208,7 +208,7 @@ export const ContentsComponent = () => {
                 <ProfileBox>
                     <ProfileImg src={newContents[0]?.profileUrl ? GetIcon(newContents[0].profileUrl) : GetIcon("userProfile.png")} alt="User Profile" />
                     <ProfileCon>
-                        <UserName>{newContents[0]?.userName}</UserName>
+                        <UserName>{newContents[0]?.userNickName}</UserName>
                         <SubText>{newContents[0] ? new Date(newContents[0].contentsDate).toLocaleString() : ''}</SubText>
                     </ProfileCon>
                 </ProfileBox>
@@ -231,8 +231,8 @@ export const ContentsComponent = () => {
                                         {relatedFiles.map((file, fileIndex) => (
                                             <StyledSwiperSlide key={fileIndex}>
                                                 <Image 
-                                                    src={`https://culiso.duckdns.org/${file.fileUrl}${file.fileName}`} 
-                                                    alt={`${file.fileName}`}
+                                                    src={GetIcon(`${file.fileUrl}${file.fileName}`)} 
+                                                    alt={`${file.fileName}`} 
                                                 />
                                             </StyledSwiperSlide>
                                         ))}
