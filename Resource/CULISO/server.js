@@ -995,14 +995,7 @@ app.post("/ContentsValue", async (req, res) => {
 app.post("/BoardContentsValue", async (req, res) => {
   const { contentsNum } = req.body;
   const token = req.headers.authorization.replace("Bearer ", "");
-  const session = await getSessionAsync(token);
-  if (!session) {
-      return res
-      .status(401)
-      .json({ success: false, message: "유효하지 않은 토큰입니다." });
-  }
-
-  const userID = session.userID;
+  const userID = await GetUserID(token);
   console.log("userID : " + userID);
 
   const contentsQuery = `select 
