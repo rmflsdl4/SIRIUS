@@ -92,9 +92,10 @@ const EmptyContainer = styled.div`
 `;
 const ReadContainer = styled.div`
     margin-top: ${(props) => props.top};
-    padding: 30px 0;
-    background-color: #FAFAFA;
+    color: ${(props) => props.color};
+    background-color: #fafafa;
     width: 320px;
+    margin-bottom: 30px;
     border: ${(props) => props.border};
     border-radius: 15px;
     display: flex;
@@ -102,8 +103,14 @@ const ReadContainer = styled.div`
     align-items: center;
     flex-direction: column;
 `;
+
 const PostContainer = styled.div`
     display: inline-flex;
+`;
+const MemberBackGruondContainer = styled.div`
+    background-color: #bbcbff;
+    border-top-right-radius: 13px;
+    border-top-left-radius: 13px;
 `;
 const Input = ({ icon, t, n, ph, v, onChange, readFlag, max, w="285px" }) => {
   return (
@@ -137,6 +144,7 @@ export const UpdateProfile = () => {
     const [openPostcode, setOpenPostcode] = useState(false);
     const [secFlag, setSecFlag] = useState(false);
     const [sexImgName, setSexImgName] = useState();
+    const [color, setColor] = useState();
 
     const [formValues, setFormValues] = useState({
         id: null,
@@ -185,9 +193,7 @@ export const UpdateProfile = () => {
         
         const userData = await GetUserData(event);
         setFormValues(userData);
-
-        const sexImgName = formValues.sex === 'M' ? "man.png" : "woman.png";
-        setSexImgName(sexImgName);
+        
         setFlag(result);
     }
     const InfoUpdate = async (event) => {
@@ -206,7 +212,15 @@ export const UpdateProfile = () => {
         }
         
     }
-
+    useEffect(()=>{
+        console.log(formValues);
+        if(formValues.sex !== null){
+            const sexImgName = formValues.sex === 'M' ? "man.png" : "woman.png";
+            const color = formValues.sex === 'M' ? "rgb(53, 158, 255)" : "rgb(255, 75, 147)";
+            setSexImgName(sexImgName);
+            setColor(color);
+        }
+    }, [formValues]);
     return (
         <div className="main">
             <div className="div">
@@ -231,11 +245,12 @@ export const UpdateProfile = () => {
                             {!secFlag && (
                                 <div>
                                     <Text color={"#3252C2"} size={"15px"} style={{marginTop:"30px"}}><span style={{fontWeight:"bold"}}>CULISO</span> <span style={{color:"#4B66C8"}}>Account</span></Text>
-                                    <ReadContainer border={formValues.sex==='M' ? "1px solid rgb(53, 158, 255)" : "1px solid rgb(255, 75, 147)"}>
-                                            <Input icon={sexImgName} t={"text"} v={formValues.id} n={"id"} ph={"아이디"} onChange={handleChange} readFlag={true}/>
-                                            <Input icon={"phone-gray.png"} t={"text"} v={formValues.phoneNum} n={"phoneNum"} ph={"전화번호"} onChange={handleChange} readFlag={true} />
-                                            <Input icon={"calendar-gray.png"} t={"text"} v={formValues.createDate} n={"createDate"} ph={"생성일"} onChange={handleChange} readFlag={true} />
-                                        </ReadContainer>
+                                    <ReadContainer border={formValues.sex==='M' ? "2px solid rgb(53, 158, 255)" : "2px solid rgb(255, 75, 147)"}>
+                                        <MemberBackGruondContainer><Text color={color} align={"center"}>회원 정보</Text></MemberBackGruondContainer>
+                                        <Input icon={sexImgName} t={"text"} v={formValues.id} n={"id"} ph={"아이디"} onChange={handleChange} readFlag={true}/>
+                                        <Input icon={"phone-gray.png"} t={"text"} v={formValues.phoneNum} n={"phoneNum"} ph={"전화번호"} onChange={handleChange} readFlag={true} />
+                                        <Input icon={"calendar-gray.png"} t={"text"} v={formValues.createDate} n={"createDate"} ph={"생성일"} onChange={handleChange} readFlag={true} />
+                                    </ReadContainer>
                                     <EmptyContainer>
                                         <Input icon={"N-gray.png"} t={"text"} v={formValues.name} n={"name"} ph={"이름"} onChange={handleChange} readFlag={false} />
                                         <Input icon={"N-gray.png"} t={"text"} v={formValues.nickName} n={"nickName"} ph={"별명"} onChange={handleChange} readFlag={false} />

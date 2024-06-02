@@ -167,11 +167,12 @@ export const CommentWriteBox = styled.div`
     left: 10px;       // 왼쪽에서 10px
     right: 10px;      // 오른쪽에서 10px
     padding: 10px;    // 내부 여백 추가
+    font-size: 16px;  // 폰트 크기 조정
 `;
 
 export const TextArea = styled.textarea`
     flex: 1;
-    font-size: 0.8em;
+    font-size: 16px;  // 폰트 크기 조정
     border: none;
     border-radius: 15px;
     margin-left: 10px;
@@ -183,6 +184,7 @@ export const TextArea = styled.textarea`
     overflow: hidden; 
     resize: none;
 `;
+
 
 export const SubmitButton = styled.button`
     background-color: white;
