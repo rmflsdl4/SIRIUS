@@ -1066,32 +1066,33 @@ app.post("/BoardContentsValue", async (req, res) => {
 
 // 커뮤니티 게시글 댓글 select
 app.post("/CommentSelectValue", async (req, res) => {
-    const { contentsNum } = req.body;
+  const { contentsNum } = req.body;
 
-    const query = `select 
-                        u.userID as userID,
-                        u.userName as userName,
-                        u.createDate as createDate,
-                        u.profileUrl as profileUrl,
-                        c.commentNum as commentNum,
-                        c.commentContent as commentContent,
-                        c.commentDate as commentDate
-                    from comment as c inner join user as u
-                        on c.userID = u.userID
-                    where c.contentsNum = ?`;
-    
-    const value = [contentsNum];
+  const query = `select 
+                      u.userID as userID,
+                      u.userName as userName,
+                      u.userNickName as userNickName,
+                      u.createDate as createDate,
+                      u.profileUrl as profileUrl,
+                      c.commentNum as commentNum,
+                      c.commentContent as commentContent,
+                      c.commentDate as commentDate
+                  from comment as c inner join user as u
+                      on c.userID = u.userID
+                  where c.contentsNum = ?`;
+  
+  const value = [contentsNum];
 
-    try {
-        // 두 개의 쿼리를 각각 실행
-        const result = await database.Query(query, value);
+  try {
+      // 두 개의 쿼리를 각각 실행
+      const result = await database.Query(query, value);
 
-        // 두 결과를 객체로 묶어 JSON 형식으로 반환
-        res.json(result);
-    } catch (error) {
-        console.error('Error executing queries:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+      // 두 결과를 객체로 묶어 JSON 형식으로 반환
+      res.json(result);
+  } catch (error) {
+      console.error('Error executing queries:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // 커뮤니티 게시글 댓글 insert
