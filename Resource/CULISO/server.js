@@ -101,6 +101,17 @@ async function GetUserID(token){
     return error;
   }
 }
+// 토큰으로 세션 제거하기
+async function DeleteSessionMember(token){
+  try{
+    await sessionStore.delete(token);
+    console.log("세션 삭제 성공: " + token);
+  }
+  catch(error){
+    console.error("세션 삭제 실패:", error);
+    return error;
+  }
+}
 
 // App 영역
 app.get("/",function(req,res){
@@ -134,6 +145,16 @@ app.post("/login", async (req, res) => {
       success: false,
       message: "아이디 또는 비밀번호가 올바르지 않습니다.",
     });
+  }
+});
+app.post("/logOut", async (req, res) => {
+  const token = req.headers.authorization.replace("Bearer ", "");
+  try {
+    await DeleteSessionMember(token);
+    res.status(200).send({success:true,message:"다음에도 큐리소를 이용해 주세요 !"});
+  }
+  catch(err){
+    res.status(400).send({success:false});
   }
 });
 app.post("/addrReq", async (req, res) => {

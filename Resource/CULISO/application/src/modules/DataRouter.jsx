@@ -344,3 +344,32 @@ export async function resetPassword(id, phoneNum, newPassword) {
       return { success: false, message: "비밀번호 재설정에 실패했습니다." };
   }
 }
+
+export async function LogOut(){
+  try {
+    const token = await cookies.get("token");
+    if (!token) {
+      console.log("토큰 없음");
+      return false; // 토큰이 없을 때 false 반환
+    }
+    const response = await fetch(url + "logOut", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${token}`,
+        }
+    });
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    const result = await response.json();
+    
+    if(result.success){
+      cookies.remove("token");
+      alert(result.message);
+      window.location.href = "/login";
+    }
+  } catch (error) {
+      console.error("Error:", error);
+  }
+}

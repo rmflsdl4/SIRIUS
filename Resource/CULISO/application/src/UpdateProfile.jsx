@@ -39,7 +39,7 @@ const InputContainer = styled.div`
     height: 47px;
     border-radius: 6px;
     background: ${(props) => props.bg};
-    margin-bottom: 10px;
+    margin: 10px 0;
     display: flex;
     align-items: center;
 `;
@@ -90,6 +90,19 @@ const EmptyContainer = styled.div`
     align-items: center;
     flex-direction: column;
 `;
+const WriteContainer = styled.div`
+    margin-top: ${(props) => props.top};
+    padding: 30px 0;
+    background-color: #FAFAFA;
+    width: 320px;
+    border: 2px solid #a5a5a5;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    box-shadow: 0px 0px 7px #a5a5a5;
+`;
 const ReadContainer = styled.div`
     margin-top: ${(props) => props.top};
     color: ${(props) => props.color};
@@ -102,15 +115,14 @@ const ReadContainer = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    box-shadow: 0px 0px 7px ${(props) => props.box};
 `;
 
 const PostContainer = styled.div`
     display: inline-flex;
 `;
 const MemberBackGruondContainer = styled.div`
-    background-color: #bbcbff;
-    border-top-right-radius: 13px;
-    border-top-left-radius: 13px;
+    border-bottom: ${(props) => props.border};
 `;
 const Input = ({ icon, t, n, ph, v, onChange, readFlag, max, w="285px" }) => {
   return (
@@ -236,7 +248,6 @@ export const UpdateProfile = () => {
                                         <input className="loginSubmit" type="submit" value={"다음으로"}/>
                                     </InContainer>
                                 </EmptyContainer>
-                                
                             </Form>
                         </div>
                     ) : (
@@ -245,16 +256,15 @@ export const UpdateProfile = () => {
                             {!secFlag && (
                                 <div>
                                     <Text color={"#3252C2"} size={"15px"} style={{marginTop:"30px"}}><span style={{fontWeight:"bold"}}>CULISO</span> <span style={{color:"#4B66C8"}}>Account</span></Text>
-                                    <ReadContainer border={formValues.sex==='M' ? "2px solid rgb(53, 158, 255)" : "2px solid rgb(255, 75, 147)"}>
-                                        <MemberBackGruondContainer><Text color={color} align={"center"}>회원 정보</Text></MemberBackGruondContainer>
+                                    <ReadContainer border={formValues.sex==='M' ? "2px solid rgb(53, 158, 255)" : "2px solid rgb(255, 75, 147)"} box={color}>
+                                        <MemberBackGruondContainer border={`2px solid ${color}`}><Text color={color} align={"center"}>회원 정보</Text></MemberBackGruondContainer>
                                         <Input icon={sexImgName} t={"text"} v={formValues.id} n={"id"} ph={"아이디"} onChange={handleChange} readFlag={true}/>
                                         <Input icon={"phone-gray.png"} t={"text"} v={formValues.phoneNum} n={"phoneNum"} ph={"전화번호"} onChange={handleChange} readFlag={true} />
                                         <Input icon={"calendar-gray.png"} t={"text"} v={formValues.createDate} n={"createDate"} ph={"생성일"} onChange={handleChange} readFlag={true} />
                                     </ReadContainer>
-                                    <EmptyContainer>
+                                    <WriteContainer>
                                         <Input icon={"N-gray.png"} t={"text"} v={formValues.name} n={"name"} ph={"이름"} onChange={handleChange} readFlag={false} />
                                         <Input icon={"N-gray.png"} t={"text"} v={formValues.nickName} n={"nickName"} ph={"별명"} onChange={handleChange} readFlag={false} />
-                                        <br/>
                                         <Input icon={"location-gray.png"} t={"text"} v={formValues.address} n={"address"} ph={"주소"} onChange={handleChange} readFlag={false} />
                                         <PostContainer>
                                             <Input icon={"location-gray.png"} w={"150px"} t={"text"} v={formValues.postNum} n={"postNum"} ph={"우편번호"} max={5} readFlag={false} />
@@ -277,18 +287,23 @@ export const UpdateProfile = () => {
                                             />
                                         )}
                                         <input className="loginSubmit" type="button" value={"다음으로"} onClick={()=>{setSecFlag(true)}}/>
-                                    </EmptyContainer>
+                                    </WriteContainer>
                                 </div>
                             )}
                             {secFlag && (
-                                <EmptyContainer top="270px">
-                                    <Culi/>
-                                    <InContainer>
-                                        <Input icon={"closed-padlock-gray.png"} t={"password"} n={"pw"} ph={"비밀번호"} />
-                                        <span style={{color:"#FF8E8F", fontSize: "12px", marginLeft: "5px"}}>{msg}</span>
-                                        <input className="loginSubmit" type="submit" value={"수정하기"} />
-                                    </InContainer>
-                                </EmptyContainer>
+                                <div>
+                                    <div>
+                                        <Culi/>
+                                    </div>
+                                    <EmptyContainer top="30px">
+                                        <InContainer>
+                                            <Input icon={"closed-padlock-gray.png"} t={"password"} n={"pw"} ph={"비밀번호"} />
+                                            <span style={{color:"#FF8E8F", fontSize: "12px", marginLeft: "5px"}}>{msg}</span>
+                                            <input className="loginSubmit" type="submit" value={"수정하기"} />
+                                        </InContainer>
+                                    </EmptyContainer>
+                                </div>
+                                
                             )}
                         </Form>
                     )}

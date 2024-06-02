@@ -5,7 +5,7 @@ import { Cookies } from "react-cookie";
 import styled from "styled-components";
 import "./style.css";
 import { useState, useEffect } from "react";
-import { GetAddress } from "./modules/DataRouter";
+import { GetAddress, LogOut } from "./modules/DataRouter";
 import { Geolocation } from '@capacitor/geolocation';
 import { AfterDeviceMain } from './AfterDeviceMain';
 
@@ -68,11 +68,6 @@ export async function BLEController(str){
   }
 }
 
-function LogOut() {
-  cookies.remove("token");
-  alert("다음에도 큐리소를 이용해 주세요 !");
-  window.location.href = "/login";
-}
 export const AfterMain = () => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
   const [address, setAddress] = useState();
   const [flag, setFlag] = useState(true);

@@ -335,6 +335,7 @@ input[type="reset"] {
   font-size: 12px;
   background-color: #eae8e8;
   border: 2px dashed #a7a7a7;
+  margin: 10px 0;
   display: flex;
   justify-content: center;
   align-items: center;
