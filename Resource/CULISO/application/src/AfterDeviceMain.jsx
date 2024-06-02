@@ -147,7 +147,7 @@ export const AfterDeviceMain = () => {
   return (
     <div className="afterdeviceMain">
       <div className="deviceMainDiv">
-        <CenterBox align="space-between" top="50px">
+        <CenterBox align="space-between" top="15px">
           <Label>
             <Text
               size="12px"
