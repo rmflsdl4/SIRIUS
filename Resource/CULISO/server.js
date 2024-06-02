@@ -104,7 +104,7 @@ async function GetUserID(token){
 // 토큰으로 세션 제거하기
 async function DeleteSessionMember(token){
   try{
-    await sessionStore.delete(token);
+    await sessionStore.destroy(token);
     console.log("세션 삭제 성공: " + token);
   }
   catch(error){
