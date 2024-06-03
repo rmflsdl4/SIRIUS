@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Cookies } from "react-cookie";
 import './App.css';
@@ -6,6 +6,7 @@ import GetIcon from './modules/GetIcon';
 import { GetChatLog } from './modules/DataRouter';
 import { BackButton } from "./modules/Navigate";
 import { Geolocation } from '@capacitor/geolocation';
+import { BlueToothContext } from './App';
 const cookies = new Cookies();
 
 export function AI() {
@@ -16,6 +17,7 @@ export function AI() {
     const typingIntervalRef = useRef(null);
     const recognitionRef = useRef(null);
     const [flag, setFlag] = useState(true);
+    const { characteristic } = useContext(BlueToothContext);
     
     useEffect(() => {
         if (!('webkitSpeechRecognition' in window)) {
@@ -65,6 +67,7 @@ export function AI() {
         if(flag){
           CheckPermissions();
           setFlag(false);
+          alert(characteristic);
         }
       }, []);
     

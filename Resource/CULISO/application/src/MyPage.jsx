@@ -112,15 +112,15 @@ export const MyPage = () => {
     <div className="myPage">
       <div className="div">
         <CenterBox>
-          <EmptyContainer width="90%">
-            {/* 좌우 80% 박스 */}
-            <EmptyContainer style={{ display: "flex", alignItems: "center" }}>
+            <EmptyContainer style={{ display: "flex", alignItems: "center", justifyContent: "left" }}>
               <BackButton left="0px" />
               <Text color={"#3252C2"} size={"15px"}>
                 <span style={{ fontWeight: "bold" }}>CULISO </span>
                 <span style={{ color: "#4B66C8" }}>MyPage</span>
               </Text>
             </EmptyContainer>
+          <EmptyContainer width="90%">
+            {/* 좌우 80% 박스 */}
             <br />
             <InputContainer bg={"none"}>
               <InputImg

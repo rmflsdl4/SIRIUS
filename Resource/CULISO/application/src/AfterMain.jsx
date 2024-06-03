@@ -4,10 +4,11 @@ import GetIcon from "./modules/GetIcon";
 import { Cookies } from "react-cookie";
 import styled from "styled-components";
 import "./style.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { GetAddress, LogOut } from "./modules/DataRouter";
 import { Geolocation } from '@capacitor/geolocation';
 import { AfterDeviceMain } from './AfterDeviceMain';
+import { BlueToothContext } from "./App";
 
 // css
 const CenterBox = styled.div`
@@ -71,7 +72,9 @@ export async function BLEController(str){
 export const AfterMain = () => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
   const [address, setAddress] = useState();
   const [flag, setFlag] = useState(true);
+  const { setBluetoothConnection } = useContext(BlueToothContext);
   const [bluetoothFlag, setBluetoothFlag] = useState(false);
+  let chosenDevice = null;
 
   useEffect(() => {
     // 주소 얻는 메소드
@@ -175,26 +178,21 @@ const checkLocationPermission = async () => {
       alert("브라우저가 Web Bluetooth API를 지원하지 않습니다.");
       return;
     }
-    let chosenDevice = null;
-     // 데이터를 쓸 특성을 저장할 변수
 
     try {
         const device = await navigator.bluetooth.requestDevice({
             filters: [{ services: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e'] }]
         });
-        console.log('Connecting to GATT Server...');
         chosenDevice = device;
         const server = await device.gatt.connect();
-        console.log('Getting GATT Service...');
-        const service = await server.getPrimaryService('6e400001-b5a3-f393-e0a9-e50e24dcca9e');
-        console.log('GATT Service received:', service);
-        characteristic = await service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'); // 데이터를 쓸 특성 UUID
-        console.log('Characteristic received:', characteristic);
+        const service = await server.getPrimaryService('6e400001-b5a3-f393-e0a9-e50e24dcca9e'); // 블루투스 기기 식별
+        characteristic = await service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'); // 블루투스 쓰기 UUID
+        setBluetoothConnection(true, characteristic);
         setBluetoothFlag(true);
-        console.log('Data written successfully');
     } catch (error) {
         console.error('Bluetooth error:', error);
         // 연결이 끊긴 경우 다시 연결 시도
+        setBluetoothConnection(false, null);
         if (error.message.includes('GATT Server is disconnected') && chosenDevice) {
             console.log('Attempting to reconnect...');
             await chosenDevice.gatt.connect();
