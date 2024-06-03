@@ -24,3 +24,10 @@ function TextToFormat(msg){
             return;
     }
 }
+
+export async function BLEController(characteristic, msg){
+    if(characteristic){
+      const value = new TextEncoder().encode(msg); // 쓸 데이터
+      await characteristic.writeValue(value);
+    }
+  }

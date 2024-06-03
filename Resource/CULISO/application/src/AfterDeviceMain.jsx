@@ -3,9 +3,10 @@ import GetIcon from "./modules/GetIcon";
 import { Cookies } from "react-cookie";
 import styled from "styled-components";
 import "./style.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { GetAddress } from "./modules/DataRouter";
-import { BLEController } from "./AfterMain";
+import { BlueToothContext } from "./App";
+import { BLEController } from "./modules/BlueToothManager";
 
 const CenterBox = styled.div`
   display: flex;
@@ -122,6 +123,7 @@ function LogOut() {
 export const AfterDeviceMain = () => {
   const [address, setAddress] = useState("");
   const [devices, setDevices] = useState(devicesData.map(device => ({ ...device, status: '꺼짐', icon: device.iconOff, powerIcon: device.powerOffIcon })));
+  const { characteristic } = useContext(BlueToothContext);
 
   useEffect(() => {
     // 주소 얻는 메소드
@@ -137,7 +139,7 @@ export const AfterDeviceMain = () => {
   const toggleDeviceStatus = (index) => {
     const newDevices = [...devices];
     const device = newDevices[index];
-    BLEController(device.bleCMD);
+    BLEController(characteristic, device.bleCMD);
     device.status = device.status === '켜짐' ? '꺼짐' : '켜짐';
     device.icon = device.status === '켜짐' ? device.iconOn : device.iconOff;
     device.powerIcon = device.status === '켜짐' ? device.powerOnIcon : device.powerOffIcon;
