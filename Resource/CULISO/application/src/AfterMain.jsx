@@ -61,18 +61,13 @@ const Button = styled.input`
 `;
 const cookies = new Cookies();
 
-let characteristic = null;
-export async function BLEController(str){
-  if(characteristic){
-    const value = new TextEncoder().encode(str); // 쓸 데이터
-    await characteristic.writeValue(value);
-  }
-}
+let deviceCharacteristic = null;
+
 
 export const AfterMain = () => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
   const [address, setAddress] = useState();
   const [flag, setFlag] = useState(true);
-  const { setBluetoothConnection } = useContext(BlueToothContext);
+  const { setBluetoothConnection, characteristic } = useContext(BlueToothContext);
   const [bluetoothFlag, setBluetoothFlag] = useState(false);
   let chosenDevice = null;
 
@@ -90,6 +85,9 @@ export const AfterMain = () => {
   useEffect(() => {
     //requestPermissions();
     if(flag){
+      if(characteristic){
+        setBluetoothFlag(true);
+      }
       CheckPermissions();
       setFlag(false);
     }
@@ -186,8 +184,8 @@ const checkLocationPermission = async () => {
         chosenDevice = device;
         const server = await device.gatt.connect();
         const service = await server.getPrimaryService('6e400001-b5a3-f393-e0a9-e50e24dcca9e'); // 블루투스 기기 식별
-        characteristic = await service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'); // 블루투스 쓰기 UUID
-        setBluetoothConnection(true, characteristic);
+        deviceCharacteristic = await service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'); // 블루투스 쓰기 UUID
+        setBluetoothConnection(true, deviceCharacteristic);
         setBluetoothFlag(true);
     } catch (error) {
         console.error('Bluetooth error:', error);
