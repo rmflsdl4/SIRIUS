@@ -45,11 +45,11 @@ function TextToFormat(msg){
             devicesData.flag = true;
             return 'i';
             
-        case "티비켜줘":
+        case "tv켜줘":
             if(devicesData.name === 'TV' && devicesData.flag === true) return;
             devicesData.flag = true;
             return 'h';
-        case "티비꺼줘":
+        case "tv꺼줘":
             if(devicesData.name === 'TV' && devicesData.flag === false) return;
             devicesData.flag = true;
             return 'h';
