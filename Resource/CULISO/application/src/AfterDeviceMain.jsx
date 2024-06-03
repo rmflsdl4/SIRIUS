@@ -102,13 +102,13 @@ const DeviceIcon = styled.img`
   height: 50px;
 `;
 
-const devicesData = [
-  { name: '침실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'f' },
-  { name: '거실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'b' },
-  { name: '에어컨', iconOn: 'air-conditioner-on.png', iconOff: 'air-conditioner-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'g' },
-  { name: '커튼', iconOn: 'curtain-on.png', iconOff: 'curtain-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'i' },
-  { name: '보일러', iconOn: 'water-heater-on.png', iconOff: 'water-heater-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: null },
-  { name: 'TV', iconOn: 'tv-on.png', iconOff: 'tv-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'h' },
+export const devicesData = [
+  { name: '침실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'f', flag: false},
+  { name: '거실 조명', iconOn: 'lighting2-on.png', iconOff: 'lighting2-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'b', flag: false },
+  { name: '에어컨', iconOn: 'air-conditioner-on.png', iconOff: 'air-conditioner-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'g', flag: false },
+  { name: '커튼', iconOn: 'curtain-on.png', iconOff: 'curtain-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'i', flag: false },
+  { name: '보일러', iconOn: 'water-heater-on.png', iconOff: 'water-heater-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: null, flag: false },
+  { name: 'TV', iconOn: 'tv-on.png', iconOff: 'tv-off.png', powerOnIcon: 'power-on.png', powerOffIcon: 'power-off.png', bleCMD: 'h', flag: false },
 ];
 
 const cookies = new Cookies();
@@ -141,6 +141,7 @@ export const AfterDeviceMain = () => {
     device.status = device.status === '켜짐' ? '꺼짐' : '켜짐';
     device.icon = device.status === '켜짐' ? device.iconOn : device.iconOff;
     device.powerIcon = device.status === '켜짐' ? device.powerOnIcon : device.powerOffIcon;
+    device.flag = device.status === '켜짐' ? true : false;
     setDevices(newDevices);
   };
 

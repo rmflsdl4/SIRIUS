@@ -7,6 +7,7 @@ import { GetChatLog } from './modules/DataRouter';
 import { BackButton } from "./modules/Navigate";
 import { Geolocation } from '@capacitor/geolocation';
 import { BlueToothContext } from './App';
+import { VoiceToBlueToothController } from './modules/BlueToothManager';
 const cookies = new Cookies();
 
 export function AI() {
@@ -67,7 +68,6 @@ export function AI() {
         if(flag){
           CheckPermissions();
           setFlag(false);
-          alert(characteristic);
         }
       }, []);
     
@@ -259,6 +259,8 @@ export function AI() {
         updateChatLog({ sender: 'user', text: msg });
 
         try {
+            VoiceToBlueToothController(characteristic, msg);
+            
             startTypingIndicator();
 
             const token = cookies.get("token");

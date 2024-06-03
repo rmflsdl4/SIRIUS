@@ -175,7 +175,7 @@ export const FindingPW = () => {
             if (result && result.success) {
                 setErrorMessage("");
                 alert(result.message);
-                Navigate("login");
+                Navigate("Login");
             } else {
                 setErrorMessage(result.message || "비밀번호 재설정에 실패했습니다.");
             }
