@@ -1,0 +1,33 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/GmarketSansTTFBold.ttf",
+      "sha1": "b52c2a5f5bf990aa0c28efc2815c7d6d9a9ea260"
+    },
+    {
+      "path": "assets/fonts/GmarketSansTTFLight.ttf",
+      "sha1": "97c64d4184d42895529e70d4453cd1299a09c0b9"
+    },
+    {
+      "path": "assets/fonts/GmarketSansTTFMedium.ttf",
+      "sha1": "abf7d6ce1869bad059315fc748aa2d5d56d00892"
+    },
+    {
+      "path": "assets/fonts/KCC-Hanbit.ttf",
+      "sha1": "25d775189f35efbaf4f6b6bb69ba77bcdf4605bb"
+    },
+    {
+      "path": "assets/fonts/LINESeedKR-Bd.ttf",
+      "sha1": "ee5404f4e209715299cfb718e357e59cf11b3655"
+    },
+    {
+      "path": "assets/fonts/Sejong hospital Bold.ttf",
+      "sha1": "77d2264e6122e03dfbb857074c5806701dc406a7"
+    },
+    {
+      "path": "assets/fonts/Sejong hospital Light.ttf",
+      "sha1": "f8c8a459de8f45ad76ee758215efda088c28a91b"
+    }
+  ]
+}
