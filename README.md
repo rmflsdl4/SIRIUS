@@ -13,9 +13,18 @@
         📃 package.json - 의존성(모듈) 파일
 
 ### 💻 Commands
-    ⌨️ npm install [--force] - package.json에 작성된 모듈들을 통합 설치함 (force 명령어는 의존성을 무시하고 설치하는 옵션)
-    ⌨️ npm run android - 리액트 네이티브를 안드로이드로 빌드 및 실행 (애뮬레이터가 연결되어 있어야 함)
-    ⌨️ npx react-native-asset - 폰트 적용 시 사용 (assets -> fonts에 ttf 또는 otf 파일을 넣어야 함)
+    ⌨️ npm install  
+> package.json에 작성된 모듈들을 통합 설치
+> --force 옵션은 의존성을 무시하고 설치
+> 개별 설치시 npm install (모듈 이름)
+
+    ⌨️ npm run android 
+> 리액트 네이티브를 안드로이드 빌드 및 실행
+> 애뮬레이터 연결 필요
+
+    ⌨️ npx react-native-asset
+> 폰트 적용 시 사용
+> assets -> fonts에 ttf 또는 otf 파일 넣고 명령어 입력
     
 # 📁 Downloads
 🔽 [APK 추가 예정]
