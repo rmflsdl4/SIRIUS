@@ -4,7 +4,7 @@ import Background from '../modules/Background';
 
 const TimeOut = (navigation) => {
     setTimeout(() => {
-        navigation.navigate('Login');
+        navigation.navigate('Welcome');
     }, 2000);
 }
 

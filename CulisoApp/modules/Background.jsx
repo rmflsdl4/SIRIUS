@@ -20,6 +20,7 @@ const Background = ({ children, center }) => {
 const styles = StyleSheet.create({
     linearGradient: {
         flex: 1,
+        alignItems: 'center',
     },
     linearGradientCenter: {
         flex: 1,

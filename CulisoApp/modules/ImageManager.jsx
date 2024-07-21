@@ -5,6 +5,16 @@ const images = {
     Logo: require("../assets/images/logo.png"),
     LoginID: require("../assets/images/profile-gray.png"),
     LoginPW: require("../assets/images/closed-padlock-gray.png"),
+    Culi: require("../assets/images/culi.png"),
+    Polygon: require("../assets/images/polygon.png"),
+    LoginButton: require("../assets/images/loginButton.png"),
+    SignUpButton: require("../assets/images/signUpButton.png"),
+    SignUpID: require("../assets/images/profile-gray.png"),
+    SignUpPW: require("../assets/images/closed-padlock-gray.png"),
+    SignUpName: require("../assets/images/N-gray.png"),
+    SignUpSex: require("../assets/images/gender.png"),
+    SignUpAddress: require("../assets/images/location-pin.png"),
+    SignUpPhone: require("../assets/images/phone-gray.png"),
 };
 
 // GetImage의 type이 images의 키값과 일치해야 이미지를 불러옴

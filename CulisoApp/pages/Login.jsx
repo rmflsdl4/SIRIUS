@@ -23,7 +23,6 @@ const Input = ({ iconType, secureText, placeholder, setFunc }) => {
   );
 };
 
-
 const Login = ({ navigation }) => {
     const [userID, setUserID] = useState();
     const [userPW, setUserPW] = useState();
