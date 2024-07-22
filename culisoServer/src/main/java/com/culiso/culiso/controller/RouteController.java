@@ -15,6 +15,7 @@ import lombok.val;
 
 //@Controller // file을 응답하는 컨트롤러 (클라이언트가 브라우저면 .html 파일을)
 @RestController // data를 응답하는 컨트롤러 (클라이언트가 휴대폰이면 data)
+@RequestMapping("/user")
 public class RouteController {
     @Autowired
     private UserService userService;
@@ -22,10 +23,9 @@ public class RouteController {
 
     @PostMapping("/login")
     public ResponseEntity<Boolean> login(@RequestBody UserEntity data){
-        
         System.out.println(data);
-        String id = data.getUserID();
-        String pw = data.getUserPW();
+        String id = data.getUser_id();
+        String pw = data.getUser_pw();
 
         System.out.println("Received id: " + id);
         System.out.println("Received pw: " + pw);
@@ -46,4 +46,34 @@ public class RouteController {
         }
        
     }
+
+    @PostMapping("/signUp")
+    public ResponseEntity<Boolean> SignUp(@RequestBody UserEntity data){
+        String id = data.getUser_id();
+        String pw = data.getUser_pw();
+        String name = data.getUser_name();
+        String phone = data.getUser_phone();
+        String post = data.getPost();
+        String address = data.getAddress();
+        String sex = data.getSex();
+        String nickName = data.getUser_nick();
+
+        System.out.println(id);
+        System.out.println(pw);
+        System.out.println(name);
+        System.out.println(phone);
+        System.out.println(post);
+        System.out.println(address);
+        System.out.println(sex);
+        System.out.println(nickName);
+
+        int result = userService.signUp(id, pw, name, phone, post, address, sex, nickName);
+        if(result > 0){
+            return ResponseEntity.ok(true);
+        }
+        else{
+            return ResponseEntity.ok(false);
+        }
+    }
 }
+

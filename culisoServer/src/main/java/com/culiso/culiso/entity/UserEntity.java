@@ -13,9 +13,37 @@ public class UserEntity {
     @Id
     @Column(nullable = false)
     @Getter @Setter
-    private String userID;
+    private String user_id;
 
     @Column(nullable = false)
     @Getter @Setter
-    private String userPW;
+    private String user_pw;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    private String user_name;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    private String user_phone;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    private String post;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    private String address;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    private String sex;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    private String user_nick;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    private String adminID;
 }
