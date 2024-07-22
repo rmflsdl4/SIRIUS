@@ -21,3 +21,11 @@
     
 
 
+
+### ⚠️ Cautions
+
+> 문제점 1 : 데이터베이스에는 userName 컬럼으로 지정, 스프링부트에서는 user_name으로 인식
+
+📝 Linux, Unix는 대소문자 영향을 받는다. 하지만 Windows, macOS는 대소문자 영향을 받지 않는다.  
+📝 JPA가 userNAME와 같은 형태가 아닌 userName 같은 형태라면 Windows, macOS에서 user_name과 같은 형식으로 변환해서 인식한다.  
+📝 따라서 데이터베이스에서 카멜 표기법으로 일관되게 작성하는 것이 호환성에 좋다.
