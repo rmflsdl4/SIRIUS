@@ -5,6 +5,7 @@ import Background from '../modules/Background';
 import { SpeechBubbleMessage } from '../modules/Culi'
 import * as Check from '../modules/Normalization'
 import axios from 'axios';
+import Postcode from "@actbase/react-daum-postcode";
 
 const guideMessage = {
     0: "지금부터 회원가입을\n도와드릴게요 !",
@@ -22,6 +23,7 @@ const TimeOut = (navigation) => {
 }
 
 const SignUp = ({ navigation }) => {
+    const [showPostcode, setShowPostcode] = useState(false);
     const [index, setIndex] = useState(0);
     const [disabled, setDisabled] = useState(false);
     const [form, setForm] = useState({
@@ -112,8 +114,26 @@ const SignUp = ({ navigation }) => {
             [field]: value
         }));
     }
+    const getAddressData = data => {
+        let defaultAddress = ''; // 기본주소
+        if (data.buildingName === 'N') {
+            defaultAddress = data.apartment;
+        } 
+        else {
+            defaultAddress = data.buildingName;
+        }
 
-    const Input = ({type, placeholder, attribute, Normalization = null}) => {
+        setForm(prevForm => ({
+            ...prevForm,
+            address: data.address + ' ' + defaultAddress,
+            post: data.zonecode
+        }));
+
+        setShowPostcode(false);
+    };
+
+    
+    const Input = ({type, placeholder, attribute, Normalization = null, inputType = 'default', readonly = false}) => {
         const [inputValue, setInputValue] = useState(form[attribute]);
 
         const HandleBlur = () => {
@@ -137,7 +157,9 @@ const SignUp = ({ navigation }) => {
                         defaultValue={form[attribute]} 
                         onChangeText={setInputValue} 
                         onBlur={HandleBlur}
-                        keyboardType={type === 'SignUpPhone' ? 'numeric' : 'default'}
+                        keyboardType={inputType}
+                        secureTextEntry={type === 'SignUpPW'}
+                        editable={!readonly}
                     />
                 </View>
                 {check[attribute].message !== "" && (
@@ -183,9 +205,11 @@ const SignUp = ({ navigation }) => {
                     
                     { index == 3 && (
                         <View style={styles.inputContainer}>
-                            <Input type={'SignUpAddress'} placeholder={"주소"} attribute={"address"}/>
-                            <Input type={'SignUpAddress'} placeholder={"우편번호"} attribute={"post"}/>
-                            <Input type={'SignUpPhone'} placeholder={"전화번호"} attribute={"user_phone"}/>
+                            <TouchableOpacity onPress={() => setShowPostcode(true)}>
+                                <Input type={'SignUpAddress'} placeholder={"주소 찾기"} attribute={"address"} readonly={true}/>
+                            </TouchableOpacity>
+                            <Input type={'SignUpAddress'} placeholder={"우편번호"} attribute={"post"} readonly={true}/>
+                            <Input type={'SignUpPhone'} placeholder={"전화번호"} attribute={"user_phone"} inputType="numeric"/>
                         </View>
                     )}
                     { (index === 1 || index === 2 || index === 3) && (
@@ -197,6 +221,16 @@ const SignUp = ({ navigation }) => {
                     )}
                 </View>
             </TouchableOpacity>
+            
+            {showPostcode && (
+                <View style={styles.postcodeContainer}>
+                    <Postcode
+                        style={styles.postcode}
+                        jsOptions={{ animation: true }}
+                        onSelected={getAddressData}
+                    />
+                </View>
+            )}
         </Background>
     );
 };
@@ -253,7 +287,20 @@ const styles = StyleSheet.create({
         color: "#FFFFFF",
         fontSize: 18,
         fontFamily: 'Sejong hospital Bold',
-    }
+    },
+    postcodeContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'white',
+        zIndex: 999,
+    },
+    postcode: {
+        flex: 1,
+        width: '100%',
+    },
 });
 
 export default SignUp;
