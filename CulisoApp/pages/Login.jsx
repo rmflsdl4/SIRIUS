@@ -33,9 +33,10 @@ const Login = ({ navigation }) => {
 
         const data = { userID, userPW };
 
-        axios.post('http://10.0.2.2:8080/login', data, {
+        axios.post('http://10.0.2.2:8080/user/login', data, {
             headers: {
                 "Content-Type": "application/json",
+                "Accept": "application/json",
             },
         })
         .then((response) => {

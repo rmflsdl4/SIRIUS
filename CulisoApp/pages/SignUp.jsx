@@ -4,6 +4,7 @@ import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
 import { SpeechBubbleMessage } from '../modules/Culi'
 import * as Check from '../modules/Normalization'
+import axios from 'axios';
 
 const guideMessage = {
     0: "지금부터 회원가입을\n도와드릴게요 !",
@@ -24,43 +25,43 @@ const SignUp = ({ navigation }) => {
     const [index, setIndex] = useState(0);
     const [disabled, setDisabled] = useState(false);
     const [form, setForm] = useState({
-        id: "",
-        pw: "",
+        user_id: "",
+        user_pw: "",
         confirmPW: "",
-        name: "",
-        nickName: "",
+        user_name: "",
+        user_nick: "",
         sex: "",
         address: "",
-        postNumber: "",
-        phoneNumber: "",
+        post: "",
+        user_phone: "",
     });
     const [check, setCheck] = useState({
-        id: { message: "", color: "", state: false },
-        pw: { message: "", color: "", state: false },
+        user_id: { message: "", color: "", state: false },
+        user_pw: { message: "", color: "", state: false },
         confirmPW: { message: "", color: "", state: false },
-        name: { message: "", color: "", state: false },
-        nickName: { message: "", color: "", state: false },
+        user_name: { message: "", color: "", state: false },
+        user_nick: { message: "", color: "", state: false },
         sex: { message: "", color: "", state: true },
         address: { message: "", color: "", state: true },
-        postNumber: { message: "", color: "", state: true },
-        phoneNumber: { message: "", color: "", state: true },
+        post: { message: "", color: "", state: true },
+        user_phone: { message: "", color: "", state: true },
     });
 
     useEffect(() => {
         if(index == 1){
-            if(check.id.state && check.pw.state && check.confirmPW.state){
+            if(check.user_id.state && check.user_pw.state && check.confirmPW.state){
                 setDisabled(true);
             }
             else setDisabled(false);
         }
         else if(index == 2){
-            if(check.name.state && check.nickName.state && check.sex.state){
+            if(check.user_name.state && check.user_nick.state && check.sex.state){
                 setDisabled(true);
             }
             else setDisabled(false);
         }
         else if(index == 3){
-            if(check.address.state && check.postNumber.state && check.phoneNumber.state){
+            if(check.address.state && check.post.state && check.user_phone.state){
                 setDisabled(true);
             }
             else setDisabled(false);
@@ -76,13 +77,34 @@ const SignUp = ({ navigation }) => {
                 ['confirmPW']: { message, color, state }
             }));
         }
-    }, [form.pw])
+    }, [form.user_pw])
 
     useEffect(() => {
         if(index == 5){
             TimeOut(navigation);
         }
     }, [index])
+
+    const SignUpHandler = () => {
+        console.log(form);
+
+        axios.post('http://10.0.2.2:8080/user/signUp', form, {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        })
+        .then((response) => {
+            console.log(response.data);
+            if(response.data){
+                console.log("회원가입 성공");
+            }
+            else{
+                console.log("회원가입 실패");
+            }
+        })
+        .catch(err => console.log(err));
+    }
 
     const UpdateForm = (field, value) => {
         setForm(prevForm => ({
@@ -134,6 +156,9 @@ const SignUp = ({ navigation }) => {
     const FormNext = () => {
         setIndex(disabled ? index + 1 : index);
         setDisabled(false);
+        if(index == 3){
+            SignUpHandler();
+        }
     }
     return (
         <Background>
@@ -142,16 +167,16 @@ const SignUp = ({ navigation }) => {
                 <View style={styles.inputContainerCenter}>
                     { index == 1 && (
                         <View style={styles.inputContainer}>
-                            <Input type={'SignUpID'} placeholder={"아이디"} attribute={"id"} Normalization={Check.ID}/>
-                            <Input type={'SignUpPW'} placeholder={"비밀번호"} attribute={"pw"} Normalization={Check.PW}/>
+                            <Input type={'SignUpID'} placeholder={"아이디"} attribute={"user_id"} Normalization={Check.ID}/>
+                            <Input type={'SignUpPW'} placeholder={"비밀번호"} attribute={"user_pw"} Normalization={Check.PW}/>
                             <Input type={'SignUpPW'} placeholder={"비밀번호 확인"} attribute={"confirmPW"} Normalization={Check.ConfirmPW}/>
                         </View>
                     )}
                     
                     { index == 2 && (
                         <View style={styles.inputContainer}>
-                            <Input type={'SignUpName'} placeholder={"이름"} attribute={"name"} Normalization={Check.Name}/>
-                            <Input type={'SignUpName'} placeholder={"별명"} attribute={"nickName"} Normalization={Check.NickName}/>
+                            <Input type={'SignUpName'} placeholder={"이름"} attribute={"user_name"} Normalization={Check.Name}/>
+                            <Input type={'SignUpName'} placeholder={"별명"} attribute={"user_nick"} Normalization={Check.NickName}/>
                             <Input type={'SignUpSex'} placeholder={"성별"} attribute={"sex"}/>
                         </View>
                     )}
@@ -159,8 +184,8 @@ const SignUp = ({ navigation }) => {
                     { index == 3 && (
                         <View style={styles.inputContainer}>
                             <Input type={'SignUpAddress'} placeholder={"주소"} attribute={"address"}/>
-                            <Input type={'SignUpAddress'} placeholder={"우편번호"} attribute={"postNumber"}/>
-                            <Input type={'SignUpPhone'} placeholder={"전화번호"} attribute={"phoneNumber"}/>
+                            <Input type={'SignUpAddress'} placeholder={"우편번호"} attribute={"post"}/>
+                            <Input type={'SignUpPhone'} placeholder={"전화번호"} attribute={"user_phone"}/>
                         </View>
                     )}
                     { (index === 1 || index === 2 || index === 3) && (
