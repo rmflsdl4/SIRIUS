@@ -13,8 +13,11 @@ const images = {
     SignUpPW: require("../assets/images/closed-padlock-gray.png"),
     SignUpName: require("../assets/images/N-gray.png"),
     SignUpSex: require("../assets/images/gender.png"),
-    SignUpAddress: require("../assets/images/location-pin.png"),
+    SignUpAddress: require("../assets/images/search-address.png"),
+    SignUpDetailAddress: require("../assets/images/location-pin.png"),
     SignUpPhone: require("../assets/images/phone-gray.png"),
+    SignUpMale: require("../assets/images/man.png"),
+    SignUpFemale: require("../assets/images/woman.png"),
 };
 
 // GetImage의 type이 images의 키값과 일치해야 이미지를 불러옴

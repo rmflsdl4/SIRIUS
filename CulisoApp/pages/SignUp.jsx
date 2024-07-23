@@ -25,6 +25,10 @@ const TimeOut = (navigation) => {
 const SignUp = ({ navigation }) => {
     const [showPostcode, setShowPostcode] = useState(false);
     const [index, setIndex] = useState(0);
+    const [maleColor, setMaleColor] = useState("#EAE8E8");
+    const [femaleColor, setFemaleColor] = useState("#EAE8E8");
+    const [maleOpacity, setMaleOpacity] = useState(1);
+    const [femaleOpacity, setFemaleOpacity] = useState(1);
     const [disabled, setDisabled] = useState(false);
     const [form, setForm] = useState({
         user_id: "",
@@ -36,6 +40,7 @@ const SignUp = ({ navigation }) => {
         address: "",
         post: "",
         user_phone: "",
+        detail_address: "",
     });
     const [check, setCheck] = useState({
         user_id: { message: "", color: "", state: false },
@@ -43,7 +48,7 @@ const SignUp = ({ navigation }) => {
         confirmPW: { message: "", color: "", state: false },
         user_name: { message: "", color: "", state: false },
         user_nick: { message: "", color: "", state: false },
-        sex: { message: "", color: "", state: true },
+        sex: { message: "", color: "", state: false },
         address: { message: "", color: "", state: true },
         post: { message: "", color: "", state: true },
         user_phone: { message: "", color: "", state: true },
@@ -58,6 +63,7 @@ const SignUp = ({ navigation }) => {
         }
         else if(index == 2){
             if(check.user_name.state && check.user_nick.state && check.sex.state){
+                
                 setDisabled(true);
             }
             else setDisabled(false);
@@ -174,13 +180,62 @@ const SignUp = ({ navigation }) => {
         if(index == 0 || index == 4){
             setIndex(index + 1);
         }
+        console.log(form.address);
     }
     const FormNext = () => {
         setIndex(disabled ? index + 1 : index);
         setDisabled(false);
         if(index == 3){
+            setForm(prevForm => ({
+                ...prevForm,
+                address: `${form.address}, ${form.detail_address}`
+            }));
             SignUpHandler();
         }
+    }
+    const Radio = ({Normalization}) => {
+        const SexUpdate = (value) => {
+            if(value == "M"){
+                setMaleColor("#3FA2F6");
+                setFemaleColor("#EAE8E8");
+                setMaleOpacity(0.5);
+                setFemaleOpacity(1);
+            }
+            else{
+                setMaleColor("#EAE8E8");
+                setFemaleColor("#E90074");
+                setMaleOpacity(1);
+                setFemaleOpacity(0.5);
+            }
+            setForm(prevForm => ({
+                ...prevForm,
+                sex: value
+            }));
+            const { message, color, state } = Normalization(value);
+            setCheck(prevCheck => ({
+                ...prevCheck,
+                ['sex']: { message, color, state }
+            }));
+        }
+
+        return (
+            <View style={styles.radioContainer}>
+                <TouchableOpacity style={[styles.male, {backgroundColor: maleColor, opacity: maleOpacity}]} onPress={() => SexUpdate('M')}>
+                    <GetImage type={'SignUpMale'} width={23} height={23}/>
+                    <Text>남자</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.female, {backgroundColor: femaleColor, opacity: femaleOpacity}]} onPress={() => SexUpdate('F')}>
+                    <GetImage type={'SignUpFemale'} width={23} height={23}/>
+                    <Text>여자</Text>
+                </TouchableOpacity>
+            </View>
+        )
+    }
+    const DetailAddressHandler = (value) => {
+        setForm(prevForm => ({
+            ...prevForm,
+            detail_address: value
+        }));
     }
     return (
         <Background>
@@ -199,7 +254,7 @@ const SignUp = ({ navigation }) => {
                         <View style={styles.inputContainer}>
                             <Input type={'SignUpName'} placeholder={"이름"} attribute={"user_name"} Normalization={Check.Name}/>
                             <Input type={'SignUpName'} placeholder={"별명"} attribute={"user_nick"} Normalization={Check.NickName}/>
-                            <Input type={'SignUpSex'} placeholder={"성별"} attribute={"sex"}/>
+                            <Radio Normalization={Check.Sex}/>
                         </View>
                     )}
                     
@@ -208,7 +263,14 @@ const SignUp = ({ navigation }) => {
                             <TouchableOpacity onPress={() => setShowPostcode(true)}>
                                 <Input type={'SignUpAddress'} placeholder={"주소 찾기"} attribute={"address"} readonly={true}/>
                             </TouchableOpacity>
-                            <Input type={'SignUpAddress'} placeholder={"우편번호"} attribute={"post"} readonly={true}/>
+                            <View style={styles.input}>
+                                <GetImage type={'SignUpDetailAddress'} width={23} height={23} marginLeft={20}/>
+                                <TextInput 
+                                    style={styles.textInput} 
+                                    placeholder={'상세 주소'}
+                                    onChangeText={DetailAddressHandler}
+                                />
+                            </View>
                             <Input type={'SignUpPhone'} placeholder={"전화번호"} attribute={"user_phone"} inputType="numeric"/>
                         </View>
                     )}
@@ -301,6 +363,32 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
     },
+    radioContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        justifyContent: 'space-around',
+    },
+    male: {
+        width: 140,
+        height: 55,
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        borderRadius: 8,
+        flexDirection: 'row',
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    female: {
+        width: 140,
+        height: 55,
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        borderRadius: 8,
+        flexDirection: 'row',
+        marginTop: 10,
+        marginBottom: 10,
+    }
 });
 
 export default SignUp;

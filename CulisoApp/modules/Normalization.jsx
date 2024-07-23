@@ -48,3 +48,8 @@ export const NickName = (value) =>{
         return {message: "별명은 2-20자의 영문/숫자/한글로 입력해주세요.", color: "#ec6060", state: false}
     }
 }
+export const Sex = (value) =>{
+    if(value !== ""){
+        return {message: "", color: "", state: true};
+    }
+}
