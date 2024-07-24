@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
@@ -93,26 +93,32 @@ const SignUp = ({ navigation }) => {
         }
     }, [index])
 
-    const SignUpHandler = () => {
-        console.log(form);
-
-        axios.post('http://10.0.2.2:8080/user/signUp', form, {
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
-        })
-        .then((response) => {
-            console.log(response.data);
-            if(response.data){
-                console.log("회원가입 성공");
-            }
-            else{
-                console.log("회원가입 실패");
-            }
-        })
-        .catch(err => console.log(err));
-    }
+    const SignUpHandler = useCallback(() => {
+        setForm(prevForm => {
+            const updatedForm = {
+                ...prevForm,
+                address: `${prevForm.address}, ${prevForm.detail_address}`
+            };
+    
+            axios.post('http://10.0.2.2:8080/user/signUp', updatedForm, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            })
+            .then((response) => {
+                console.log(response.data);
+                if (response.data) {
+                    console.log("회원가입 성공");
+                } else {
+                    console.log("회원가입 실패");
+                }
+            })
+            .catch(err => console.log(err));
+    
+            return updatedForm;
+        });
+    }, [setForm]);
 
     const UpdateForm = (field, value) => {
         setForm(prevForm => ({
@@ -186,10 +192,6 @@ const SignUp = ({ navigation }) => {
         setIndex(disabled ? index + 1 : index);
         setDisabled(false);
         if(index == 3){
-            setForm(prevForm => ({
-                ...prevForm,
-                address: `${form.address}, ${form.detail_address}`
-            }));
             SignUpHandler();
         }
     }
