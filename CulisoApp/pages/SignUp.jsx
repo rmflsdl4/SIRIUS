@@ -100,7 +100,7 @@ const SignUp = ({ navigation }) => {
                 address: `${prevForm.address}, ${prevForm.detail_address}`
             };
     
-            axios.post('http://10.0.2.2:8080/user/signUp', updatedForm, {
+            axios.post('http://192.168.25.4:8080/user/signUp', updatedForm, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",

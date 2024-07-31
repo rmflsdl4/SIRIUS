@@ -24,16 +24,16 @@ const Input = ({ iconType, secureText, placeholder, setFunc }) => {
 };
 
 const Login = ({ navigation }) => {
-    const [userID, setUserID] = useState();
-    const [userPW, setUserPW] = useState();
+    const [user_id, setUserID] = useState();
+    const [user_pw, setUserPW] = useState();
     
     const LoginHandler = () => {
-        console.log(`아이디: ${userID}`);
-        console.log(`비번: ${userPW}`);
+        console.log(`아이디: ${user_id}`);
+        console.log(`비번: ${user_pw}`);
 
-        const data = { userID, userPW };
-
-        axios.post('http://10.0.2.2:8080/user/login', data, {
+        const data = { user_id, user_pw };
+        //http://10.0.2.2:8080/user/login
+        axios.post('http://192.168.25.4:8080/user/login', data, {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
