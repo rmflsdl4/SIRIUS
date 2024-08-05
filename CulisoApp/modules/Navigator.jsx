@@ -11,6 +11,28 @@ export const Button = ({ type, text, width, height, background, onPress }) => {
     )
 }
 
+
+
+// Main에서 사용하는 하단 버튼 형식
+export const BottomButton = ({navigation}) => {
+    const Button = ({route, type, text}) => {
+        return (
+            <TouchableOpacity style={styles.BottomButton} onPress={()=>navigation.navigate(route)}>
+                <GetImage type={type} width={50} height={50} marginBottom={5}/>
+                <Text style={styles.Text}>{text}</Text>
+            </TouchableOpacity> 
+        )
+    }
+    return (
+       <View style={styles.BottomButtonContainer}>
+            <Button route={''} type={'NavHome'} text={'우리 집'}/>
+            <Button route={''} type={'NavBoard'} text={'커뮤니티'}/>
+            <Button route={''} type={'Culi'} text={'큐리'}/>
+            <Button route={''} type={'NavMypage'} text={'내 정보'}/>
+       </View>
+    )
+}
+
 // 작은 회색 글씨 이동 메뉴
 //export const BottomMenubar({navigation})
 
@@ -31,4 +53,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: 'Sejong hospital Bold',
     },
+    BottomButtonContainer: {
+        width: '100%',
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+        bottom: 0,
+        position: 'absolute',
+        marginBottom: 20
+    },
+    BottomButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
 });

@@ -18,6 +18,10 @@ const images = {
     SignUpPhone: require("../assets/images/phone-gray.png"),
     SignUpMale: require("../assets/images/man.png"),
     SignUpFemale: require("../assets/images/woman.png"),
+    NavHome: require("../assets/images/nav_home.png"),
+    NavBoard: require("../assets/images/nav_board.png"),
+    NavMypage: require("../assets/images/nav_mypage.png"),
+    SearchDevice: require("../assets/images/home.png"),
 };
 
 // GetImage의 type이 images의 키값과 일치해야 이미지를 불러옴
