@@ -7,6 +7,7 @@ import Welcome from "./pages/Welcome";
 import Login from "./pages/Login";
 import Main from "./pages/Main";
 import SignUp from "./pages/SignUp";
+import Mypage from "./pages/Mypage";
 
 
 const Stack = createStackNavigator();
@@ -15,16 +16,26 @@ const Stack = createStackNavigator();
 const defaultHeaderOptions = {
     headerShown: true,
     headerStyle: {
-      backgroundColor: 'transparent', // 배경을 투명으로 설정
-      elevation: 0,
-    shadowOpacity: 0,
+        backgroundColor: 'transparent', // 배경을 투명으로 설정
+        elevation: 0,
+        shadowOpacity: 0,
     },
     headerTintColor: '#000',
     headerTitle: '',
     headerTitleStyle: {
-      fontWeight: 'bold',
+        fontWeight: 'bold',
     },
-  };
+};
+const mypageHeaderOptions = {
+  headerShown: true,
+  headerStyle: {
+      backgroundColor: 'transparent', // 배경을 투명으로 설정
+      elevation: 0,
+      shadowOpacity: 0,
+  },
+  headerTintColor: '#000',
+  headerTitle: 'CULISO Mypage',
+};
 
 const App = () => {
 
@@ -36,6 +47,7 @@ const App = () => {
                 <Stack.Screen name="Login" component={Login} options={defaultHeaderOptions}/>
                 <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
                 <Stack.Screen name="SignUp" component={SignUp} options={defaultHeaderOptions}/>
+                <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -28,7 +28,7 @@ export const BottomButton = ({navigation}) => {
             <Button route={''} type={'NavHome'} text={'우리 집'}/>
             <Button route={''} type={'NavBoard'} text={'커뮤니티'}/>
             <Button route={''} type={'Culi'} text={'큐리'}/>
-            <Button route={''} type={'NavMypage'} text={'내 정보'}/>
+            <Button route={'Mypage'} type={'NavMypage'} text={'내 정보'}/>
        </View>
     )
 }

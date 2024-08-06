@@ -22,6 +22,11 @@ const images = {
     NavBoard: require("../assets/images/nav_board.png"),
     NavMypage: require("../assets/images/nav_mypage.png"),
     SearchDevice: require("../assets/images/home.png"),
+    ProfileMan: require("../assets/images/profile-man.png"),
+    ProfileWoman: require("../assets/images/profile-woman.png"),
+    ProfileUpdate: require("../assets/images/mypage-modify.png"),
+    MypageWriteBorder: require("../assets/images/mypage-list.png"),
+    MypageWriteComment: require("../assets/images/comments.png"),
 };
 
 // GetImage의 type이 images의 키값과 일치해야 이미지를 불러옴
