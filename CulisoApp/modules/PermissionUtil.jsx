@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import { PERMISSIONS, request, requestMultiple, RESULTS } from "react-native-permissions";
+import { PERMISSIONS, request, requestMultiple, RESULTS, check } from "react-native-permissions";
 
 export const PermissionRequest = () => {
     // os 확인
@@ -20,4 +20,21 @@ export const PermissionRequest = () => {
         }
     }
     requestPermission();
+}
+
+export const BluetoothCheck = async () => {
+    // os 확인
+    if(Platform.OS !== "ios" && Platform.OS !== "android") return;
+    
+    const permission = Platform.OS === 'ios' ? PERMISSIONS.IOS.BLUETOOTH : PERMISSIONS.ANDROID.BLUETOOTH_SCAN;
+    try{
+        const status = await check(permission);
+        if(status !== RESULTS.GRANTED){
+            await request(permission);
+        }
+        return status;
+    }
+    catch(err){
+        console.log(err);
+    }
 }
