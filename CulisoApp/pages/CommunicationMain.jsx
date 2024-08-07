@@ -4,6 +4,8 @@ import { GetImage } from '../modules/ImageManager';
 import { MenuBarValue, UserInfoValue } from "./modules/CommunityDataRouter";
 import { AllContents } from "./GetCommunityMainData";
 import { useNavigation } from '@react-navigation/native';
+import Background from '../modules/Background';
+import axios from 'axios';
 
 const TopBar = ({ goToPage }) => {
     return (
@@ -50,7 +52,7 @@ const MenuBar = ({ menuItems, activeMenu, handleMenuClick }) => {
     );
 };
 
-export const CommunicationMain = () => {
+const CommunicationMain = () => {
     const navigation = useNavigation();
 
     function goToPage(name) {
@@ -63,20 +65,41 @@ export const CommunicationMain = () => {
     const [selectedBoardID, setSelectedBoardID] = useState(1); // 기본값은 1로 설정
 
     // 메뉴 바 데이터 DB에서 가져오기
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const menuData = await MenuBarValue();
-                const userData = await UserInfoValue();
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const menuData = await MenuBarValue();
+    //             // const userData = await UserInfoValue();
 
-                setMenuItems(menuData);
-                setUserInfo(userData);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-        fetchData();
-    }, []);
+    //             setMenuItems(menuData);
+    //             // setUserInfo(userData);
+    //         } catch (error) {
+    //             console.error("Error fetching data:", error);
+    //         }
+    //     };
+    //     fetchData();
+    // }, []);
+
+    const MenuBarValue = () => {
+        axios.post('http://192.168.25.4:8080/user/menuBarValue', {}, {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        })
+        .then((response) => {
+            console.log(response.data);
+            return response.data;
+        })
+        .catch((err) => {
+            console.error(err);
+            Alert.alert('데이터 로드 실패', '메뉴 데이터를 불러오는데 실패했습니다.', [
+                { text: '확인', onPress: () => console.log('alert closed') },
+            ]);
+            return [];
+        });
+    }
+    
 
     // 메뉴 클릭 시 해당 메뉴의 게시판 번호를 설정하고 AllContents 호출
     const handleMenuClick = (boardID, index) => {
@@ -87,11 +110,11 @@ export const CommunicationMain = () => {
     return (
         <Background center={true}>
             <TopBar goToPage={goToPage} />
-            <ItemBar userInfo={userInfo} goToPage={goToPage} />
-            <MenuBar menuItems={menuItems} activeMenu={activeMenu} handleMenuClick={handleMenuClick} />
+            {/* <ItemBar userInfo={userInfo} goToPage={goToPage} /> */}
+            {/* <MenuBar menuItems={menuItems} activeMenu={activeMenu} handleMenuClick={handleMenuClick} /> */}
 
             <ScrollView contentContainerStyle={styles.centerBox}>
-                <AllContents boardID={selectedBoardID} />
+                {/* <AllContents boardID={selectedBoardID} /> */}
             </ScrollView>
         </Background>
     );
@@ -157,3 +180,5 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
 });
+
+export default CommunicationMain;

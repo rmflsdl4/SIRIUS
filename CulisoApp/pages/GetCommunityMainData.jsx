@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from "rea
 import { GetImage } from '../modules/ImageManager';
 import { ContentsValue, IncrementViews } from "./CommunityDataRouter";
 import { useNavigation } from "@react-navigation/native";
+import axios from 'axios';
 
 const MenuTitle = ({ boardID, board }) => {
     return boardID === 1 ? (
@@ -47,7 +48,7 @@ const CommunityContentsRight = ({ board }) => {
         board.fileUrl && board.fileName ? (
             <View style={styles.communityContentsRight}>
                 <Image
-                    source={{ uri: `https://culiso.duckdns.org/${board.fileUrl}${board.fileName}` }}
+                    source={{ uri: `http://192.168.25.4:8080/${board.fileUrl}${board.fileName}` }}
                     style={styles.image}
                 />
             </View>
