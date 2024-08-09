@@ -10,6 +10,7 @@
                             📂 culiso
                                 📂 config - 라이브러리, 패키지 등의 설정 파일
                                 📂 controller - 라우터 처리
+                                📂 dto - 필요한 데이터 전달을 위한 칼럼 정의
                                 📂 entity - 데이터베이스 테이블 및 열 정의
                                 📂 repository - 데이터베이스 CRUD
                                 📂 service - 각 기능들을 호출
