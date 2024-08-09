@@ -1,5 +1,6 @@
 package com.culiso.culiso.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +9,15 @@ import org.springframework.http.ResponseEntity;
 //import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import com.culiso.culiso.dto.BoardMenuDTO;
+import com.culiso.culiso.dto.UserProfileDTO;
 import com.culiso.culiso.entity.UserEntity;
+import com.culiso.culiso.service.BoardService;
+import com.culiso.culiso.service.UserProfileService;
 import com.culiso.culiso.service.UserService;
 
 import lombok.val;
+
 
 //@Controller // file을 응답하는 컨트롤러 (클라이언트가 브라우저면 .html 파일을)
 @RestController // data를 응답하는 컨트롤러 (클라이언트가 휴대폰이면 data)
@@ -75,5 +81,38 @@ public class RouteController {
             return ResponseEntity.ok(false);
         }
     }
-}
 
+    
+    // 커뮤니티 영역
+    @Autowired
+    private BoardService boardService;
+    private UserProfileService userProfileService;
+
+    @PostMapping("/menuBarValue")
+    public ResponseEntity<List<BoardMenuDTO>> menuBarValue() {
+        System.out.println("메뉴 바 값을 가져오는 중...");
+        List<BoardMenuDTO> boards = boardService.menuBarValue();
+
+        if (!boards.isEmpty()) {
+            System.out.println("성공적으로 " + boards.size() + "개의 메뉴 항목을 가져왔습니다.");
+        } else {
+            System.out.println("메뉴 항목을 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(boards);
+    }
+
+    @PostMapping("/userProfileValue")
+    public ResponseEntity<List<UserProfileDTO>> userProfileValue() {
+        System.out.println("메뉴 바 값을 가져오는 중...");
+        List<UserProfileDTO> userProfiles = userProfileService.userProfileValue();
+
+        if (!userProfiles.isEmpty()) {
+            System.out.println("성공적으로 " + userProfiles.size() + "개의 유저 프로필 항목을 가져왔습니다.");
+        } else {
+            System.out.println("유저 프로필 항목을 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(userProfiles);
+    }
+}
