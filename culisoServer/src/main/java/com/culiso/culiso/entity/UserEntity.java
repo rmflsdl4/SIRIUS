@@ -1,5 +1,7 @@
 package com.culiso.culiso.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -46,4 +48,17 @@ public class UserEntity {
     @Column(nullable = false)
     @Getter @Setter
     private String adminID;
+
+    // 추가된 필드들
+    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @Getter @Setter
+    private LocalDateTime create_date;
+
+    @Column(nullable = true, length = 100)
+    @Getter @Setter
+    private String profile_url;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Getter @Setter
+    private boolean delete_flag;
 }
