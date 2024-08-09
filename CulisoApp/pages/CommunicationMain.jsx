@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { GetImage } from '../modules/ImageManager';
-import { MenuBarValue, UserInfoValue } from "./modules/CommunityDataRouter";
-import { AllContents } from "./GetCommunityMainData";
 import { useNavigation } from '@react-navigation/native';
 import Background from '../modules/Background';
 import axios from 'axios';
@@ -23,9 +21,9 @@ const ItemBar = ({ userInfo, goToPage }) => {
     return (
         <View style={styles.topBar}>
             <View style={styles.profileBox}>
-                <GetImage type={userInfo[0]?.profileUrl ? userInfo[0].profileUrl : 'userProfile'} width={39} height={39} />
+                <GetImage type={userInfo[0]?.profile_url ? userInfo[0].profile_url : 'userProfile'} width={39} height={39} />
                 <View style={styles.profileCon}>
-                    <Text style={styles.userName}>{userInfo[0]?.userNickName}</Text>
+                    <Text style={styles.userName}>{userInfo[0]?.user_nick_name}</Text>
                     <Text style={styles.subText}>안녕하세요. 반갑습니다.</Text>
                 </View>
             </View>
@@ -39,13 +37,13 @@ const ItemBar = ({ userInfo, goToPage }) => {
 const MenuBar = ({ menuItems, activeMenu, handleMenuClick }) => {
     return (
         <View style={styles.menuBar}>
-            {menuItems.map((item, index) => (
+            {menuItems && menuItems.map((item, index) => (
                 <Text
-                    key={item.boardID}
+                    key={item.board_id}
                     style={[styles.menuText, activeMenu === index && styles.activeMenuText]}
-                    onPress={() => handleMenuClick(item.boardID, index)}
+                    onPress={() => handleMenuClick(item.board_id, index)}
                 >
-                    {item.boardName}
+                    {item.board_name}
                 </Text>
             ))}
         </View>
@@ -64,24 +62,23 @@ const CommunicationMain = () => {
     const [userInfo, setUserInfo] = useState([]);
     const [selectedBoardID, setSelectedBoardID] = useState(1); // 기본값은 1로 설정
 
-    // 메뉴 바 데이터 DB에서 가져오기
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const menuData = await MenuBarValue();
-    //             // const userData = await UserInfoValue();
-
-    //             setMenuItems(menuData);
-    //             // setUserInfo(userData);
-    //         } catch (error) {
-    //             console.error("Error fetching data:", error);
-    //         }
-    //     };
-    //     fetchData();
-    // }, []);
+    // 메뉴 바, 유저 정보 데이터 DB에서 가져오기
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await MenuBarValue();
+                await UserInfoValue();
+    
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+    
+        fetchData();
+    }, []);
 
     const MenuBarValue = () => {
-        axios.post('http://192.168.25.4:8080/user/menuBarValue', {}, {
+        axios.post('http://192.168.45.113:8080/user/menuBarValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
@@ -89,15 +86,37 @@ const CommunicationMain = () => {
         })
         .then((response) => {
             console.log(response.data);
-            return response.data;
+            if(response.data){
+                setMenuItems(response.data);
+            }
+            else{
+                Alert.alert('데이터 로드 실패', '메뉴 데이터를 불러오는데 실패했습니다.', [
+                    { text: '확인', onPress: () => console.log('alert closed') },
+                ]);
+            }
         })
-        .catch((err) => {
-            console.error(err);
-            Alert.alert('데이터 로드 실패', '메뉴 데이터를 불러오는데 실패했습니다.', [
-                { text: '확인', onPress: () => console.log('alert closed') },
-            ]);
-            return [];
-        });
+        .catch(err => console.log(err));
+    }
+
+    const UserInfoValue = () => {
+        axios.post('http://192.168.45.113:8080/user/userProfileValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        })
+        .then((response) => {
+            console.log(response.data);
+            if(response.data){
+                setUserInfo(response.data);
+            }
+            else{
+                Alert.alert('데이터 로드 실패', '유저 프로필 데이터를 불러오는데 실패했습니다.', [
+                    { text: '확인', onPress: () => console.log('alert closed') },
+                ]);
+            }
+        })
+        .catch(err => console.log(err));
     }
     
 
@@ -110,8 +129,8 @@ const CommunicationMain = () => {
     return (
         <Background center={true}>
             <TopBar goToPage={goToPage} />
-            {/* <ItemBar userInfo={userInfo} goToPage={goToPage} /> */}
-            {/* <MenuBar menuItems={menuItems} activeMenu={activeMenu} handleMenuClick={handleMenuClick} /> */}
+            <ItemBar userInfo={userInfo} goToPage={goToPage} />
+            <MenuBar menuItems={menuItems} activeMenu={activeMenu} handleMenuClick={handleMenuClick} />
 
             <ScrollView contentContainerStyle={styles.centerBox}>
                 {/* <AllContents boardID={selectedBoardID} /> */}
