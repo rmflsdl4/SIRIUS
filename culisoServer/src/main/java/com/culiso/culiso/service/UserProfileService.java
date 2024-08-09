@@ -6,14 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.culiso.culiso.dto.BoardMenuDTO;
+import com.culiso.culiso.dto.UserProfileDTO;
 import com.culiso.culiso.repository.BoardRepository;
+import com.culiso.culiso.repository.UserProfileRepository;
 
 @Service
-public class BoardService {
+public class UserProfileService {
     @Autowired
-    private BoardRepository boardRepository;
+    private UserProfileRepository userProfileRepository;
 
-    public List<BoardMenuDTO> menuBarValue() {
-        return boardRepository.boardMenuHandler();
+    public List<UserProfileDTO> userProfileValue() {
+        return userProfileRepository.userProfileHandler();
     }
 }
