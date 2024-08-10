@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { BottomButton } from "../modules/Navigator";
 import { PermissionRequest } from "../modules/PermissionUtil";
 import { BluetoothConnect } from "../modules/Bluetooth";
+import Header from "../modules/Header";
 
 const SearchDevice = ({onPress}) => {
     return (
@@ -19,13 +20,42 @@ const SearchDevice = ({onPress}) => {
 }
 
 const DeviceManage = () => {
+    const devicesData = [
+        { name: '침실 조명', iconOn: 'DeviceLightOn', iconOff: 'DeviceLightOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'f', flag: false},
+        { name: '거실 조명', iconOn: 'DeviceLightOn', iconOff: 'DeviceLightOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'b', flag: false },
+        { name: '에어컨', iconOn: 'DeviceAirConditionerOn', iconOff: 'DeviceAirConditionerOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'g', flag: false },
+        { name: '커튼', iconOn: 'DeviceCurtainOn', iconOff: 'DeviceCurtainOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'i', flag: false },
+        { name: '보일러', iconOn: 'DeviceWaterHeaterOn', iconOff: 'DeviceWaterHeaterOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: null, flag: false },
+        { name: 'TV', iconOn: 'DeviceTVOn', iconOff: 'DeviceTVOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'h', flag: false },
+    ];
+    const [devices, setDevices] = useState(devicesData.map(device => ({ ...device, status: '꺼짐', icon: device.iconOff, powerIcon: device.powerOffIcon })));
+
+    const toggleDeviceStatus = (index) => {
+        const newDevices = [...devices];
+        const device = newDevices[index];
+
+        device.status = device.status === '켜짐' ? '꺼짐' : '켜짐';
+        device.icon = device.status === '켜짐' ? device.iconOn : device.iconOff;
+        device.powerIcon = device.status === '켜짐' ? device.powerOnIcon : device.powerOffIcon;
+        device.flag = device.status === '켜짐' ? true : false;
+        setDevices(newDevices);
+    };
     return (
-        <View style={styles.searchContainer}>
-            <GetImage type={'SearchDevice'} width={192} height={192}/>
-            <Text style={styles.text}>등록된 기기가 있네요</Text>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>등록하기</Text>
-            </TouchableOpacity>
+        <View style={styles.GridWrapper}>
+            <View style={styles.Grid}>
+                {devices.map((device, index) => (
+                    <View style={styles.DeviceCard} key={device.name}>
+                        <View style={styles.DeviceHeader}>
+                            <GetImage type={device.icon} width={50} height={50}/>
+                            <TouchableOpacity style={styles.PowerButton} onPress={() => toggleDeviceStatus(index)}>
+                                <GetImage type={device.powerIcon} width={40} height={40} />
+                            </TouchableOpacity>
+                        </View>
+                        <Text style={styles.DeviceName}>{device.name}</Text>
+                        <Text stlye={styles.DeviceStatus}>{device.status}</Text>
+                    </View>
+                ))}
+            </View>
         </View>
     )
 }
@@ -44,7 +74,8 @@ const Main = ({ navigation }) => {
 
     return (
         <Background center={true}>
-            {device === null ?
+            <Header address={'광주광역시 남구 효덕로 272 하우젠빌라 208호'}/>
+            {device !== null ?
                 <SearchDevice onPress={()=>BluetoothHandler()}/>
                 :
                 <DeviceManage/>
@@ -84,6 +115,53 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: 'Sejong hospital Bold',
         color: '#ffffff',
+    },
+    PowerButton: {
+        background: 'none',
+        cursor: 'pointer',
+    },
+    DeviceCard: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 20,
+        padding: 15,
+        marginTop: 15,
+        width: 150,
+        // iOS 쉐도우
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+
+        // Android 쉐도우
+        elevation: 3,
+    },
+    DeviceHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%'
+    },
+    GridWrapper: {
+        justifyContent: 'center',
+    },
+    Grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        width: 350,
+        margin: 'auto',
+    },
+    DeviceName: {
+        fontSize: 18,
+        marginTop: 10,
+        color: '#333'
+    },
+    DeviceStatus: {
+        fontSize: 16,
+        color: 'gray'
     }
 });
 

@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Main from "./pages/Main";
 import SignUp from "./pages/SignUp";
 import Mypage from "./pages/Mypage";
+import CuliTalk from "./pages/CuliTalk";
 
 
 const Stack = createStackNavigator();
@@ -36,6 +37,16 @@ const mypageHeaderOptions = {
   headerTintColor: '#000',
   headerTitle: 'CULISO Mypage',
 };
+const culiTalkHeaderOptions = {
+    headerShown: true,
+    headerStyle: {
+        backgroundColor: 'transparent', // 배경을 투명으로 설정
+        elevation: 0,
+        shadowOpacity: 0,
+    },
+    headerTintColor: '#000',
+    headerTitle: 'CULI Talk',
+  };
 
 const App = () => {
 
@@ -48,6 +59,7 @@ const App = () => {
                 <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
                 <Stack.Screen name="SignUp" component={SignUp} options={defaultHeaderOptions}/>
                 <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
+                <Stack.Screen name="CuliTalk" component={CuliTalk} options={culiTalkHeaderOptions}/>
             </Stack.Navigator>
         </NavigationContainer>
     );
