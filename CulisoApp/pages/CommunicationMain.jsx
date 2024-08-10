@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { GetImage } from '../modules/ImageManager';
 import { useNavigation } from '@react-navigation/native';
+import AllContents from './GetCommunityMainData';
 import Background from '../modules/Background';
 import axios from 'axios';
 
@@ -21,9 +22,9 @@ const ItemBar = ({ userInfo, goToPage }) => {
     return (
         <View style={styles.topBar}>
             <View style={styles.profileBox}>
-                <GetImage type={userInfo[0]?.profile_url ? userInfo[0].profile_url : 'userProfile'} width={39} height={39} />
+                <GetImage type={userInfo[0]?.profile_url ? userInfo[0].profile_url : 'UserProfile'} width={39} height={39} />
                 <View style={styles.profileCon}>
-                    <Text style={styles.userName}>{userInfo[0]?.user_nick_name}</Text>
+                    <Text style={styles.userName}>{userInfo[0]?.user_nick}</Text>
                     <Text style={styles.subText}>안녕하세요. 반갑습니다.</Text>
                 </View>
             </View>
@@ -57,6 +58,8 @@ const CommunicationMain = () => {
         navigation.navigate(name);
     }
 
+    const postUrl = 'http://192.168.45.113:8080/';
+    
     const [activeMenu, setActiveMenu] = useState(0);
     const [menuItems, setMenuItems] = useState([]);
     const [userInfo, setUserInfo] = useState([]);
@@ -78,7 +81,7 @@ const CommunicationMain = () => {
     }, []);
 
     const MenuBarValue = () => {
-        axios.post('http://192.168.45.113:8080/user/menuBarValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
+        axios.post(postUrl + 'user/menuBarValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
@@ -99,7 +102,7 @@ const CommunicationMain = () => {
     }
 
     const UserInfoValue = () => {
-        axios.post('http://192.168.45.113:8080/user/userProfileValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
+        axios.post(postUrl + 'user/userProfileValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
@@ -121,9 +124,9 @@ const CommunicationMain = () => {
     
 
     // 메뉴 클릭 시 해당 메뉴의 게시판 번호를 설정하고 AllContents 호출
-    const handleMenuClick = (boardID, index) => {
+    const handleMenuClick = (board_id, index) => {
         setActiveMenu(index);
-        setSelectedBoardID(boardID);
+        setSelectedBoardID(board_id);
     };
 
     return (
@@ -133,7 +136,7 @@ const CommunicationMain = () => {
             <MenuBar menuItems={menuItems} activeMenu={activeMenu} handleMenuClick={handleMenuClick} />
 
             <ScrollView contentContainerStyle={styles.centerBox}>
-                {/* <AllContents boardID={selectedBoardID} /> */}
+                <AllContents board_id={selectedBoardID} />
             </ScrollView>
         </Background>
     );
