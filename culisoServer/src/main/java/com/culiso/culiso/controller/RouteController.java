@@ -6,13 +6,16 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import com.culiso.culiso.dto.BoardMenuDTO;
+import com.culiso.culiso.dto.ContentListFileDTO;
 import com.culiso.culiso.dto.UserProfileDTO;
+import com.culiso.culiso.entity.BoardEntity;
 import com.culiso.culiso.entity.UserEntity;
 import com.culiso.culiso.service.BoardService;
+import com.culiso.culiso.service.ContentListService;
 import com.culiso.culiso.service.UserProfileService;
 import com.culiso.culiso.service.UserService;
 
@@ -86,7 +89,10 @@ public class RouteController {
     // 커뮤니티 영역
     @Autowired
     private BoardService boardService;
+    @Autowired
     private UserProfileService userProfileService;
+    @Autowired
+    private ContentListService contentListService;
 
     @PostMapping("/menuBarValue")
     public ResponseEntity<List<BoardMenuDTO>> menuBarValue() {
@@ -114,5 +120,22 @@ public class RouteController {
         }
 
         return ResponseEntity.ok(userProfiles);
+    }
+
+    @PostMapping("/contentListValue")
+    public ResponseEntity<List<ContentListFileDTO>> contentListValue(@RequestBody BoardEntity data) {
+        int board_id = data.getBoard_id();
+
+        System.out.println("메뉴 바 값을 가져오는 중...");
+        System.out.println(board_id);
+        List<ContentListFileDTO> contentList = contentListService.contentListValue(board_id);
+
+        if (!contentList.isEmpty()) {
+            System.out.println("성공적으로 " + contentList.size() + "개의 커뮤니티 컨텐츠 항목을 가져왔습니다.");
+        } else {
+            System.out.println("커뮤니티 컨텐츠 항목을 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(contentList);
     }
 }
