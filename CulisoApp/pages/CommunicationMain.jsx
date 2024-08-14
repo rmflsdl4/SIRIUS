@@ -3,13 +3,13 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'rea
 import { GetImage } from '../modules/ImageManager';
 import { useNavigation } from '@react-navigation/native';
 import AllContents from './GetCommunityMainData';
-import Background from '../modules/Background';
+import CommunityBackground from '../modules/CommunityBackground';
 import axios from 'axios';
 
-const TopBar = ({ goToPage }) => {
+const TopBar = ({ navigation }) => {
     return (
         <View style={styles.topBar}>
-            <TouchableOpacity onPress={() => goToPage("afterMain")}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
                 <GetImage type={'BackArrow'} width={22} height={22} />
             </TouchableOpacity>
             <Text style={styles.mainTitle}>CULISO</Text>
@@ -130,24 +130,25 @@ const CommunicationMain = () => {
     };
 
     return (
-        <Background center={true}>
-            <TopBar goToPage={goToPage} />
+        <CommunityBackground center={false}>
+            <TopBar navigation={navigation} />
             <ItemBar userInfo={userInfo} goToPage={goToPage} />
             <MenuBar menuItems={menuItems} activeMenu={activeMenu} handleMenuClick={handleMenuClick} />
 
             <ScrollView contentContainerStyle={styles.centerBox}>
                 <AllContents board_id={selectedBoardID} />
             </ScrollView>
-        </Background>
+        </CommunityBackground>
     );
 };
 
 const styles = StyleSheet.create({
     topBar: {
+        marginTop: 40,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: '7%',
+        height: 50, // 고정된 높이 값으로 변경
         paddingHorizontal: 20,
     },
     profileBox: {
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
     centerBox: {
         alignItems: 'center',
         flexDirection: 'column',
-        height: '79%',
+        height: '82%',
         paddingHorizontal: 20,
     },
 });

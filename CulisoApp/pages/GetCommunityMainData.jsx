@@ -19,7 +19,7 @@ const MenuTitle = ({ board_id, board }) => {
 const CommunityContentsLeft = ({ board, truncateText }) => {
     return (
         <View style={[styles.communityContentsLeft, { width: board.fileUrl && board.file_name ? '60%' : '100%' }]}>
-            <View style={styles.contents_title}>
+            <View style={styles.contentsTitle}>
                 <Text style={styles.contentsTitleText}>{board.contents_title}</Text>
             </View>
             <View style={styles.contents}>
@@ -62,10 +62,6 @@ const AllContents = ({ board_id }) => {
   const [contents, setContents] = useState([]);
   const navigation = useNavigation();
 
-  const goToPage = (name) => {
-    navigation.navigate(name);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -100,6 +96,7 @@ const AllContents = ({ board_id }) => {
     .catch(err => console.log(err));
   }
 
+  // 아직 개발 안됨
   const viewsCount = async (sendContentsNum) => {
     try {
       await IncrementViews(sendContentsNum);
@@ -126,8 +123,8 @@ const AllContents = ({ board_id }) => {
           <TouchableOpacity
             style={styles.communityContents}
             onPress={() => {
-              goToPage(`ContentsComponent?contentsNum=${board.contents_num}`);
-              viewsCount(board.contents_num);
+              navigation.navigate('ContentsComponent', { contents_num: board.contents_num });
+              // viewsCount(board.contents_num);   // 개발 아직 안됨
             }}
           >
             <CommunityContentsLeft board={board} truncateText={truncateText} />
@@ -141,13 +138,13 @@ const AllContents = ({ board_id }) => {
 
 const styles = StyleSheet.create({
   communityContentsBox: {
-    margin: 10,
     width: "100%",
+    marginTop: 10,
   },
   communityContents: {
     flexDirection: "row",
     width: "100%",
-    height: 150,
+    height: 185,
     borderRadius: 15,
     backgroundColor: "white",
     marginVertical: 10,
