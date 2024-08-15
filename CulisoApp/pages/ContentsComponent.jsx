@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, ScrollView, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, Image, ScrollView, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform, TouchableWithoutFeedback  } from "react-native";
 import Modal from "react-native-modal";  // react-native-modal을 사용하여 모달을 구현
 import { GetImage } from '../modules/ImageManager';
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -37,7 +37,7 @@ const Container = ({ newContents, sessionUserID, toggleDropdown, isDropdownOpen,
             </TouchableOpacity>
             {newContents.map((content, index) => (
                 <View key={index}>
-                    {content.user_iD === sessionUserID && (
+                    {content.user_id === sessionUserID && (
                         <TouchableOpacity onPress={toggleDropdown} style={styles.topImg}>
                             <GetImage type={'Dropdown'} width={22} height={22}/>
                         </TouchableOpacity>
@@ -71,6 +71,108 @@ const ProfileBox = ({ newContents }) => {
     );
 };
 
+const NewContents = ({ newContents, relatedFiles, isRecommendClicked, like, handleRecommendClick, comment }) => {
+    return (
+        <View>
+            {newContents.map((content, index) => (
+                <View key={index} style={styles.boardCommunityContents}>
+                    <Text style={styles.contentsTitle}>{content.contents_title}</Text>
+                    <View style={styles.contents}>
+                        <Text>{content.content}</Text>
+                        {relatedFiles.length > 0 && (
+                            <View style={styles.contentsImgBox}>
+                                <Swiper
+                                    style={styles.wrapper}
+                                    showsButtons={true}
+                                >
+                                    {relatedFiles.map((file, fileIndex) => (
+                                        <View key={fileIndex} style={styles.slide}>
+                                            <Image
+                                                source={{ uri: postUrl + `${file.file_url}${file.file_name}` }}
+                                                style={styles.image}
+                                            />
+                                        </View>
+                                    ))}
+                                </Swiper>
+                            </View>
+                        )}
+                    </View>
+                    <View style={styles.element}>
+                        <TouchableOpacity onPress={handleRecommendClick}>
+                            <Image
+                                source={require('../assets/images/recommend.png')}
+                                style={[styles.icon, isRecommendClicked && styles.clickedIcon]}
+                            />
+                        </TouchableOpacity>
+                        <Text style={styles.recommendAndContentsNum}>{like}</Text>
+                        <GetImage type={'Comments'} width={20} height={20} marginRight={10} />
+                        <Text style={styles.recommendAndContentsNum}>{comment.length}</Text>
+                    </View>
+                </View>
+            ))}
+        </View>
+    );
+};
+
+
+const Comment = ({ comment, sessionUserID, openModal, setDeleteComment }) => {
+    return (
+        <View>
+            {comment.length > 0 ? (
+                <View style={styles.boardCommunityContents}>
+                    <Text style={styles.contentsTitle}>댓글</Text>
+                    {comment.map((commentItem, index) => (
+                        <View key={index} style={styles.commentContainer}>
+                            <GetImage type={commentItem.profile_url ? commentItem.profile_url : 'ProfileBlack'} width={25} height={25} marginRight={10} />
+                            <View style={styles.commentContent}>
+                                <View style={styles.userInfo}>
+                                    <Text style={styles.userNick}>{commentItem.user_nick}</Text>
+                                    <Text style={styles.writeDate}>{new Date(commentItem.comment_date).toLocaleString()}</Text>
+                                </View>
+                                <Text style={styles.commentText}>{commentItem.comment_content}</Text>
+                            </View>
+                            {commentItem.user_id === sessionUserID && (
+                                <TouchableOpacity onPress={() => { openModal(); setDeleteComment(commentItem.comment_num) }}>
+                                    <GetImage type={'Closed4'} width={13} height={13} marginRight={10} />
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    ))}
+                </View>
+            ) : (
+                <View style={styles.boardCommunityContents}>
+                    <Text style={styles.contentsTitle}>댓글</Text>
+                    <Text style={styles.contentsTitle}>댓글이 없습니다.</Text>
+                </View>
+            )}
+        </View>
+    );
+};
+
+const CommentWriteBox = ({ newComment, handleCommentChange, handleCommentSubmit }) => {
+    return (
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'padding'} 
+            style={styles.commentWriteContainer}
+            keyboardVerticalOffset={0}
+        >
+            <View style={styles.commentWriteBox}>
+                <TextInput
+                    style={styles.textArea}
+                    placeholder="댓글을 입력하세요"
+                    value={newComment}
+                    onChangeText={handleCommentChange}
+                    multiline={true}
+                />
+                <TouchableOpacity onPress={handleCommentSubmit} style={styles.submitButton}>
+                    <GetImage type="Send" width={24} height={24} />
+                </TouchableOpacity>
+            </View>
+        </KeyboardAvoidingView>
+
+    );
+};
+
 
 const ContentsComponent = () => {
     const postUrl = 'http://192.168.45.113:8080/';
@@ -99,69 +201,171 @@ const ContentsComponent = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                await BoardContentsValue(contents_num);
+                const data = await BoardContentsValue(contents_num);
+                if (data) {
+                    setNewContents(data.contentsResult);
+                    setComment(data.commentResult);
+                    setRelatedFiles(data.fileResult);
+                    setSessionUserID(data.sessionUserID);
+    
+                    console.log("setSessionUserID : " + data.sessionUserID);
+                    console.log("sessionUserID : " + sessionUserID);
+    
+                    if (data.contentsResult.length > 0) {
+                        setLike(data.contentsResult[0].recommend);
+                    }
+    
+                    // 해당 게시글에 좋아요 눌렀는지 확인
+                    if(data.contentsRecommendResult){
+                        setIsRecommendClicked(true);
+                    } else {
+                        setIsRecommendClicked(false);
+                    }
 
-                // console.log("setSessionUserID : " + sessionUserID.userID);
-                // console.log("sessionUserID : " + sessionUserID);
-                
-                if (data.contentsResult.length > 0) {
-                    setLike(data.contentsResult[0].recommend);
+                    console.log("isRecommendClicked : " + isRecommendClicked);
+                } else {
+                    console.error("No data returned from the server.");
                 }
-
-                // // 해당 게시글에 좋아요 눌렀는지 확인
-                // if(data.contentsRecommendResult[0].count){
-                //     setIsRecommendClicked(true);
-                // } else {
-                //     setIsRecommendClicked(false);
-                // }
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         };
         fetchData();
     }, [contents_num]);
-
-    const BoardContentsValue = (contents_num) => {
-        console.log("Requested contents_num:", contents_num);  // contents_num 값을 콘솔에 출력
     
-        axios.post(postUrl + 'user/postContents', { contents_num }, {  // contents_num 전송
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
-        })
-        .then((response) => {
+    const BoardContentsValue = async (contents_num) => {
+        try {
+            console.log("Requested contents_num:", contents_num);  // contents_num 값을 콘솔에 출력
+    
+            const response = await axios.post(postUrl + 'user/postContents', { contents_num }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            });
+    
             console.log(response.data);
-            if(response.data){
-                setNewContents(response.data.contentsResult);
-                setComment(response.data.commentResult);
-                setRelatedFiles(response.data.fileResult);
-                setSessionUserID(response.data.sessionUserID.user_iD);
-            }
-            else{
+    
+            if (response.data) {
+                return response.data;
+            } else {
                 Alert.alert('데이터 로드 실패', '커뮤니티 컨텐츠 데이터를 불러오는데 실패했습니다.', [
                     { text: '확인', onPress: () => console.log('alert closed') },
                 ]);
             }
-        })
-        .catch(err => console.log(err));
-      }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const handleCommentChange = (text) => {
+        setNewComment(text);
+    };    
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    // 드롭다운 메뉴 있을 때 화면 터치 이벤트
+    const screenTouch = () => {
+        if(isDropdownOpen === true) {
+            setIsDropdownOpen(!isDropdownOpen);
+        }
+    };
+    
+    // 댓글 작성하기
+    const handleCommentSubmit = async () => {
+        try {
+            if(newComment !== "") {
+                try {
+                    const data = {
+                        comment_content: newComment, 
+                        contents_num: contents_num
+                    };
+
+                    console.log("comment_content : " + data.comment_content);
+                    console.log("contents_num : " + data.contents_num);
+
+                    const response = await axios.post(postUrl + 'user/commentInsert', data, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
+                        },
+                    });
+            
+                    console.log(response.data);
+            
+                    if (response.data) {
+                        setNewComment(""); // 입력 필드를 초기화
+                        setComment(response.data || []);
+                    } else {
+                        Alert.alert('데이터 로드 실패', '댓글 데이터를 불러오는데 실패했습니다.', [
+                            { text: '확인', onPress: () => console.log('alert closed') },
+                        ]);
+                    }
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        } catch (error) {
+            console.error("Error submitting comment:", error);
+        }
+    };
+
+    // 댓글 삭제하기
+    const handleCommentDelete = async () => {
+        try {
+            await CommentDeleteValue(deleteComment);
+
+            const data = await CommentSelectValue(sendContentsNum);
+            setComment(data || []);
+
+            closeModal();
+        } catch (error) {
+            console.error("Error submitting comment:", error);
+        }
+    };
 
     return (
-        <CommunityBackground center={false}>
-            <TopBar 
-                navigation={navigation} 
-                newContents={newContents}
-                sessionUserID={sessionUserID}
-                isDropdownOpen={isDropdownOpen}
-                toggleDropdown={() => setIsDropdownOpen(!isDropdownOpen)}
-                contents_num={contents_num}
-                contentOpenModal={() => setContentIsOpen(true)}
-                goToPage={goToPage}
-            />
-            <ProfileBox newContents={newContents} />
+        <TouchableWithoutFeedback onPress={screenTouch}>
+            <CommunityBackground center={false}>
+                <TopBar 
+                    navigation={navigation} 
+                    newContents={newContents}
+                    sessionUserID={sessionUserID}
+                    isDropdownOpen={isDropdownOpen}
+                    toggleDropdown={() => setIsDropdownOpen(!isDropdownOpen)}
+                    contents_num={contents_num}
+                    contentOpenModal={() => setContentIsOpen(true)}
+                    goToPage={goToPage}
+                />
+                <ProfileBox newContents={newContents} />
 
-        </CommunityBackground>
+                <ScrollView style={styles.boardCenterBox} >
+                    <NewContents 
+                        newContents={newContents} 
+                        relatedFiles={relatedFiles} 
+                        isRecommendClicked={isRecommendClicked} 
+                        like={like} 
+                        // handleRecommendClick={handleRecommendClick} 
+                        comment={comment}
+                    />
+                    <Comment 
+                        comment={comment} 
+                        sessionUserID={sessionUserID} 
+                        openModal={() => setIsOpen(true)} 
+                        setDeleteComment={setDeleteComment} 
+                    />
+                </ScrollView>
+
+                <CommentWriteBox
+                    newComment={newComment}
+                    handleCommentChange={handleCommentChange}
+                    handleCommentSubmit={handleCommentSubmit}
+                />
+
+            </CommunityBackground>
+        </TouchableWithoutFeedback>
     );
 }
 
@@ -190,22 +394,19 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    image: {
-        width: 22,
-        height: 22,
-    },
     dropdownMenu: {
         position: 'absolute',
-        top: 50, 
-        right: 0,
+        top: 40, 
+        right: 8,
         backgroundColor: 'white',
-        borderRadius: 5,
+        borderRadius: 25,
         padding: 10,
         elevation: 5, 
         shadowColor: '#000', 
         shadowOffset: { width: 0, height: 2 }, 
         shadowOpacity: 0.8, 
         shadowRadius: 2, 
+        zIndex: 9999,
     },
     dropdownItem: {
         paddingVertical: 8,
@@ -231,6 +432,159 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#6e6e6e', // 서브텍스트의 색상 설정
     },
+    boardCenterBox: {
+        padding: 10,
+        flexDirection: 'column',
+        height: '80%',
+        paddingBottom: 20,
+    },
+    boardCommunityContents: {
+        width: 'calc(100% - 40px)',
+        backgroundColor: 'white',
+        borderRadius: 15,
+        flexDirection: 'column',
+        marginBottom: 20,
+        padding: 10,
+        boxSizing: 'border-box', // React Native에서 기본적으로 적용됨
+    },
+    contentsTitle: {
+        width: '100%',
+        fontSize: 16,
+        fontWeight: 'bold',
+        paddingBottom: 10,
+        paddingHorizontal: 10,
+    },
+    contents: {
+        fontSize: 14,
+        paddingHorizontal: 10,
+    },
+    contentsImgBox: {
+        marginTop: 10,
+    },
+    wrapper: {},
+    slide: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+    },
+    image: {
+        width: '100%',
+        height: 200,
+    },
+    element: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10,
+        paddingHorizontal: 10,
+        paddingBottom: 10,
+    },
+    icon: {
+        width: 20,
+        height: 20,
+        marginRight: 10,
+    },
+    clickedIcon: {
+        tintColor: '#50C878', // 적용 가능한 색상
+    },
+    recommendAndContentsNum: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginRight: 10,
+        fontSize: 16,
+    },
+    commentContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    commentProfile: {
+        width: 25,
+        height: 25,
+        borderRadius: 12.5,
+        marginRight: 10,
+    },
+    commentContent: {
+        flex: 1,
+    },
+    userInfo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 5,
+    },
+    userNick: {
+        fontWeight: 'bold',
+    },
+    writeDate: {
+        fontSize: 12,
+        color: '#999',
+    },
+    commentText: {
+        fontSize: 14,
+    },
+    commentDeleteIcon: {
+        width: 13,
+        height: 13,
+        marginLeft: 10,
+    },
+    deleteBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        margin: 20,
+    },
+    deleteBtnLeft: {
+        padding: 10,
+        marginRight: 10,
+        backgroundColor: '#A9A9A9',
+        color: 'white',
+        borderRadius: 8,
+    },
+    deleteBtnRight: {
+        padding: 10,
+        backgroundColor: '#42A5F5',
+        color: 'white',
+        borderRadius: 8,
+    },
+    commentWriteContainer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: 'white',
+        borderTopWidth: 1,
+        borderColor: '#ddd',
+    },
+
+    commentWriteBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#F7F7F7',
+        borderColor: '#ddd',
+        borderTopWidth: 1,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+    },
+    
+    textArea: {
+        flex: 1,
+        fontSize: 16,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        marginRight: 10,
+    },
+
+    submitButton: {
+        backgroundColor: '#50C878',
+        borderRadius: 20,
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });
+
 
 export default ContentsComponent;
