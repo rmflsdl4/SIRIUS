@@ -10,12 +10,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import com.culiso.culiso.dto.BoardMenuDTO;
+import com.culiso.culiso.dto.CombinedContentsResponseDTO;
+import com.culiso.culiso.dto.CommentDTO;
 import com.culiso.culiso.dto.ContentListFileDTO;
+import com.culiso.culiso.dto.PostContentsControllerDTO;
 import com.culiso.culiso.dto.UserProfileDTO;
 import com.culiso.culiso.entity.BoardEntity;
+import com.culiso.culiso.entity.CommentEntity;
+import com.culiso.culiso.entity.ContentsEntity;
 import com.culiso.culiso.entity.UserEntity;
 import com.culiso.culiso.service.BoardService;
+import com.culiso.culiso.service.CommentInsertService;
 import com.culiso.culiso.service.ContentListService;
+import com.culiso.culiso.service.PostContentsService;
 import com.culiso.culiso.service.UserProfileService;
 import com.culiso.culiso.service.UserService;
 
@@ -93,6 +100,10 @@ public class RouteController {
     private UserProfileService userProfileService;
     @Autowired
     private ContentListService contentListService;
+    @Autowired
+    private PostContentsService postContentsService;
+    @Autowired
+    private CommentInsertService commentInsertService;
 
     @PostMapping("/menuBarValue")
     public ResponseEntity<List<BoardMenuDTO>> menuBarValue() {
@@ -138,4 +149,47 @@ public class RouteController {
 
         return ResponseEntity.ok(contentList);
     }
+
+    @PostMapping("/postContents")
+    public ResponseEntity<CombinedContentsResponseDTO> postContents(@RequestBody ContentsEntity data) {
+        System.out.println("컨텐츠 번호를 가져오는 중...");
+        
+        int contents_num = data.getContents_num();
+        // String sessionUserID = user.getUser_id();
+        String sessionUserID = "user1";
+
+        System.out.println(contents_num);
+
+        CombinedContentsResponseDTO postContents = postContentsService.postContents(contents_num, sessionUserID);
+
+        if (postContents != null) {
+            System.out.println("성공적으로 커뮤니티 컨텐츠 항목을 가져왔습니다.");
+        } else {
+            System.out.println("커뮤니티 컨텐츠 항목을 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(postContents);
+    }
+
+    @PostMapping("/commentInsert")
+    public ResponseEntity<List<CommentDTO>> commentInsert(@RequestBody CommentEntity data) {
+        System.out.println("댓글 내용, 컨텐츠 번호를 가져오는 중...");
+
+        String comment_content = data.getComment_content();
+        int contents_num = data.getContents_num();
+        String user_id = "user1";
+
+        System.out.println("comment_content = " + comment_content + "      contents_num = " + contents_num);
+
+        List<CommentDTO> comments = commentInsertService.commentInsert(comment_content, user_id, contents_num);
+
+        if (comments != null) {
+            System.out.println("성공적으로 댓글 내용들을 가져왔습니다.");
+        } else {
+            System.out.println("댓글 내용들을 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(comments);
+    }
+
 }
