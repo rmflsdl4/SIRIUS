@@ -14,15 +14,18 @@ import com.culiso.culiso.dto.CombinedContentsResponseDTO;
 import com.culiso.culiso.dto.CommentDTO;
 import com.culiso.culiso.dto.ContentListFileDTO;
 import com.culiso.culiso.dto.PostContentsControllerDTO;
+import com.culiso.culiso.dto.RecommendRequestDTO;
 import com.culiso.culiso.dto.UserProfileDTO;
 import com.culiso.culiso.entity.BoardEntity;
 import com.culiso.culiso.entity.CommentEntity;
 import com.culiso.culiso.entity.ContentsEntity;
 import com.culiso.culiso.entity.UserEntity;
 import com.culiso.culiso.service.BoardService;
-import com.culiso.culiso.service.CommentInsertService;
+import com.culiso.culiso.service.CommentService;
 import com.culiso.culiso.service.ContentListService;
+import com.culiso.culiso.service.ContentsService;
 import com.culiso.culiso.service.PostContentsService;
+import com.culiso.culiso.service.RecommendClickedService;
 import com.culiso.culiso.service.UserProfileService;
 import com.culiso.culiso.service.UserService;
 
@@ -95,6 +98,8 @@ public class RouteController {
     
     // 커뮤니티 영역
     @Autowired
+    private ContentsService contentsService;
+    @Autowired
     private BoardService boardService;
     @Autowired
     private UserProfileService userProfileService;
@@ -103,7 +108,9 @@ public class RouteController {
     @Autowired
     private PostContentsService postContentsService;
     @Autowired
-    private CommentInsertService commentInsertService;
+    private CommentService commentService;
+    @Autowired
+    private RecommendClickedService recommendClickedService;
 
     @PostMapping("/menuBarValue")
     public ResponseEntity<List<BoardMenuDTO>> menuBarValue() {
@@ -181,7 +188,7 @@ public class RouteController {
 
         System.out.println("comment_content = " + comment_content + "      contents_num = " + contents_num);
 
-        List<CommentDTO> comments = commentInsertService.commentInsert(comment_content, user_id, contents_num);
+        List<CommentDTO> comments = commentService.commentInsert(comment_content, user_id, contents_num);
 
         if (comments != null) {
             System.out.println("성공적으로 댓글 내용들을 가져왔습니다.");
@@ -192,4 +199,76 @@ public class RouteController {
         return ResponseEntity.ok(comments);
     }
 
+    @PostMapping("/commentDelete")
+    public ResponseEntity<List<CommentDTO>> commentDelete(@RequestBody CommentEntity data) {
+        System.out.println("댓글 내용, 컨텐츠 번호를 가져오는 중...");
+
+        int comment_num = data.getComment_num();
+        int contents_num = data.getContents_num();
+
+        System.out.println("comment_num = " + comment_num + "      contents_num = " + contents_num);
+
+        List<CommentDTO> comments = commentService.commentDelete(comment_num, contents_num);
+
+        if (comments != null) {
+            System.out.println("성공적으로 댓글 내용들을 가져왔습니다.");
+        } else {
+            System.out.println("댓글 내용들을 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(comments);
+    }
+
+    @PostMapping("/contentsDelete")
+    public ResponseEntity<Boolean> contentsDelete(@RequestBody ContentsEntity data) {
+        System.out.println("댓글 내용, 컨텐츠 번호를 가져오는 중...");
+        
+        int contents_num = data.getContents_num();
+
+        System.out.println("contents_num = " + contents_num);
+
+        int result = contentsService.contentsDelete(contents_num);
+
+        if(result > 0){
+            return ResponseEntity.ok(true);
+        }
+        else{
+            return ResponseEntity.ok(false);
+        }
+    }
+
+    @PostMapping("/recommendClicked")
+    public ResponseEntity<Integer> recommendClicked(@RequestBody RecommendRequestDTO data) {
+        System.out.println("댓글 내용, 컨텐츠 번호를 가져오는 중...");
+        
+        int check = data.getCheck();
+        int contents_num = data.getContents_num();
+        String user_id = "user1";
+
+        System.out.println("check = " + check);
+        System.out.println("contents_num = " + contents_num);
+
+        int recommend = recommendClickedService.recommendClicked(check, contents_num, user_id);
+
+        return ResponseEntity.ok(recommend);
+    }
+
+    @PostMapping("/viewsCount")
+    public ResponseEntity<Boolean> viewsCount(@RequestBody ContentsEntity data) {
+        System.out.println("댓글 내용, 컨텐츠 번호를 가져오는 중...");
+        
+        int contents_num = data.getContents_num();
+        String user_id = "user1";
+
+        System.out.println("contents_num = " + contents_num);
+
+        int result = contentsService.viewsCount(contents_num, user_id);
+
+        if(result > 0){
+            return ResponseEntity.ok(true);
+        }
+        else{
+            return ResponseEntity.ok(false);
+        }
+    }
 }
