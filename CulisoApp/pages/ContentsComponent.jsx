@@ -5,6 +5,7 @@ import { GetImage } from '../modules/ImageManager';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import CommunityBackground from '../modules/CommunityBackground';
 import axios from 'axios';
+import CustomStyles from '../modules/ModalComponent';
 
 const TopBar = ({ navigation, newContents, sessionUserID, isDropdownOpen, toggleDropdown, contents_num, contentOpenModal, goToPage }) => {
     return (
@@ -194,6 +195,22 @@ const ContentsComponent = () => {
     const [like, setLike] = useState();  // 좋아요 값 초기화
     const [sessionUserID, setSessionUserID] = useState();
 
+    const openModal = () => {
+        setIsOpen(true);
+    };
+    
+    const closeModal = () => {
+        setIsOpen(false);
+    };
+    
+    const contentOpenModal = () => {
+        setContentIsOpen(true);
+    };
+    
+    const contentCloseModal = () => {
+        setContentIsOpen(false);
+    };    
+
     const goToPage = (name) => {
         navigation.navigate(name);
     };
@@ -315,14 +332,96 @@ const ContentsComponent = () => {
     // 댓글 삭제하기
     const handleCommentDelete = async () => {
         try {
-            await CommentDeleteValue(deleteComment);
+            const data = {
+                contents_num: contents_num,
+                comment_num: deleteComment
+            };
 
-            const data = await CommentSelectValue(sendContentsNum);
-            setComment(data || []);
+            const response = await axios.post(postUrl + 'user/commentDelete', data, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            });
+    
+            console.log(response.data);
+    
+            if (response.data) {
+                setComment(response.data || []);
+                closeModal();
+            } else {
+                Alert.alert('데이터 로드 실패', '댓글 데이터를 불러오는데 실패했습니다.', [
+                    { text: '확인', onPress: () => console.log('alert closed') },
+                ]);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
-            closeModal();
-        } catch (error) {
-            console.error("Error submitting comment:", error);
+    // 게시글 삭제하기
+    const handleDeletePost = async () => {
+        try {
+            const data = {
+                contents_num: contents_num
+            };
+
+            const response = await axios.post(postUrl + 'user/contentsDelete', data, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            });
+    
+            console.log(response.data);
+    
+            if (response.data) {
+                navigation.navigate("CommunicationMain")
+            } else {
+                Alert.alert('데이터 로드 실패', '댓글 데이터를 불러오는데 실패했습니다.', [
+                    { text: '확인', onPress: () => console.log('alert closed') },
+                ]);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    // 추천 이벤트
+    const handleRecommendClick = async () => {
+        // 새로운 추천 상태 값을 결정합니다.
+        const newRecommendClicked = !isRecommendClicked;
+        
+        // 추천 상태를 업데이트합니다.
+        setIsRecommendClicked(newRecommendClicked);
+
+        try {
+            // 서버로 보낼 체크 값을 설정합니다.
+            const check = newRecommendClicked ? 1 : 0;
+
+            const data = {
+                check: check,
+                contents_num: contents_num
+            };
+
+            const response = await axios.post(postUrl + 'user/recommendClicked', data, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            });
+    
+            console.log(response.data);
+    
+            if (response.data) {
+                setLike(response.data);
+            } else {
+                Alert.alert('데이터 로드 실패', '추천 데이터를 불러오는데 실패했습니다.', [
+                    { text: '확인', onPress: () => console.log('alert closed') },
+                ]);
+            }
+        } catch (err) {
+            console.log(err);
         }
     };
 
@@ -334,7 +433,7 @@ const ContentsComponent = () => {
                     newContents={newContents}
                     sessionUserID={sessionUserID}
                     isDropdownOpen={isDropdownOpen}
-                    toggleDropdown={() => setIsDropdownOpen(!isDropdownOpen)}
+                    toggleDropdown={toggleDropdown}
                     contents_num={contents_num}
                     contentOpenModal={() => setContentIsOpen(true)}
                     goToPage={goToPage}
@@ -347,13 +446,13 @@ const ContentsComponent = () => {
                         relatedFiles={relatedFiles} 
                         isRecommendClicked={isRecommendClicked} 
                         like={like} 
-                        // handleRecommendClick={handleRecommendClick} 
+                        handleRecommendClick={handleRecommendClick} 
                         comment={comment}
                     />
                     <Comment 
                         comment={comment} 
                         sessionUserID={sessionUserID} 
-                        openModal={() => setIsOpen(true)} 
+                        openModal={openModal} 
                         setDeleteComment={setDeleteComment} 
                     />
                 </ScrollView>
@@ -363,6 +462,38 @@ const ContentsComponent = () => {
                     handleCommentChange={handleCommentChange}
                     handleCommentSubmit={handleCommentSubmit}
                 />
+
+                {/* 댓글 삭제 모달 */}
+                <Modal isVisible={isOpen} onBackdropPress={closeModal} style={CustomStyles}>
+                    <View style={styles.modalContent}>
+                        <GetImage type="Mark" width={50} height={50} />
+                        <Text style={styles.modalTitle}>댓글을 삭제하시겠습니까?</Text>
+                        <View style={styles.modalButtonContainer}>
+                            <TouchableOpacity style={styles.modalButton} onPress={handleCommentDelete}>
+                                <Text style={styles.modalButtonText}>확인</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
+                                <Text style={styles.modalButtonText}>취소</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                {/* 게시글 삭제 모달 */}
+                <Modal isVisible={isContentOpen} onBackdropPress={contentCloseModal} style={CustomStyles}>
+                    <View style={styles.modalContent}>
+                        <GetImage type="Mark" width={50} height={50} />
+                        <Text style={styles.modalTitle}>게시글을 삭제하시겠습니까?</Text>
+                        <View style={styles.modalButtonContainer}>
+                            <TouchableOpacity style={styles.modalButton} onPress={handleDeletePost}>
+                                <Text style={styles.modalButtonText}>확인</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalButton} onPress={contentCloseModal}>
+                                <Text style={styles.modalButtonText}>취소</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
 
             </CommunityBackground>
         </TouchableWithoutFeedback>
@@ -583,6 +714,34 @@ const styles = StyleSheet.create({
         padding: 10,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginVertical: 15,
+    },
+    modalButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    modalButton: {
+        margin: 5,
+        padding: 10,
+        backgroundColor: '#42A5F5',
+        borderRadius: 5,
+    },
+    modalButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    modalButtonLeft: {
+        backgroundColor: '#A9A9A9',
     },
 });
 

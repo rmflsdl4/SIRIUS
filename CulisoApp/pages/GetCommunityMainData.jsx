@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { GetImage } from '../modules/ImageManager';
-// import { ContentsValue, IncrementViews } from "./CommunityDataRouter";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 
 const MenuTitle = ({ board_id, board }) => {
@@ -58,6 +57,7 @@ const CommunityContentsRight = ({ board, postUrl }) => {
 
 const AllContents = ({ board_id }) => {
   const postUrl = 'http://192.168.45.113:8080/';
+  const isFocused = useIsFocused();  // useIsFocused 훅 추가
 
   const [contents, setContents] = useState([]);
   const navigation = useNavigation();
@@ -70,8 +70,11 @@ const AllContents = ({ board_id }) => {
         console.error("Error fetching data:", error);
       }
     };
-    fetchData();
-  }, [board_id]);
+
+    if (isFocused) {  // 화면이 포커스될 때만 데이터 가져오기
+      fetchData();
+    }
+  }, [isFocused, board_id]);  // isFocused와 board_id를 의존성 배열에 추가
 
   const ContentsValue = (board_id) => {
     console.log("Requested board_id:", board_id);  // board_id 값을 콘솔에 출력
@@ -97,9 +100,31 @@ const AllContents = ({ board_id }) => {
   }
 
   // 아직 개발 안됨
-  const viewsCount = async (sendContentsNum) => {
+  const viewsCount = async (contents_num) => {
     try {
-      await IncrementViews(sendContentsNum);
+      console.log("Requested board_id:", board_id);  // board_id 값을 콘솔에 출력
+
+      const data = {
+        contents_num: contents_num
+    };
+
+      axios.post(postUrl + 'user/viewsCount', data, {  // board_id 전송
+          headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+          },
+      })
+      .then((response) => {
+          if(response.data){}
+          else{
+              Alert.alert('데이터 로드 실패', '커뮤니티 컨텐츠 데이터를 불러오는데 실패했습니다.', [
+                  { text: '확인', onPress: () => console.log('alert closed') },
+              ]);
+          }
+      })
+      .catch(err => console.log(err));
+
+      // await IncrementViews(Contents_num);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -124,7 +149,7 @@ const AllContents = ({ board_id }) => {
             style={styles.communityContents}
             onPress={() => {
               navigation.navigate('ContentsComponent', { contents_num: board.contents_num });
-              // viewsCount(board.contents_num);   // 개발 아직 안됨
+              viewsCount(board.contents_num);   // 개발 아직 안됨
             }}
           >
             <CommunityContentsLeft board={board} truncateText={truncateText} />

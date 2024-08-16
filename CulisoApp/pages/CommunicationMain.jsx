@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { GetImage } from '../modules/ImageManager';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import AllContents from './GetCommunityMainData';
 import CommunityBackground from '../modules/CommunityBackground';
 import axios from 'axios';
@@ -53,6 +53,8 @@ const MenuBar = ({ menuItems, activeMenu, handleMenuClick }) => {
 
 const CommunicationMain = () => {
     const navigation = useNavigation();
+    const isFocused = useIsFocused();  // useIsFocused 훅 추가
+
 
     function goToPage(name) {
         navigation.navigate(name);
@@ -67,18 +69,18 @@ const CommunicationMain = () => {
 
     // 메뉴 바, 유저 정보 데이터 DB에서 가져오기
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                await MenuBarValue();
-                await UserInfoValue();
-    
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-    
-        fetchData();
-    }, []);
+        if (isFocused) {  // 화면이 포커스될 때만 데이터 새로고침
+            const fetchData = async () => {
+                try {
+                    await MenuBarValue();
+                    await UserInfoValue();
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            };
+            fetchData();
+        }
+    }, [isFocused]);
 
     const MenuBarValue = () => {
         axios.post(postUrl + 'user/menuBarValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
