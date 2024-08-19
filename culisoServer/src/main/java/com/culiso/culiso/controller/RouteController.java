@@ -15,6 +15,7 @@ import com.culiso.culiso.dto.CommentDTO;
 import com.culiso.culiso.dto.ContentListFileDTO;
 import com.culiso.culiso.dto.PostContentsControllerDTO;
 import com.culiso.culiso.dto.RecommendRequestDTO;
+import com.culiso.culiso.dto.UserInformationDTO;
 import com.culiso.culiso.dto.UserProfileDTO;
 import com.culiso.culiso.entity.BoardEntity;
 import com.culiso.culiso.entity.CommentEntity;
@@ -30,6 +31,7 @@ import com.culiso.culiso.service.UserProfileService;
 import com.culiso.culiso.service.UserService;
 
 import lombok.val;
+
 
 
 //@Controller // file을 응답하는 컨트롤러 (클라이언트가 브라우저면 .html 파일을)
@@ -94,7 +96,16 @@ public class RouteController {
             return ResponseEntity.ok(false);
         }
     }
+    @PostMapping("/info")
+    @ResponseBody
+    public UserInformationDTO GetInformation(@RequestBody UserEntity data){
+        String id = data.getUser_id();
+        
+        UserInformationDTO info = userService.getInformation(id);
 
+        return info;
+    }
+    
     
     // 커뮤니티 영역
     @Autowired

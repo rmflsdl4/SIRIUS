@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.culiso.culiso.dto.UserInformationDTO;
 import com.culiso.culiso.entity.UserEntity;
 
 import jakarta.transaction.Transactional;
@@ -30,4 +31,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String>{
         @Param("sex") String sex,
         @Param("nickName") String nickName
     );
+
+    @Query("SELECT new com.culiso.culiso.dto.UserInformationDTO(user.id, user.user_name, user.user_nick, user.sex, user.address, user.post, user.user_phone) FROM UserEntity user WHERE user.user_id = :id")
+    UserInformationDTO getInformationHandler(@Param("id") String id);
 }
