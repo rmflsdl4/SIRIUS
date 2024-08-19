@@ -42,6 +42,19 @@ const images = {
     Logout: require("../assets/images/logout.png"),
     Send: require("../assets/images/send-blue.png"),
     Voice: require("../assets/images/voice-blue.png"),
+    BackArrow: require("../assets/images/backArrow.png"),
+    Alarm: require("../assets/images/alarm.png"),
+    Plus2: require("../assets/images/plus2.png"),
+    Star: require("../assets/images/star.png"),
+    Recommend: require("../assets/images/recommend.png"),
+    Views2: require("../assets/images/views2.png"),
+    UserProfile: require("../assets/images/userProfile.png"),
+    Dropdown: require("../assets/images/dropdown.png"),
+    Comments: require("../assets/images/comments.png"),
+    Send: require("../assets/images/send.png"),
+    Closed4: require("../assets/images/closed4.png"),
+    ProfileBlack: require("../assets/images/profile-black.png"),
+    Mark: require("../assets/images/mark.png"),
 };
 
 // GetImage의 type이 images의 키값과 일치해야 이미지를 불러옴
@@ -61,4 +74,3 @@ export const GetImage = ({type, width, height, marginLeft, marginRight, marginTo
         />
     );
 };
-
