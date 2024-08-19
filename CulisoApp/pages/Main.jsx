@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
@@ -6,6 +6,7 @@ import { BottomButton } from "../modules/Navigator";
 import { PermissionRequest } from "../modules/PermissionUtil";
 import { BluetoothConnect } from "../modules/Bluetooth";
 import Header from "../modules/Header";
+import UserDataContext from "../contexts/UserDataContext";
 
 const SearchDevice = ({onPress}) => {
     return (
@@ -62,6 +63,8 @@ const DeviceManage = () => {
 
 const Main = ({ navigation }) => {
     const [device, setDevice] = useState(null);
+    const userContext = useContext(UserDataContext);
+    const { address } = userContext;
 
     const BluetoothHandler = async () => {
         const result = await BluetoothConnect();
@@ -69,12 +72,12 @@ const Main = ({ navigation }) => {
         console.log(device);
     }
     useEffect(()=>{
-        PermissionRequest();
+        PermissionRequest();   
     }, [])
 
     return (
         <Background center={true}>
-            <Header address={'광주광역시 남구 효덕로 272 하우젠빌라 208호'}/>
+            <Header address={address}/>
             {device !== null ?
                 <SearchDevice onPress={()=>BluetoothHandler()}/>
                 :

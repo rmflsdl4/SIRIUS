@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
 // 페이지 불러오기
@@ -10,8 +10,9 @@ import SignUp from "./pages/SignUp";
 import Mypage from "./pages/Mypage";
 import CuliTalk from "./pages/CuliTalk";
 import CommunicationMain from "./pages/CommunicationMain";
-import ContentsComponent from "./pages/ContentsComponent";
 
+
+import UserDataContext from './contexts/UserDataContext';
 
 const Stack = createStackNavigator();
 
@@ -48,24 +49,49 @@ const culiTalkHeaderOptions = {
     },
     headerTintColor: '#000',
     headerTitle: 'CULI Talk',
-  };
+};
+
+
 
 const App = () => {
-
+    const [userData, setUserData] = useState({
+        user_id: "",
+        user_pw: "",
+        confirmPW: "",
+        user_name: "",
+        user_nick: "",
+        sex: "",
+        address: "",
+        post: "",
+        user_phone: "",
+        detail_address: "",
+    });
+    const setUserValues = (values) =>{
+        setUserData(prevState => ({
+            ...prevState,
+            ...values
+        }));
+    }
+    // 콘텍스트 밸류
+    const userValues = {
+        ...userData,
+        setUserValues
+    }
     return (
-        <NavigationContainer>
-            <Stack.Navigator initialRouteName="Main">
-                <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }} />
-                <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
-                <Stack.Screen name="Login" component={Login} options={defaultHeaderOptions}/>
-                <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
-                <Stack.Screen name="SignUp" component={SignUp} options={defaultHeaderOptions}/>
-                <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
-                <Stack.Screen name="CuliTalk" component={CuliTalk} options={culiTalkHeaderOptions}/>
-                <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
-                <Stack.Screen name="ContentsComponent" component={ContentsComponent} options={{ headerShown: false }}/>
-            </Stack.Navigator>
-        </NavigationContainer>
+        <UserDataContext.Provider value={userValues}>
+            <NavigationContainer>
+                <Stack.Navigator initialRouteName="Login">
+                    <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }} />
+                    <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
+                    <Stack.Screen name="Login" component={Login} options={defaultHeaderOptions}/>
+                    <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
+                    <Stack.Screen name="SignUp" component={SignUp} options={defaultHeaderOptions}/>
+                    <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
+                    <Stack.Screen name="CuliTalk" component={CuliTalk} options={culiTalkHeaderOptions}/>
+                    <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
+                </Stack.Navigator>
+            </NavigationContainer>
+        </UserDataContext.Provider>
     );
 };
 

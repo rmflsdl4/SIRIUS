@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
 import axios from 'axios';
+import GetUserData from "../modules/GetUserData";
+import UserDataContext from "../contexts/UserDataContext";
 
 const Header = () => {
     return (
@@ -26,6 +28,8 @@ const Input = ({ iconType, secureText, placeholder, setFunc }) => {
 const Login = ({ navigation }) => {
     const [user_id, setUserID] = useState();
     const [user_pw, setUserPW] = useState();
+    const userContext = useContext(UserDataContext);
+    const { setUserValues } = userContext;
     
     const LoginHandler = () => {
         console.log(`아이디: ${user_id}`);
@@ -33,15 +37,19 @@ const Login = ({ navigation }) => {
 
         const data = { user_id, user_pw };
         //http://10.0.2.2:8080/user/login
-        axios.post('http://192.168.25.4:8080/user/login', data, {
+        //http://192.168.25.4:8080/user/login
+        axios.post('http://10.0.2.2:8080/user/login', data, {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
             },
         })
-        .then((response) => {
+        .then(async (response) => {
             console.log(response.data);
             if(response.data){
+                const data = await GetUserData(user_id);
+                console.log(data);
+                setUserValues(data);
                 navigation.navigate('Main');
             }
             else{

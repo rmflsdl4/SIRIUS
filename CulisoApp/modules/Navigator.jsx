@@ -26,7 +26,7 @@ export const BottomButton = ({navigation}) => {
     return (
        <View style={styles.BottomButtonContainer}>
             <Button route={''} type={'NavHome'} text={'우리 집'}/>
-            <Button route={''} type={'NavBoard'} text={'커뮤니티'}/>
+            <Button route={'CommunicationMain'} type={'NavBoard'} text={'커뮤니티'}/>
             <Button route={'CuliTalk'} type={'Culi'} text={'큐리'}/>
             <Button route={'Mypage'} type={'NavMypage'} text={'내 정보'}/>
        </View>
