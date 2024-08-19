@@ -9,6 +9,8 @@ import Main from "./pages/Main";
 import SignUp from "./pages/SignUp";
 import Mypage from "./pages/Mypage";
 import CuliTalk from "./pages/CuliTalk";
+import CommunicationMain from "./pages/CommunicationMain";
+import ContentsComponent from "./pages/ContentsComponent";
 
 
 const Stack = createStackNavigator();
@@ -60,6 +62,8 @@ const App = () => {
                 <Stack.Screen name="SignUp" component={SignUp} options={defaultHeaderOptions}/>
                 <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
                 <Stack.Screen name="CuliTalk" component={CuliTalk} options={culiTalkHeaderOptions}/>
+                <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
+                <Stack.Screen name="ContentsComponent" component={ContentsComponent} options={{ headerShown: false }}/>
             </Stack.Navigator>
         </NavigationContainer>
     );
