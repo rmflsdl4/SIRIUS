@@ -1,6 +1,7 @@
 package com.culiso.culiso.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import com.culiso.culiso.dto.BoardMenuDTO;
 import com.culiso.culiso.dto.CombinedContentsResponseDTO;
 import com.culiso.culiso.dto.CommentDTO;
 import com.culiso.culiso.dto.ContentListFileDTO;
+import com.culiso.culiso.dto.MessageDTO;
+import com.culiso.culiso.dto.MessagesDTO;
 import com.culiso.culiso.dto.PostContentsControllerDTO;
 import com.culiso.culiso.dto.RecommendRequestDTO;
 import com.culiso.culiso.dto.UserInformationDTO;
@@ -22,6 +25,7 @@ import com.culiso.culiso.entity.CommentEntity;
 import com.culiso.culiso.entity.ContentsEntity;
 import com.culiso.culiso.entity.UserEntity;
 import com.culiso.culiso.service.BoardService;
+import com.culiso.culiso.service.ChatService;
 import com.culiso.culiso.service.CommentService;
 import com.culiso.culiso.service.ContentListService;
 import com.culiso.culiso.service.ContentsService;
@@ -105,6 +109,32 @@ public class RouteController {
 
         return info;
     }
+
+
+    @Autowired
+    private ChatService chatService;
+
+    @PostMapping("/getChatLog")
+    @ResponseBody
+    public List<MessagesDTO> ChatLog(@RequestBody Map<String, String> requestBody){
+        String user_id = requestBody.get("user_id");
+        return chatService.getChatLog(user_id);
+    }
+
+    @PostMapping("/chatRecord")
+    @ResponseBody
+    public void ChatRecord(@RequestBody List<MessageDTO> data){
+        for (MessageDTO message : data) {
+            if(message.getRole().equals("user")) {
+                message.setRole("U");
+            }
+            else message.setRole("A");
+
+            System.out.println("User: " + message.getUser_id() + "Role: " + message.getRole() + ", Content: " + message.getContent());
+            chatService.chatRecord(message.getUser_id(), message.getRole(), message.getContent());
+        }
+    }
+
     
     
     // 커뮤니티 영역

@@ -1,7 +1,7 @@
 package com.culiso.culiso.dto;
 
 public class UserInformationDTO {
-    private String id;
+    private String user_id;
     private String user_name;
     private String user_nick;
     private String sex;
@@ -10,8 +10,8 @@ public class UserInformationDTO {
     private String user_phone;
 
     // 생성자, 게터, 세터
-    public UserInformationDTO(String id, String user_name, String user_nick, String sex, String address, String post, String user_phone) {
-        this.id = id;
+    public UserInformationDTO(String user_id, String user_name, String user_nick, String sex, String address, String post, String user_phone) {
+        this.user_id = user_id;
         this.user_name = user_name;
         this.user_nick = user_nick;
         this.sex = sex;
@@ -20,12 +20,12 @@ public class UserInformationDTO {
         this.user_phone = user_phone;
     }
 
-    public String getId() {
-        return id;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
     public String getUser_name() {

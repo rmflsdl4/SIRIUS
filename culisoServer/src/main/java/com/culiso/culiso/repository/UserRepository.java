@@ -32,6 +32,6 @@ public interface UserRepository extends JpaRepository<UserEntity, String>{
         @Param("nickName") String nickName
     );
 
-    @Query("SELECT new com.culiso.culiso.dto.UserInformationDTO(user.id, user.user_name, user.user_nick, user.sex, user.address, user.post, user.user_phone) FROM UserEntity user WHERE user.user_id = :id")
+    @Query("SELECT new com.culiso.culiso.dto.UserInformationDTO(user.user_id, user.user_name, user.user_nick, user.sex, user.address, user.post, user.user_phone) FROM UserEntity user WHERE user.user_id = :id")
     UserInformationDTO getInformationHandler(@Param("id") String id);
 }
