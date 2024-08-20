@@ -1,8 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { getChatResponse } from "../modules/OpenAI";
+import axios from 'axios';
+import UserDataContext from "../contexts/UserDataContext";
 
 const TalkButton = ({ type, onPress }) => {
     return (
@@ -34,11 +36,41 @@ const CuliTalk = ({ navigation }) => {
     const [scrollHeight, setScrollHeight] = useState(0);
     const [contentHeight, setContentHeight] = useState(0);
     const scrollViewRef = useRef(); // ScrollView에 대한 ref 생성
+    const userContext = useContext(UserDataContext);
+    const { user_id } = userContext;
+
+    useEffect(() => {
+        GetMessages(); 
+    }, [])
+
+    const GetMessages = async () => {
+        const response = await axios.post('http://10.0.2.2:8080/user/getChatLog', { user_id: user_id }, {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        })
+
+        if(response.data){
+            response.data.forEach(message => {
+                setMessages(messages => [...messages, 
+                    {
+                        content: message.user_chat_context, 
+                        role: message.sender_type === 'U' ? 'user' : 'assistant'
+                    }
+                ]);
+            });
+            console.log(response.data[0].sender_type);
+        }
+    }
 
     const SendMessage = async () => {
+        console.log('uid: ', user_id);
+        var requsetData = [];
         if (message.trim()) {
             try{
                 const newUserMessage = { role: 'user', content: message };
+
                 setMessages(messages => [...messages, newUserMessage]);
                 setMessage('');
 
@@ -46,6 +78,22 @@ const CuliTalk = ({ navigation }) => {
                 const newCuliMessage = { role: 'assistant', content: culiMessage };
                 
                 setMessages(messages => [...messages, newCuliMessage]);
+
+                
+                requsetData = [
+                    {...newUserMessage, user_id: user_id},
+                    {...newCuliMessage, user_id: user_id},
+                ];
+                
+
+                axios.post('http://10.0.2.2:8080/user/chatRecord', requsetData, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                    },
+                })
+                
+                console.log(requsetData);
             }
             catch (err) {
                 console.log(err);

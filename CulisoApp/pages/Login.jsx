@@ -48,7 +48,7 @@ const Login = ({ navigation }) => {
             console.log(response.data);
             if(response.data){
                 const data = await GetUserData(user_id);
-                console.log(data);
+                console.log('받은', data);
                 setUserValues(data);
                 navigation.navigate('Main');
             }

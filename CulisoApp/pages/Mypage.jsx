@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { BottomButton } from "../modules/Navigator";
+import UserDataContext from "../contexts/UserDataContext";
 
-const Profile = ({name}) => {
+const Profile = ({name, sex}) => {
     return (
         <View style={styles.profileContainer}>
-            <GetImage type={'ProfileMan'} width={75} height={75} marginRight={12}/>
+            <GetImage type={sex === 'M' ? 'ProfileMan':'ProfileWoman'} width={75} height={75} marginRight={12}/>
             <View>
                 <Text style={styles.profileNameText}>{name}</Text>
                 <TouchableOpacity style={styles.profileUpdate}>
@@ -39,9 +40,13 @@ const Nav = ({ type, name, onPress }) => {
     )
 }
 const Mypage = ({ navigation }) => {
+    
+    const userContext = useContext(UserDataContext);
+    const { user_name, sex } = userContext;
+
     return (
         <Background>
-            <Profile name={'테스트'}/>
+            <Profile name={user_name} sex={sex}/>
             <Section header={'커뮤니티'}>
                 <Nav type={'MypageWriteBorder'} name={'작성 게시글 목록'} onPress={()=>navigation.navigate('')}/>
                 <Nav type={'MypageWriteComment'} name={'작성 댓글 목록'} onPress={()=>navigation.navigate('')}/>
