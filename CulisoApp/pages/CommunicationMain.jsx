@@ -18,7 +18,7 @@ const TopBar = ({ navigation }) => {
     );
 };
 
-const ItemBar = ({ userInfo, goToPage }) => {
+const ItemBar = ({ userInfo, navigation }) => {
     return (
         <View style={styles.topBar}>
             <View style={styles.profileBox}>
@@ -28,7 +28,7 @@ const ItemBar = ({ userInfo, goToPage }) => {
                     <Text style={styles.subText}>안녕하세요. 반갑습니다.</Text>
                 </View>
             </View>
-            <TouchableOpacity onPress={() => goToPage("contentUpload?prevPage=CommunicationMain")}>
+            <TouchableOpacity onPress={() => navigation.navigate("ContentUpload", { prevPage: 'CommunicationMain' })}>
                 <GetImage type={'Plus2'} width={22} height={22} />
             </TouchableOpacity>
         </View>
@@ -54,11 +54,6 @@ const MenuBar = ({ menuItems, activeMenu, handleMenuClick }) => {
 const CommunicationMain = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();  // useIsFocused 훅 추가
-
-
-    function goToPage(name) {
-        navigation.navigate(name);
-    }
 
     const postUrl = 'http://192.168.45.113:8080/';
     
@@ -134,7 +129,7 @@ const CommunicationMain = () => {
     return (
         <CommunityBackground center={false}>
             <TopBar navigation={navigation} />
-            <ItemBar userInfo={userInfo} goToPage={goToPage} />
+            <ItemBar userInfo={userInfo} navigation={navigation} />
             <MenuBar menuItems={menuItems} activeMenu={activeMenu} handleMenuClick={handleMenuClick} />
 
             <ScrollView contentContainerStyle={styles.centerBox}>
