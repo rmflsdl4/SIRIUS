@@ -1,5 +1,7 @@
 package com.culiso.culiso.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.culiso.culiso.dto.BoardMenuDTO;
 import com.culiso.culiso.dto.CombinedContentsResponseDTO;
@@ -29,6 +32,7 @@ import com.culiso.culiso.service.ChatService;
 import com.culiso.culiso.service.CommentService;
 import com.culiso.culiso.service.ContentListService;
 import com.culiso.culiso.service.ContentsService;
+import com.culiso.culiso.service.ImgService;
 import com.culiso.culiso.service.PostContentsService;
 import com.culiso.culiso.service.RecommendClickedService;
 import com.culiso.culiso.service.UserProfileService;
@@ -134,7 +138,6 @@ public class RouteController {
             chatService.chatRecord(message.getUser_id(), message.getRole(), message.getContent());
         }
     }
-
     
     
     // 커뮤니티 영역
@@ -152,6 +155,8 @@ public class RouteController {
     private CommentService commentService;
     @Autowired
     private RecommendClickedService recommendClickedService;
+    @Autowired
+    private ImgService imgService;
 
     @PostMapping("/menuBarValue")
     public ResponseEntity<List<BoardMenuDTO>> menuBarValue() {
@@ -311,5 +316,42 @@ public class RouteController {
         else{
             return ResponseEntity.ok(false);
         }
+    }
+
+    @PostMapping("/CheckBoard")
+    public ResponseEntity<List<BoardMenuDTO>> CheckBoard() {
+        System.out.println("게시판 체크박스 목록 값을 가져오는 중...");
+        List<BoardMenuDTO> checkBoard = boardService.CheckBoard();
+
+        if (!checkBoard.isEmpty()) {
+            System.out.println("성공적으로 " + checkBoard.size() + "개의 체크박스 항목을 가져왔습니다.");
+        } else {
+            System.out.println("체크박스 항목을 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(checkBoard);
+    }
+
+    @PostMapping("/ContentsInsert")
+    public ResponseEntity<?> insertContent(
+        @RequestParam("title") String title, 
+        @RequestParam("contents") String contents, 
+        @RequestParam("board_id") int board_id, 
+        @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+        
+        String user_id = "user1";
+        List<String> savedFileNames = null;
+
+        try {
+            // images 리스트가 비어 있지 않을 경우에만 이미지 저장 실행
+            if (images != null && !images.isEmpty()) {
+                savedFileNames = imgService.saveImages(user_id, images);
+            }
+            contentsService.contentsInsert(title, contents, board_id, user_id, savedFileNames);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("파일 저장 중 오류가 발생했습니다.");
+        }
+
+        return ResponseEntity.ok("게시글이 성공적으로 생성되었습니다.");
     }
 }
