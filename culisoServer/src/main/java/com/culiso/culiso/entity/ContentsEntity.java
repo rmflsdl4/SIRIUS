@@ -30,11 +30,12 @@ public class ContentsEntity {
     @Getter @Setter
     private String content;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(nullable = false)
+    
     @Getter @Setter
     private LocalDateTime contents_date;
 
-    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    @Column(nullable = false)
     @Getter @Setter
     private int recommend;
 
