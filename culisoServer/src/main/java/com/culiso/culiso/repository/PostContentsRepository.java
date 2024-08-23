@@ -40,7 +40,6 @@ public interface PostContentsRepository extends JpaRepository<ContentsEntity, In
 
 
     @Query("SELECT COUNT(cr) FROM ContentsRecommendEntity cr " +
-           "WHERE cr.id.user_id = 'user1' AND cr.id.contents_num = :contents_num")
-    int countUserRecommend(@Param("contents_num") int contents_num);
-    // int countUserRecommend(@Param("user_id") String user_id, @Param("contents_num") int contents_num);
+           "WHERE cr.id.user_id = :user_id AND cr.id.contents_num = :contents_num")
+    int countUserRecommend(@Param("contents_num") int contents_num, @Param("user_id") String sessionUserID);
 }
