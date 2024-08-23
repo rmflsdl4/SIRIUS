@@ -26,7 +26,7 @@ public class ContentListService {
             contents = contentListRepository.findAllContentsByBoardId(boardId);
         }
 
-        // 각 contentsNum에 대해 파일 정보를 조회하고, ContentListFileDTO에 추가
+        // 각 contents_num에 대해 파일 정보를 조회하고, ContentListFileDTO에 추가
         contents.forEach(content -> {
             fileRepository.findFirstByContentsNumOrderByFileUploadNumAsc(content.getContents_num())
                 .ifPresent(file -> {

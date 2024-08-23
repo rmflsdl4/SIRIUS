@@ -21,7 +21,7 @@ public class PostContentsService {
         List<PostContentsDTO> contentsResult = postContentsRepository.getPostContents(contents_num);
         List<CommentDTO> commentResult = postContentsRepository.getComments(contents_num);
         List<FileDTO> fileResult = postContentsRepository.getFiles(contents_num);
-        int contentsRecommendResult = postContentsRepository.countUserRecommend(contents_num);
+        int contentsRecommendResult = postContentsRepository.countUserRecommend(contents_num, sessionUserID);
 
         return new CombinedContentsResponseDTO(contentsResult, commentResult, fileResult, contentsRecommendResult, sessionUserID);
     }
