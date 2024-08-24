@@ -41,14 +41,16 @@ public class ContentsService {
 
         // 엔티티 저장과 동시에 ID 가져오기
         ContentsEntity savedContent = contentsRepository.save(content);
-        
-        // 저장된 엔티티의 ID를 가져옴
-        int contents_num = savedContent.getContents_num();
-        
-        // 저장된 파일 이름을 사용하여 파일 정보를 데이터베이스에 저장
-        for (String uniqueFileName : savedFileNames) {
-            String fileUrl = "images/" + uniqueFileName; // 클라이언트가 접근할 수 있는 URL 경로로 변환
-            fileRepository.fileInsertHandle(fileUrl, uniqueFileName, user_id, contents_num);
+
+        if (savedFileNames != null) {
+            // 저장된 엔티티의 ID를 가져옴
+            int contents_num = savedContent.getContents_num();
+            
+            // 저장된 파일 이름을 사용하여 파일 정보를 데이터베이스에 저장
+            for (String file_name : savedFileNames) {
+                String file_url = "images/" + user_id + "/"; // 클라이언트가 접근할 수 있는 URL 경로로 변환
+                fileRepository.fileInsertHandle(file_url, file_name, user_id, contents_num);
+            }
         }
     }
 }
