@@ -19,6 +19,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 // 유저 권한 허용
                 .requestMatchers("/user/**").permitAll()
+                // 정적 리소스에 대한 요청 허용
+                .requestMatchers("/images/**").permitAll()
 
                 .anyRequest().authenticated()
             )
