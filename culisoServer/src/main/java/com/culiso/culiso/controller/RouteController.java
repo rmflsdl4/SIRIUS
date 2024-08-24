@@ -338,7 +338,9 @@ public class RouteController {
         @RequestParam("contents") String contents, 
         @RequestParam("board_id") int board_id, 
         @RequestParam(value = "images", required = false) List<MultipartFile> images) {
-        
+            
+        System.out.println("컨텐츠 추가 중...");
+
         String user_id = "user1";
         List<String> savedFileNames = null;
 
