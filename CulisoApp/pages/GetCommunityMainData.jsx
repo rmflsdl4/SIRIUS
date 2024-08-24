@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from "rea
 import { GetImage } from '../modules/ImageManager';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
+import ENDPOINT from "../modules/Endpoint";
 
 const MenuTitle = ({ board_id, board }) => {
     return board_id === 1 ? (
@@ -42,12 +43,15 @@ const CommunityContentsLeft = ({ board, truncateText }) => {
     );
 };
 
-const CommunityContentsRight = ({ board, postUrl }) => {
+const CommunityContentsRight = ({ board, ENDPOINT }) => {
+    const imageUrl = ENDPOINT + board.file_url + board.file_name;
+    console.log('Image URL:', imageUrl); // 콘솔에 URL 출력
+
     return (
-        board.fileUrl && board.fileName ? (
+        board.file_url && board.file_name ? (
             <View style={styles.communityContentsRight}>
                 <Image
-                    source={{ uri: postUrl + `${board.file_url}${board.file_name}` }}
+                    source={{ uri: ENDPOINT + board.file_url + board.file_name }}
                     style={styles.image}
                 />
             </View>
@@ -56,7 +60,6 @@ const CommunityContentsRight = ({ board, postUrl }) => {
 };
 
 const AllContents = ({ board_id }) => {
-  const postUrl = 'http://192.168.45.113:8080/';
   const isFocused = useIsFocused();  // useIsFocused 훅 추가
 
   const [contents, setContents] = useState([]);
@@ -79,7 +82,7 @@ const AllContents = ({ board_id }) => {
   const ContentsValue = (board_id) => {
     console.log("Requested board_id:", board_id);  // board_id 값을 콘솔에 출력
 
-    axios.post(postUrl + 'user/contentListValue', { board_id }, {  // board_id 전송
+    axios.post(ENDPOINT + 'user/contentListValue', { board_id }, {  // board_id 전송
         headers: {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -99,7 +102,7 @@ const AllContents = ({ board_id }) => {
     .catch(err => console.log(err));
   }
 
-  // 아직 개발 안됨
+  // 조회수 카운트
   const viewsCount = async (contents_num) => {
     try {
       console.log("Requested board_id:", board_id);  // board_id 값을 콘솔에 출력
@@ -108,7 +111,7 @@ const AllContents = ({ board_id }) => {
         contents_num: contents_num
     };
 
-      axios.post(postUrl + 'user/viewsCount', data, {  // board_id 전송
+      axios.post(ENDPOINT + 'user/viewsCount', data, {  // board_id 전송
           headers: {
               "Content-Type": "application/json",
               "Accept": "application/json",
@@ -149,11 +152,11 @@ const AllContents = ({ board_id }) => {
             style={styles.communityContents}
             onPress={() => {
               navigation.navigate('ContentsComponent', { contents_num: board.contents_num });
-              viewsCount(board.contents_num);   // 개발 아직 안됨
+              viewsCount(board.contents_num);   
             }}
           >
             <CommunityContentsLeft board={board} truncateText={truncateText} />
-            <CommunityContentsRight board={board} postUrl={postUrl} />
+            <CommunityContentsRight board={board} ENDPOINT={ENDPOINT} />
           </TouchableOpacity>
         </View>
       ))}
@@ -241,8 +244,10 @@ const styles = StyleSheet.create({
     height: 22,
   },
   image: {
-    width: 90,
-    height: 90,
+    width: 100,
+    height: 130,
+    marginRight: 20,
+    borderRadius: 15,
   },
 });
 

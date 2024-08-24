@@ -6,6 +6,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import CommunityBackground from '../modules/CommunityBackground';
 import axios from 'axios';
 import CustomStyles from '../modules/ModalComponent';
+import Swiper from 'react-native-swiper';
+import ENDPOINT from "../modules/Endpoint";
 
 const TopBar = ({ navigation, newContents, sessionUserID, isDropdownOpen, toggleDropdown, contents_num, contentOpenModal, goToPage }) => {
     return (
@@ -72,7 +74,7 @@ const ProfileBox = ({ newContents }) => {
     );
 };
 
-const NewContents = ({ newContents, relatedFiles, isRecommendClicked, like, handleRecommendClick, comment }) => {
+const NewContents = ({ newContents, relatedFiles, isRecommendClicked, like, handleRecommendClick, comment, ENDPOINT }) => {
     return (
         <View>
             {newContents.map((content, index) => (
@@ -85,11 +87,12 @@ const NewContents = ({ newContents, relatedFiles, isRecommendClicked, like, hand
                                 <Swiper
                                     style={styles.wrapper}
                                     showsButtons={true}
+                                    paginationStyle={{ bottom: -20 }}  // dots의 위치를 이미지 아래로 조정
                                 >
                                     {relatedFiles.map((file, fileIndex) => (
                                         <View key={fileIndex} style={styles.slide}>
                                             <Image
-                                                source={{ uri: postUrl + `${file.file_url}${file.file_name}` }}
+                                                source={{ uri: ENDPOINT + file.file_url + file.file_name }}
                                                 style={styles.image}
                                             />
                                         </View>
@@ -124,7 +127,7 @@ const Comment = ({ comment, sessionUserID, openModal, setDeleteComment }) => {
                     <Text style={styles.contentsTitle}>댓글</Text>
                     {comment.map((commentItem, index) => (
                         <View key={index} style={styles.commentContainer}>
-                            <GetImage type={commentItem.profile_url ? commentItem.profile_url : 'ProfileBlack'} width={25} height={25} marginRight={10} />
+                            <GetImage type={commentItem.profile_url ? commentItem.profile_url : 'ProfileBlack'} width={30} height={30} marginRight={10} />
                             <View style={styles.commentContent}>
                                 <View style={styles.userInfo}>
                                     <Text style={styles.userNick}>{commentItem.user_nick}</Text>
@@ -176,8 +179,6 @@ const CommentWriteBox = ({ newComment, handleCommentChange, handleCommentSubmit 
 
 
 const ContentsComponent = () => {
-    const postUrl = 'http://192.168.45.113:8080/';
-
     const navigation = useNavigation();
     const route = useRoute();
     const contents_num = route.params?.contents_num;  // Route에서 params 가져오기
@@ -254,7 +255,7 @@ const ContentsComponent = () => {
         try {
             console.log("Requested contents_num:", contents_num);  // contents_num 값을 콘솔에 출력
     
-            const response = await axios.post(postUrl + 'user/postContents', { contents_num }, {
+            const response = await axios.post(ENDPOINT + 'user/postContents', { contents_num }, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -285,8 +286,10 @@ const ContentsComponent = () => {
 
     // 드롭다운 메뉴 있을 때 화면 터치 이벤트
     const screenTouch = () => {
+        console.log("드롭다운 박스 닫기 실행.....");
+
         if(isDropdownOpen === true) {
-            setIsDropdownOpen(!isDropdownOpen);
+            setIsDropdownOpen(false);  // 드롭다운을 닫도록 직접 설정
         }
     };
     
@@ -303,7 +306,7 @@ const ContentsComponent = () => {
                     console.log("comment_content : " + data.comment_content);
                     console.log("contents_num : " + data.contents_num);
 
-                    const response = await axios.post(postUrl + 'user/commentInsert', data, {
+                    const response = await axios.post(ENDPOINT + 'user/commentInsert', data, {
                         headers: {
                             "Content-Type": "application/json",
                             "Accept": "application/json",
@@ -337,7 +340,7 @@ const ContentsComponent = () => {
                 comment_num: deleteComment
             };
 
-            const response = await axios.post(postUrl + 'user/commentDelete', data, {
+            const response = await axios.post(ENDPOINT + 'user/commentDelete', data, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -366,7 +369,7 @@ const ContentsComponent = () => {
                 contents_num: contents_num
             };
 
-            const response = await axios.post(postUrl + 'user/contentsDelete', data, {
+            const response = await axios.post(ENDPOINT + 'user/contentsDelete', data, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -404,7 +407,7 @@ const ContentsComponent = () => {
                 contents_num: contents_num
             };
 
-            const response = await axios.post(postUrl + 'user/recommendClicked', data, {
+            const response = await axios.post(ENDPOINT + 'user/recommendClicked', data, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -448,6 +451,7 @@ const ContentsComponent = () => {
                         like={like} 
                         handleRecommendClick={handleRecommendClick} 
                         comment={comment}
+                        ENDPOINT={ENDPOINT}
                     />
                     <Comment 
                         comment={comment} 
@@ -506,7 +510,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: 50, // 고정된 높이 값으로 변경
+        height: 50,
         padding: 10,
     },
     leftContainer: {
@@ -527,16 +531,16 @@ const styles = StyleSheet.create({
     },
     dropdownMenu: {
         position: 'absolute',
-        top: 40, 
+        top: 40,
         right: 8,
         backgroundColor: 'white',
         borderRadius: 25,
         padding: 10,
-        elevation: 5, 
-        shadowColor: '#000', 
-        shadowOffset: { width: 0, height: 2 }, 
-        shadowOpacity: 0.8, 
-        shadowRadius: 2, 
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
         zIndex: 9999,
     },
     dropdownItem: {
@@ -550,7 +554,7 @@ const styles = StyleSheet.create({
     profileImg: {
         width: 39,
         height: 39,
-        borderRadius: 19.5, // 이미지가 원형으로 보이도록 설정
+        borderRadius: 19.5,
     },
     profileCon: {
         marginLeft: 8,
@@ -561,7 +565,7 @@ const styles = StyleSheet.create({
     },
     subText: {
         fontSize: 12,
-        color: '#6e6e6e', // 서브텍스트의 색상 설정
+        color: '#6e6e6e',
     },
     boardCenterBox: {
         padding: 10,
@@ -576,7 +580,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         marginBottom: 20,
         padding: 10,
-        boxSizing: 'border-box', // React Native에서 기본적으로 적용됨
+        boxSizing: 'border-box',
     },
     contentsTitle: {
         width: '100%',
@@ -590,9 +594,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     contentsImgBox: {
-        marginTop: 10,
+        marginTop: 30,
+        marginBottom: 15,
+        height: 200, // Swiper의 높이를 적절하게 설정
     },
-    wrapper: {},
+    wrapper: {
+        height: '100%', // Swiper가 부모 요소의 높이를 꽉 채우도록 설정
+    },
     slide: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -600,7 +608,8 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '100%',
-        height: 200,
+        height: '100%', // 이미지가 부모 요소의 높이에 맞게 조정되도록 설정
+        resizeMode: 'contain', // 이미지를 contain 모드로 설정하여 이미지 비율 유지
     },
     element: {
         flexDirection: 'row',
@@ -615,7 +624,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     clickedIcon: {
-        tintColor: '#50C878', // 적용 가능한 색상
+        tintColor: '#50C878',
     },
     recommendAndContentsNum: {
         flexDirection: 'row',
@@ -625,8 +634,9 @@ const styles = StyleSheet.create({
     },
     commentContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
+        alignItems: 'flex-start', // X 표시가 내려가지 않도록 수정
+        marginTop: 10,
+        marginBottom: 20,
     },
     commentProfile: {
         width: 25,
@@ -635,7 +645,8 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     commentContent: {
-        flex: 1,
+        flex: 1, // X 표시가 우측에 고정되도록 수정
+        paddingRight: 10, // X 표시와 글자 사이의 간격 추가
     },
     userInfo: {
         flexDirection: 'row',
@@ -650,12 +661,14 @@ const styles = StyleSheet.create({
         color: '#999',
     },
     commentText: {
+        flex: 1, // X 표시와 겹치지 않도록 추가
         fontSize: 14,
     },
     commentDeleteIcon: {
         width: 13,
         height: 13,
         marginLeft: 10,
+        alignSelf: 'center', // X 표시가 가운데 오도록 설정
     },
     deleteBox: {
         flexDirection: 'row',
@@ -678,7 +691,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     commentWriteContainer: {
-        position: 'absolute',
+        // position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
@@ -686,7 +699,6 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderColor: '#ddd',
     },
-
     commentWriteBox: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -697,7 +709,6 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 10,
     },
-    
     textArea: {
         flex: 1,
         fontSize: 16,
@@ -707,7 +718,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginRight: 10,
     },
-
     submitButton: {
         backgroundColor: '#50C878',
         borderRadius: 20,
@@ -744,6 +754,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#A9A9A9',
     },
 });
+
 
 
 export default ContentsComponent;

@@ -5,6 +5,7 @@ import { useNavigation, useIsFocused } from '@react-navigation/native';
 import AllContents from './GetCommunityMainData';
 import CommunityBackground from '../modules/CommunityBackground';
 import axios from 'axios';
+import ENDPOINT from "../modules/Endpoint";
 
 const TopBar = ({ navigation }) => {
     return (
@@ -54,8 +55,6 @@ const MenuBar = ({ menuItems, activeMenu, handleMenuClick }) => {
 const CommunicationMain = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();  // useIsFocused 훅 추가
-
-    const postUrl = 'http://192.168.45.113:8080/';
     
     const [activeMenu, setActiveMenu] = useState(0);
     const [menuItems, setMenuItems] = useState([]);
@@ -78,7 +77,7 @@ const CommunicationMain = () => {
     }, [isFocused]);
 
     const MenuBarValue = () => {
-        axios.post(postUrl + 'user/menuBarValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
+        axios.post(ENDPOINT + 'user/menuBarValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
@@ -99,7 +98,7 @@ const CommunicationMain = () => {
     }
 
     const UserInfoValue = () => {
-        axios.post(postUrl + 'user/userProfileValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
+        axios.post(ENDPOINT + 'user/userProfileValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",

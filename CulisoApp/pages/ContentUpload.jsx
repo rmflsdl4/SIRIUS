@@ -5,6 +5,9 @@ import { GetImage } from '../modules/ImageManager';
 import CommunityBackground from '../modules/CommunityBackground';
 import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios';
+import CustomStyles from '../modules/ModalComponent';
+import Modal from "react-native-modal";
+import ENDPOINT from "../modules/Endpoint";
 
 const TopBar = ({ navigation, prevPage, checkItems }) => {
     return (
@@ -43,19 +46,50 @@ const TitleAndContent = ({
     prevPage,
     contentData,
     sendContents,
-    setSendContents,      // 추가
-    setChangeTitle,       // 추가
-    setChangeContents,    // 추가
-    setDeleteFiles,       // 추가
-    fileInputRef,
-    relatedFiles,
-    setRelatedFiles       // 추가
+    setSendContents,      
+    setChangeTitle,       
+    setChangeContents   
 }) => {
-
     // 제목과 내용을 위한 초기값 설정
     const initialTitle = prevPage === "ContentsComponent" ? contentData[0]?.contentsTitle : sendContents.title;
     const initialContents = prevPage === "ContentsComponent" ? contentData[0]?.content : sendContents.contents;
 
+    // 제목과 내용 입력 시, 값을 저장
+    const handleInputChange = (name, value) => {
+        setSendContents(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+
+        // 제목, 내용 입력했는지 파악
+        if (name === 'title') {
+            setChangeTitle(true);
+        } else if (name === 'contents') {
+            setChangeContents(true);
+        }
+    };
+
+    return (
+        <ScrollView style={styles.container}>
+            <TextInput
+                style={styles.input}
+                placeholder="제목"
+                onChangeText={(text) => handleInputChange('title', text)}
+                defaultValue={initialTitle}
+            />
+            <TextInput
+                style={styles.textArea}
+                placeholder="내용을 입력하세요."
+                onChangeText={(text) => handleInputChange('contents', text)}
+                defaultValue={initialContents}
+                multiline={true}
+            />
+        </ScrollView>
+    );
+};
+
+
+const PhotoUpload = ({ setDeleteFiles, relatedFiles, setRelatedFiles }) => {
     // 파일 선택 버튼 클릭 시, 파일 선택을 위한 DocumentPicker 사용
     const handleImageButtonClick = async () => {
         console.log('파일 선택중');
@@ -76,21 +110,6 @@ const TitleAndContent = ({
         }
     };
 
-    // 제목과 내용 입력 시, 값을 저장
-    const handleInputChange = (name, value) => {
-        setSendContents(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-
-        // 제목, 내용 입력했는지 파악
-        if (name === 'title') {
-            setChangeTitle(true);
-        } else if (name === 'contents') {
-            setChangeContents(true);
-        }
-    };
-
     // 업로드 할 사진 제거
     const handleRemoveFile = (fileIndex) => {
         setRelatedFiles(prevFiles => {
@@ -107,51 +126,33 @@ const TitleAndContent = ({
     };
 
     return (
-        <View>
-            <ScrollView style={styles.container}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="제목"
-                    onChangeText={(text) => handleInputChange('title', text)}
-                    defaultValue={initialTitle}
-                />
-                <TextInput
-                    style={styles.textArea}
-                    placeholder="내용을 입력하세요."
-                    onChangeText={(text) => handleInputChange('contents', text)}
-                    defaultValue={initialContents}
-                    multiline={true}
-                />
-            </ScrollView>
-            <View style={styles.photoUploadBox}>
-                <TouchableOpacity onPress={handleImageButtonClick} style={styles.photoButton}>
-                    <GetImage type="Camera" width={30} height={30} />
-                </TouchableOpacity>
+        <View style={styles.photoUploadBox}>
+            <TouchableOpacity onPress={handleImageButtonClick} style={styles.photoButton}>
+                <GetImage type="Camera" width={30} height={30} />
+            </TouchableOpacity>
 
-                {relatedFiles.length > 0 && (
-                    <View style={styles.contentsImgBox}>
-                        {relatedFiles.map((file, fileIndex) => (
-                            <View key={fileIndex} style={styles.imageContainer}>
-                                <Image
-                                    source={{ uri: file.uri || file.fileUrl }}
-                                    style={styles.image}
-                                />
-                                <TouchableOpacity onPress={() => handleRemoveFile(fileIndex)} style={styles.imgCloseBtn}>
-                                    <Text style={{ color: 'white' }}>&times;</Text>
-                                </TouchableOpacity>
-                            </View>
-                        ))}
-                    </View>
-                )}
-            </View>
+            {relatedFiles.length > 0 && (
+                <View style={styles.contentsImgBox}>
+                    {relatedFiles.map((file, fileIndex) => (
+                        <View key={fileIndex} style={styles.imageContainer}>
+                            <Image
+                                source={{ uri: file.uri || file.fileUrl }}
+                                style={styles.image}
+                            />
+                            <TouchableOpacity onPress={() => handleRemoveFile(fileIndex)} style={styles.imgCloseBtn}>
+                                <Text style={{ color: 'white' }}>&times;</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ))}
+                </View>
+            )}
         </View>
     );
 };
 
 
-const ContentUpload = () => {
-    const postUrl = 'http://192.168.45.113:8080/';
 
+const ContentUpload = () => {
     const navigation = useNavigation();
     const route = useRoute();
     
@@ -174,6 +175,7 @@ const ContentUpload = () => {
 
     const { contentsNum: sendContentsNum, prevPage } = route.params;
 
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -181,7 +183,7 @@ const ContentUpload = () => {
                     const data = await PrevPageValue(sendContentsNum);
                     setContentData(data.contentsResult);
                     const files = data.fileResult.map(file => ({
-                        fileUrl: postUrl + `${file.fileUrl}${file.fileName}`
+                        fileUrl: ENDPOINT + `${file.fileUrl}${file.fileName}`
                     }));
                         setRelatedFiles(files);
                         setDefaultTitle(data.contentsResult[0]?.contentsTitle);
@@ -214,7 +216,7 @@ const ContentUpload = () => {
 
     // 게시판 체크박스 목록 가져오기
     const CheckBoard = () => {
-        axios.post(postUrl + 'user/CheckBoard', {}, {  // 빈 객체 '{}'를 명시적으로 추가
+        axios.post(ENDPOINT + 'user/CheckBoard', {}, {  // 빈 객체 '{}'를 명시적으로 추가
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
@@ -302,17 +304,18 @@ const ContentUpload = () => {
             try {
                 const path = "ContentsUpdate";
                 await ContentsControl(path, formData);
-                goToPage("CommunicationMain");
+                navigation.navigate('CommunicationMain');
             } catch (error) {
                 console.error("Error submitting comment:", error);
             }
 
         } else if (prevPage === "CommunicationMain") {
             console.log("완료 버튼 클릭 - 삽입 함수");
+            console.log("sendContentsNum : " + sendContentsNum);
 
             formData.append('title', sendContents.title);
             formData.append('contents', sendContents.contents);
-            formData.append('boardID', sendContents.boardID);
+            formData.append('board_id', sendContents.board_id);
 
             relatedFiles.forEach(file => {
                 formData.append('images', {
@@ -325,56 +328,112 @@ const ContentUpload = () => {
             try {
                 const path = "ContentsInsert";
                 await ContentsControl(path, formData);
-                goToPage("CommunicationMain");
+                navigation.navigate('CommunicationMain');
             } catch (error) {
                 console.error("Error submitting comment:", error);
             }
         }
     };
+
+    const ContentsControl = async (path, formData) => {
+        try {
+            console.log("path:", path); 
+            console.log("formData:", formData); 
+            formData._parts.forEach(part => {
+                console.log(`Key: ${part[0]}, Value: ${JSON.stringify(part[1])}`);
+            });
+    
+            const response = await axios.post(ENDPOINT + 'user/' + path, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+    
+            console.log(response.data);
+    
+            if (response.data) {
+                console.log(response.data);
+            } else {
+                Alert.alert('데이터 로드 실패', '커뮤니티 컨텐츠 데이터를 불러오는데 실패했습니다.', [
+                    { text: '확인', onPress: () => console.log('alert closed') },
+                ]);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
     
     return (
         <CommunityBackground center={false}>
             <TopBar navigation={navigation} prevPage={prevPage} checkItems={checkItems} />
             
             <View style={styles.bg}>
-                <ScrollView style={styles.centerBox}>
-                    {prevPage === "CommunicationMain" && 
-                        <OptionBox 
-                            boardData={boardData} 
-                            sendContents={sendContents} 
-                            handleCheckboxChange={handleCheckboxChange} 
-                        />
-                    }
+                {prevPage === "CommunicationMain" && 
+                    <OptionBox 
+                        boardData={boardData} 
+                        sendContents={sendContents} 
+                        handleCheckboxChange={handleCheckboxChange} 
+                    />
+                }
 
+                <ScrollView style={styles.centerBox}>
                     <TitleAndContent 
                         prevPage={prevPage}
                         contentData={contentData}
                         sendContents={sendContents}
-                        setSendContents={setSendContents}         // 추가
-                        setChangeTitle={setChangeTitle}           // 추가
-                        setChangeContents={setChangeContents}     // 추가
-                        setDeleteFiles={setDeleteFiles}           // 추가
-                        fileInputRef={fileInputRef}
-                        relatedFiles={relatedFiles}
-                        setRelatedFiles={setRelatedFiles}         // 추가
+                        setSendContents={setSendContents}         
+                        setChangeTitle={setChangeTitle}           
+                        setChangeContents={setChangeContents}     
                     />
                 </ScrollView>
+
+                <PhotoUpload
+                        setDeleteFiles={setDeleteFiles}
+                        relatedFiles={relatedFiles}
+                        setRelatedFiles={setRelatedFiles} 
+                />
             </View>
+
+            <Modal isVisible={isOpen} onBackdropPress={closeModal} style={CustomStyles}>
+                <View style={styles.modalContent}>
+                    <GetImage type="Mark" width={50} height={50} />
+                    <Text style={styles.modalTitle}>
+                        {prevPage === "CommunicationMain" ? "게시글을 생성하시겠습니까?" : "게시글을 수정하시겠습니까?"}
+                    </Text>
+                    <View style={styles.modalButtonContainer}>
+                        <TouchableOpacity style={styles.modalButton} onPress={handleTopBtnClick}>
+                            <Text style={styles.modalButtonText}>확인</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
+                            <Text style={styles.modalButtonText}>취소</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal isVisible={checkItemsIsOpen} onBackdropPress={checkItemsCloseModal} style={CustomStyles}>
+                <View style={styles.modalContent}>
+                    <GetImage type="Mark" width={50} height={50} />
+                    <Text style={styles.modalTitle}>작성하지 않은 내용이 있습니다.</Text>
+                    <View style={styles.modalButtonContainer}>
+                        <TouchableOpacity style={styles.modalButton} onPress={checkItemsCloseModal}>
+                            <Text style={styles.modalButtonText}>확인</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </CommunityBackground>
     );
 };
-
-const { height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     bg: {
         flex: 1,
         flexDirection: 'column',
-        alignItems: 'center',
         backgroundColor: '#ffffff',
         width: '100%',
         height: '100%',
-      },
+    },
     topBar: {
         marginTop: 40,
         flexDirection: 'row',
@@ -409,6 +468,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         marginVertical: 10,
+        alignItems: 'flex-start', // 추가: 자식 요소들을 왼쪽 끝에 정렬
+        paddingLeft: 20,
     },
     checkboxContainer: {
         flexDirection: 'row',
@@ -423,8 +484,8 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 6, // 둥근 모서리로 체크박스를 스타일링
-        transition: 'all 0.2s ease', // 애니메이션 효과 추가
+        borderRadius: 6,
+        transition: 'all 0.2s ease',
         marginRight: 8,
     },
     checked: {
@@ -447,38 +508,39 @@ const styles = StyleSheet.create({
         position: 'relative',  // 추가: 자식 요소들의 위치를 기준으로 함
     },
     input: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
         marginVertical: 10,
         padding: 8,
         fontSize: 18,
+        borderBottomWidth: 1, // 제목과 내용의 구분을 위해 border-bottom만 남김
+        borderBottomColor: '#ccc',
+        backgroundColor: 'transparent', // 배경색 제거
     },
     textArea: {
-        height: 300,
-        borderRadius: 10,
+        flex: 1, // ScrollView의 공간을 차지하도록 설정
         padding: 10,
         marginVertical: 10,
         fontSize: 16,
         textAlignVertical: 'top',  // 텍스트가 상단에서 시작되도록 설정
-    },
+    },    
     photoUploadBox: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#f8f8f8',
         padding: 10,
-        borderRadius: 10,
         position: 'absolute',
         bottom: 0,
         left: 0,
         width: '100%',
+        justifyContent: 'flex-start', // 사진 아이콘을 왼쪽 정렬
+        backgroundColor: '#f0f0f0', // 연한 회색 배경색
     },
     photoButton: {
-        backgroundColor: '#f0f0f0',
-        borderRadius: 20,
         padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 10,
+        borderWidth: 2, // 테두리 두께를 두껍게 설정
+        borderColor: '#999999', // 더 진한 회색 테두리
+        borderRadius: 10,
     },
     cameraIcon: {
         width: 30,
@@ -509,6 +571,34 @@ const styles = StyleSheet.create({
     },
     closeBtnText: {
         color: 'white',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginVertical: 15,
+    },
+    modalButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    modalButton: {
+        margin: 5,
+        padding: 10,
+        backgroundColor: '#42A5F5',
+        borderRadius: 5,
+    },
+    modalButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    modalButtonLeft: {
+        backgroundColor: '#A9A9A9',
     },
 });
 
