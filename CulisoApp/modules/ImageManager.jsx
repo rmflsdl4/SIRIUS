@@ -55,6 +55,8 @@ const images = {
     Closed4: require("../assets/images/closed4.png"),
     ProfileBlack: require("../assets/images/profile-black.png"),
     Mark: require("../assets/images/mark.png"),
+    Closed3: require("../assets/images/closed3.png"),
+    Camera: require("../assets/images/camera.png"),
 };
 
 // GetImage의 type이 images의 키값과 일치해야 이미지를 불러옴
