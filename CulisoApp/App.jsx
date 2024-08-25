@@ -10,7 +10,8 @@ import SignUp from "./pages/SignUp";
 import Mypage from "./pages/Mypage";
 import CuliTalk from "./pages/CuliTalk";
 import CommunicationMain from "./pages/CommunicationMain";
-
+import ContentsComponent from "./pages/ContentsComponent";
+import ContentUpload from "./pages/ContentUpload";
 
 import UserDataContext from './contexts/UserDataContext';
 
@@ -89,6 +90,9 @@ const App = () => {
                     <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
                     <Stack.Screen name="CuliTalk" component={CuliTalk} options={culiTalkHeaderOptions}/>
                     <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
+                    <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
+                    <Stack.Screen name="ContentsComponent" component={ContentsComponent} options={{ headerShown: false }}/>
+                    <Stack.Screen name="ContentUpload" component={ContentUpload} options={{ headerShown: false }}/>
                 </Stack.Navigator>
             </NavigationContainer>
         </UserDataContext.Provider>
