@@ -63,6 +63,21 @@ public class ImgService {
         return savedFileNames;
     }
 
+    // 이미지 파일 삭제
+    public void deleteImages(String user_id, List<String> del_img_names) {
+        String user_upload_dir = Paths.get(uploadDir, user_id).toString();
+
+        for (String file_name : del_img_names) {
+            Path file_path = Paths.get(user_upload_dir, file_name);
+            try {
+                Files.deleteIfExists(file_path);
+            } catch (IOException e) {
+                System.err.println("Failed to delete file: " + file_path.toString());
+                e.printStackTrace();
+            }
+        }
+    }
+
     // 파일 확장자 추출 메서드
     private String getFileExtension(String fileName) {
         String extension = "";
