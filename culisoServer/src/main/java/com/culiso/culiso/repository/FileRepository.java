@@ -1,5 +1,6 @@
 package com.culiso.culiso.repository;
 
+import com.culiso.culiso.dto.FileDTO;
 import com.culiso.culiso.entity.FileEntity;
 
 import jakarta.transaction.Transactional;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface FileRepository extends JpaRepository<FileEntity, Integer> {
@@ -27,4 +29,18 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
         @Param("user_id") String user_id,
         @Param("contents_num") int contents_num
         );
+
+    // 파일 삭제
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM FileEntity file WHERE contents_num = :contents_num AND file_name IN :file_names")
+    void fileDeleteHandle(
+        @Param("file_names") List<String> del_img_names,  // List<String>으로 변경
+        @Param("contents_num") int contents_num
+    );
+
+    // 게시글 수정 전 저장된 파일들 조회
+    @Query("select new com.culiso.culiso.dto.FileDTO(file.file_upload_num, file.file_url, file.file_name) " +
+           "from FileEntity file where file.contents_num = :contents_num")
+    List<FileDTO> findFiles(int contents_num);
 }
