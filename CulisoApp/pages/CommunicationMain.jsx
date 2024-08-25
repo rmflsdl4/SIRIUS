@@ -84,7 +84,6 @@ const CommunicationMain = () => {
             },
         })
         .then((response) => {
-            console.log(response.data);
             if(response.data){
                 setMenuItems(response.data);
             }
@@ -105,7 +104,6 @@ const CommunicationMain = () => {
             },
         })
         .then((response) => {
-            console.log(response.data);
             if(response.data){
                 setUserInfo(response.data);
             }

@@ -50,9 +50,21 @@ const TitleAndContent = ({
     setChangeTitle,       
     setChangeContents   
 }) => {
-    // 제목과 내용을 위한 초기값 설정
-    const initialTitle = prevPage === "ContentsComponent" ? contentData[0]?.contentsTitle : sendContents.title;
-    const initialContents = prevPage === "ContentsComponent" ? contentData[0]?.content : sendContents.contents;
+    // 제목과 내용을 위한 상태 정의
+    const [initialTitle, setInitialTitle] = useState('');
+    const [initialContents, setInitialContents] = useState('');
+
+    // contentData가 변경될 때마다 initialTitle과 initialContents를 설정
+    useEffect(() => {
+        if (prevPage === "ContentsComponent" && contentData) {
+            if (!initialTitle) { // 이미 값이 있는 경우 덮어쓰지 않도록
+                setInitialTitle(contentData.contents_title || '');
+            }
+            if (!initialContents) { // 이미 값이 있는 경우 덮어쓰지 않도록
+                setInitialContents(contentData.content || '');
+            }
+        }
+    }, [contentData, prevPage]);
 
     // 제목과 내용 입력 시, 값을 저장
     const handleInputChange = (name, value) => {
@@ -64,8 +76,10 @@ const TitleAndContent = ({
         // 제목, 내용 입력했는지 파악
         if (name === 'title') {
             setChangeTitle(true);
+            setInitialTitle(value); // 수정된 값을 initialTitle에 반영
         } else if (name === 'contents') {
             setChangeContents(true);
+            setInitialContents(value); // 수정된 값을 initialContents에 반영
         }
     };
 
@@ -75,18 +89,19 @@ const TitleAndContent = ({
                 style={styles.input}
                 placeholder="제목"
                 onChangeText={(text) => handleInputChange('title', text)}
-                defaultValue={initialTitle}
+                value={initialTitle}
             />
             <TextInput
                 style={styles.textArea}
                 placeholder="내용을 입력하세요."
                 onChangeText={(text) => handleInputChange('contents', text)}
-                defaultValue={initialContents}
+                value={initialContents}
                 multiline={true}
             />
         </ScrollView>
     );
 };
+
 
 
 const PhotoUpload = ({ setDeleteFiles, relatedFiles, setRelatedFiles }) => {
@@ -150,8 +165,6 @@ const PhotoUpload = ({ setDeleteFiles, relatedFiles, setRelatedFiles }) => {
     );
 };
 
-
-
 const ContentUpload = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -175,19 +188,11 @@ const ContentUpload = () => {
 
     const { contentsNum: sendContentsNum, prevPage } = route.params;
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {
                 if(prevPage === "ContentsComponent") {
-                    const data = await PrevPageValue(sendContentsNum);
-                    setContentData(data.contentsResult);
-                    const files = data.fileResult.map(file => ({
-                        fileUrl: ENDPOINT + `${file.fileUrl}${file.fileName}`
-                    }));
-                        setRelatedFiles(files);
-                        setDefaultTitle(data.contentsResult[0]?.contentsTitle);
-                        setDefaultContents(data.contentsResult[0]?.content);
+                    await PrevBoardContentsValue(sendContentsNum);
                 } else {
                     await CheckBoard();
                 }
@@ -228,7 +233,45 @@ const ContentUpload = () => {
                 setBoardData(response.data);
             }
             else{
-                Alert.alert('데이터 로드 실패', '유저 프로필 데이터를 불러오는데 실패했습니다.', [
+                Alert.alert('데이터 로드 실패', '게시판 체크박스 목록 데이터를 불러오는데 실패했습니다.', [
+                    { text: '확인', onPress: () => console.log('alert closed') },
+                ]);
+            }
+        })
+        .catch(err => console.log(err));
+    }
+
+    // 게시글 수정 전 게시글 제목, 내용, 파일 가져오기
+    const PrevBoardContentsValue = (sendContentsNum) => {
+        console.log("sendContentsNum : " + sendContentsNum);
+        const data = {
+            contents_num: sendContentsNum
+        }
+
+        axios.post(ENDPOINT + 'user/PrevBoardContentsValue', data, {  
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        })
+        .then((response) => {
+            console.log(response.data);
+            if (response.data) {
+                // contentsResult는 객체이므로, 배열처럼 접근하지 말고 직접 속성에 접근해야 합니다.
+                const contentsResult = response.data.contentsResult;
+                setContentData(contentsResult);
+    
+                // 파일 목록 처리
+                const files = response.data.fileResult.map(file => ({
+                    fileUrl: ENDPOINT + `${file.file_url}${file.file_name}`
+                }));
+                setRelatedFiles(files);
+    
+                // 제목과 내용을 직접 설정
+                setDefaultTitle(contentsResult.contents_title);
+                setDefaultContents(contentsResult.content);
+            } else {
+                Alert.alert('데이터 로드 실패', '게시글 데이터를 불러오는데 실패했습니다.', [
                     { text: '확인', onPress: () => console.log('alert closed') },
                 ]);
             }
@@ -279,26 +322,23 @@ const ContentUpload = () => {
                 formData.append('contents', sendContents.contents);
             }
 
-            formData.append('contentsNum', sendContentsNum);
+            formData.append('contents_num', sendContentsNum);
 
             relatedFiles.forEach((file, index) => {
-                if (typeof file.uri === 'string') {
-                    formData.append(`images`, {
-                        uri: file.uri,
-                        type: file.type,
-                        name: file.name || `image_${index}.jpg`,
-                    });
-                } else {
-                    formData.append(`imgUrl`, file.fileUrl);
-                }
+                formData.append('images', {
+                    uri: file.uri,
+                    type: file.type,
+                    name: file.name || `image_${index}.jpg`,
+                });
             });
+            
 
             // deleteFiles 배열에서 중복 제거 및 파일 이름 부분만 추출
             const uniqueDeleteFiles = Array.from(new Set(deleteFiles.map(file => file.fileUrl.split('/').pop())));
             console.log("deleteFiles: ", uniqueDeleteFiles);
 
             uniqueDeleteFiles.forEach((file, index) => {
-                formData.append(`delImgName`, file);
+                formData.append(`del_img_names`, file);
             });
 
             try {
@@ -311,19 +351,19 @@ const ContentUpload = () => {
 
         } else if (prevPage === "CommunicationMain") {
             console.log("완료 버튼 클릭 - 삽입 함수");
-            console.log("sendContentsNum : " + sendContentsNum);
 
             formData.append('title', sendContents.title);
             formData.append('contents', sendContents.contents);
             formData.append('board_id', sendContents.board_id);
 
-            relatedFiles.forEach(file => {
+            relatedFiles.forEach((file, index) => {
                 formData.append('images', {
                     uri: file.uri,
                     type: file.type,
                     name: file.name || `image_${index}.jpg`,
                 });
             });
+            
 
             try {
                 const path = "ContentsInsert";
@@ -336,13 +376,13 @@ const ContentUpload = () => {
     };
 
     const ContentsControl = async (path, formData) => {
-        try {
-            console.log("path:", path); 
+        console.log("path:", path); 
             console.log("formData:", formData); 
             formData._parts.forEach(part => {
                 console.log(`Key: ${part[0]}, Value: ${JSON.stringify(part[1])}`);
             });
-    
+
+        try {
             const response = await axios.post(ENDPOINT + 'user/' + path, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",

@@ -44,9 +44,6 @@ const CommunityContentsLeft = ({ board, truncateText }) => {
 };
 
 const CommunityContentsRight = ({ board, ENDPOINT }) => {
-    const imageUrl = ENDPOINT + board.file_url + board.file_name;
-    console.log('Image URL:', imageUrl); // 콘솔에 URL 출력
-
     return (
         board.file_url && board.file_name ? (
             <View style={styles.communityContentsRight}>
@@ -89,7 +86,6 @@ const AllContents = ({ board_id }) => {
         },
     })
     .then((response) => {
-        console.log(response.data);
         if(response.data){
           setContents(response.data);
         }
