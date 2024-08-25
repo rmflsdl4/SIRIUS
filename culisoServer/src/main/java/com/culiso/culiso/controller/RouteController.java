@@ -19,6 +19,7 @@ import com.culiso.culiso.dto.CommentDTO;
 import com.culiso.culiso.dto.ContentListFileDTO;
 import com.culiso.culiso.dto.MessageDTO;
 import com.culiso.culiso.dto.MessagesDTO;
+import com.culiso.culiso.dto.ModifiedContentsResponseDTO;
 import com.culiso.culiso.dto.PostContentsControllerDTO;
 import com.culiso.culiso.dto.RecommendRequestDTO;
 import com.culiso.culiso.dto.UserInformationDTO;
@@ -332,6 +333,7 @@ public class RouteController {
         return ResponseEntity.ok(checkBoard);
     }
 
+    // 게시글 생성하기
     @PostMapping("/ContentsInsert")
     public ResponseEntity<?> insertContent(
         @RequestParam("title") String title, 
@@ -356,4 +358,50 @@ public class RouteController {
 
         return ResponseEntity.ok("게시글이 성공적으로 생성되었습니다.");
     }
+
+    // 게시글 수정하기
+    @PostMapping("/ContentsUpdate")
+    public ResponseEntity<?> updateContent(
+            @RequestParam("title") String title, 
+            @RequestParam("contents") String contents, 
+            @RequestParam("contents_num") int contents_num, 
+            @RequestParam(value = "images", required = false) List<MultipartFile> images,
+            @RequestParam(value = "del_img_names", required = false) List<String> del_img_names) {
+
+        System.out.println("컨텐츠 수정 중...");
+
+        String user_id = "user1";  
+        List<String> saved_file_names = null;
+
+        try {
+            // images 리스트가 비어 있지 않을 경우에만 이미지 저장 실행
+            if (images != null && !images.isEmpty()) {
+                saved_file_names = imgService.saveImages(user_id, images);
+            }
+
+            contentsService.updateContent(title, contents, contents_num, saved_file_names, del_img_names, user_id);
+            return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("게시글 수정 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 게시글 수정 전 게시글 제목, 내용, 파일 가져오기
+    @PostMapping(value = "/PrevBoardContentsValue", produces = "application/json")
+    public ResponseEntity<ModifiedContentsResponseDTO> PrevBoardContentsValue(@RequestBody ContentsEntity data) {
+        int contents_num = data.getContents_num();
+
+        System.out.println("contents_num : " + contents_num);
+        ModifiedContentsResponseDTO boardContentsValue = contentsService.getContentsAndFiles(contents_num);
+
+        if (boardContentsValue != null) {
+            System.out.println("성공적으로 컨텐츠 내용을 가져왔습니다.");
+            return ResponseEntity.ok(boardContentsValue);
+        } else {
+            System.out.println("컨텐츠 내용을 찾을 수 없습니다.");
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
