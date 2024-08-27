@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { GetImage } from '../modules/ImageManager';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -6,6 +6,7 @@ import AllContents from './GetCommunityMainData';
 import CommunityBackground from '../modules/CommunityBackground';
 import axios from 'axios';
 import ENDPOINT from "../modules/Endpoint";
+import UserDataContext from "../contexts/UserDataContext";
 
 const TopBar = ({ navigation }) => {
     return (
@@ -55,11 +56,19 @@ const MenuBar = ({ menuItems, activeMenu, handleMenuClick }) => {
 const CommunicationMain = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();  // useIsFocused 훅 추가
+    const userContext = useContext(UserDataContext);
+    const { id } = userContext;
     
     const [activeMenu, setActiveMenu] = useState(0);
     const [menuItems, setMenuItems] = useState([]);
     const [userInfo, setUserInfo] = useState([]);
     const [selectedBoardID, setSelectedBoardID] = useState(1); // 기본값은 1로 설정
+
+    useEffect(() => {
+        console.log("현재 유저 데이터: ", userContext);
+        console.log("현재 유저 아이디: ", id);
+    }, [userContext]);
+    
 
     // 메뉴 바, 유저 정보 데이터 DB에서 가져오기
     useEffect(() => {
@@ -97,7 +106,7 @@ const CommunicationMain = () => {
     }
 
     const UserInfoValue = () => {
-        axios.post(ENDPOINT + 'user/userProfileValue', {}, {  // 빈 객체 '{}'를 명시적으로 추가
+        axios.post(ENDPOINT + 'user/userProfileValue', {user_id: id}, {  
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, Button, Alert, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { GetImage } from '../modules/ImageManager';
@@ -8,6 +8,7 @@ import axios from 'axios';
 import CustomStyles from '../modules/ModalComponent';
 import Modal from "react-native-modal";
 import ENDPOINT from "../modules/Endpoint";
+import UserDataContext from "../contexts/UserDataContext";
 
 const TopBar = ({ navigation, prevPage, checkItems }) => {
     return (
@@ -102,8 +103,6 @@ const TitleAndContent = ({
     );
 };
 
-
-
 const PhotoUpload = ({ setDeleteFiles, relatedFiles, setRelatedFiles }) => {
     // 파일 선택 버튼 클릭 시, 파일 선택을 위한 DocumentPicker 사용
     const handleImageButtonClick = async () => {
@@ -168,6 +167,8 @@ const PhotoUpload = ({ setDeleteFiles, relatedFiles, setRelatedFiles }) => {
 const ContentUpload = () => {
     const navigation = useNavigation();
     const route = useRoute();
+    const userContext = useContext(UserDataContext);
+    const { id } = userContext;
     
     const [contentData, setContentData] = useState([]);
     const [boardData, setBoardData] = useState([]);
@@ -304,6 +305,7 @@ const ContentUpload = () => {
     // 게시글 수정 및 삽입
     const handleTopBtnClick = async () => {
         const formData = new FormData();
+        formData.append('user_id', id);
 
         if (prevPage === "ContentsComponent") {
             console.log("완료 버튼 클릭 - 업데이트 함수");

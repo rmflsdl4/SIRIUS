@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, Image, ScrollView, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform, TouchableWithoutFeedback  } from "react-native";
 import Modal from "react-native-modal";  // react-native-modal을 사용하여 모달을 구현
 import { GetImage } from '../modules/ImageManager';
@@ -8,8 +8,9 @@ import axios from 'axios';
 import CustomStyles from '../modules/ModalComponent';
 import Swiper from 'react-native-swiper';
 import ENDPOINT from "../modules/Endpoint";
+import UserDataContext from "../contexts/UserDataContext";
 
-const TopBar = ({ navigation, newContents, sessionUserID, isDropdownOpen, toggleDropdown, contents_num, contentOpenModal, goToPage }) => {
+const TopBar = ({ navigation, newContents, sessionUserID, isDropdownOpen, toggleDropdown, contents_num, contentOpenModal }) => {
     return (
         <View style={styles.topBar}>
             <View style={styles.leftContainer}>
@@ -26,13 +27,13 @@ const TopBar = ({ navigation, newContents, sessionUserID, isDropdownOpen, toggle
                 isDropdownOpen={isDropdownOpen}
                 contents_num={contents_num}
                 contentOpenModal={contentOpenModal}
-                goToPage={goToPage}
+                navigation={navigation}
             />
         </View>
     );
 }
 
-const Container = ({ newContents, sessionUserID, toggleDropdown, isDropdownOpen, contents_num, contentOpenModal, goToPage }) => {
+const Container = ({ newContents, sessionUserID, toggleDropdown, isDropdownOpen, contents_num, contentOpenModal, navigation }) => {
     return (
         <View style={styles.rightContainer}>
             <TouchableOpacity style={[styles.topImg, { marginRight: 15 }]}>
@@ -50,7 +51,7 @@ const Container = ({ newContents, sessionUserID, toggleDropdown, isDropdownOpen,
 
             {isDropdownOpen && (
                 <View style={styles.dropdownMenu}>
-                    <TouchableOpacity style={styles.dropdownItem} onPress={() => goToPage(`contentUpload?contentsNum=${contents_num}&prevPage=ContentsComponent`)}>
+                    <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate("ContentUpload", { contentsNum: contents_num, prevPage: 'ContentsComponent' })}>
                         <Text>게시글 수정하기</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.dropdownItem} onPress={contentOpenModal}>
@@ -182,7 +183,8 @@ const ContentsComponent = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const contents_num = route.params?.contents_num;  // Route에서 params 가져오기
-    console.log("contents_num = " + contents_num);
+    const userContext = useContext(UserDataContext);
+    const { id } = userContext;
 
     const [newContents, setNewContents] = useState([]);
     const [comment, setComment] = useState([]);
@@ -211,10 +213,6 @@ const ContentsComponent = () => {
     const contentCloseModal = () => {
         setContentIsOpen(false);
     };    
-
-    const goToPage = (name) => {
-        navigation.navigate(name);
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -253,9 +251,7 @@ const ContentsComponent = () => {
     
     const BoardContentsValue = async (contents_num) => {
         try {
-            console.log("Requested contents_num:", contents_num);  // contents_num 값을 콘솔에 출력
-    
-            const response = await axios.post(ENDPOINT + 'user/postContents', { contents_num }, {
+            const response = await axios.post(ENDPOINT + 'user/postContents', { contents_num, user_id: id }, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -300,11 +296,9 @@ const ContentsComponent = () => {
                 try {
                     const data = {
                         comment_content: newComment, 
-                        contents_num: contents_num
+                        contents_num: contents_num,
+                        user_id: id
                     };
-
-                    console.log("comment_content : " + data.comment_content);
-                    console.log("contents_num : " + data.contents_num);
 
                     const response = await axios.post(ENDPOINT + 'user/commentInsert', data, {
                         headers: {
@@ -366,7 +360,8 @@ const ContentsComponent = () => {
     const handleDeletePost = async () => {
         try {
             const data = {
-                contents_num: contents_num
+                contents_num: contents_num,
+                user_id: id
             };
 
             const response = await axios.post(ENDPOINT + 'user/contentsDelete', data, {
@@ -404,7 +399,8 @@ const ContentsComponent = () => {
 
             const data = {
                 check: check,
-                contents_num: contents_num
+                contents_num: contents_num,
+                user_id: id
             };
 
             const response = await axios.post(ENDPOINT + 'user/recommendClicked', data, {
@@ -416,13 +412,14 @@ const ContentsComponent = () => {
     
             console.log(response.data);
     
-            if (response.data) {
+            if (response.data != null) {
                 setLike(response.data);
             } else {
                 Alert.alert('데이터 로드 실패', '추천 데이터를 불러오는데 실패했습니다.', [
                     { text: '확인', onPress: () => console.log('alert closed') },
                 ]);
             }
+            
         } catch (err) {
             console.log(err);
         }
@@ -439,7 +436,6 @@ const ContentsComponent = () => {
                     toggleDropdown={toggleDropdown}
                     contents_num={contents_num}
                     contentOpenModal={() => setContentIsOpen(true)}
-                    goToPage={goToPage}
                 />
                 <ProfileBox newContents={newContents} />
 
