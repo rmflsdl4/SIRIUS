@@ -174,9 +174,12 @@ public class RouteController {
     }
 
     @PostMapping("/userProfileValue")
-    public ResponseEntity<List<UserProfileDTO>> userProfileValue() {
+    public ResponseEntity<List<UserProfileDTO>> userProfileValue(@RequestBody Map<String, String> request) {
+        String user_id = request.get("user_id");
         System.out.println("메뉴 바 값을 가져오는 중...");
-        List<UserProfileDTO> userProfiles = userProfileService.userProfileValue();
+        System.out.println("메뉴 바 user_id : " + user_id);
+
+        List<UserProfileDTO> userProfiles = userProfileService.userProfileValue(user_id);
 
         if (!userProfiles.isEmpty()) {
             System.out.println("성공적으로 " + userProfiles.size() + "개의 유저 프로필 항목을 가져왔습니다.");
@@ -209,10 +212,10 @@ public class RouteController {
         System.out.println("컨텐츠 번호를 가져오는 중...");
         
         int contents_num = data.getContents_num();
-        // String sessionUserID = user.getUser_id();
-        String sessionUserID = "user1";
+        String sessionUserID = data.getUser_id();
 
         System.out.println(contents_num);
+        System.out.println("컨텐츠 유저 아이디 : " + sessionUserID);
 
         CombinedContentsResponseDTO postContents = postContentsService.postContents(contents_num, sessionUserID);
 
@@ -231,7 +234,7 @@ public class RouteController {
 
         String comment_content = data.getComment_content();
         int contents_num = data.getContents_num();
-        String user_id = "user1";
+        String user_id = data.getUser_id();
 
         System.out.println("comment_content = " + comment_content + "      contents_num = " + contents_num);
 
@@ -271,10 +274,11 @@ public class RouteController {
         System.out.println("댓글 내용, 컨텐츠 번호를 가져오는 중...");
         
         int contents_num = data.getContents_num();
+        String user_id = data.getUser_id();
 
         System.out.println("contents_num = " + contents_num);
 
-        int result = contentsService.contentsDelete(contents_num);
+        int result = contentsService.contentsDelete(contents_num, user_id);
 
         if(result > 0){
             return ResponseEntity.ok(true);
@@ -290,12 +294,14 @@ public class RouteController {
         
         int check = data.getCheck();
         int contents_num = data.getContents_num();
-        String user_id = "user1";
+        String user_id = data.getUser_id();
 
         System.out.println("check = " + check);
         System.out.println("contents_num = " + contents_num);
+        System.out.println("user_id = " + user_id);
 
         int recommend = recommendClickedService.recommendClicked(check, contents_num, user_id);
+        System.out.println("recommend = " + recommend);
 
         return ResponseEntity.ok(recommend);
     }
@@ -305,11 +311,10 @@ public class RouteController {
         System.out.println("댓글 내용, 컨텐츠 번호를 가져오는 중...");
         
         int contents_num = data.getContents_num();
-        String user_id = "user1";
 
         System.out.println("contents_num = " + contents_num);
 
-        int result = contentsService.viewsCount(contents_num, user_id);
+        int result = contentsService.viewsCount(contents_num);
 
         if(result > 0){
             return ResponseEntity.ok(true);
@@ -336,14 +341,15 @@ public class RouteController {
     // 게시글 생성하기
     @PostMapping("/ContentsInsert")
     public ResponseEntity<?> insertContent(
+        @RequestParam("user_id") String user_id, 
         @RequestParam("title") String title, 
         @RequestParam("contents") String contents, 
         @RequestParam("board_id") int board_id, 
         @RequestParam(value = "images", required = false) List<MultipartFile> images) {
             
         System.out.println("컨텐츠 추가 중...");
+        System.out.println("컨텐츠 생성 user_id : " + user_id);
 
-        String user_id = "user1";
         List<String> savedFileNames = null;
 
         try {
@@ -362,6 +368,7 @@ public class RouteController {
     // 게시글 수정하기
     @PostMapping("/ContentsUpdate")
     public ResponseEntity<?> updateContent(
+            @RequestParam("user_id") String user_id,
             @RequestParam("title") String title, 
             @RequestParam("contents") String contents, 
             @RequestParam("contents_num") int contents_num, 
@@ -369,8 +376,8 @@ public class RouteController {
             @RequestParam(value = "del_img_names", required = false) List<String> del_img_names) {
 
         System.out.println("컨텐츠 수정 중...");
+        System.out.println("컨텐츠 수정 user_id : " + user_id);
 
-        String user_id = "user1";  
         List<String> saved_file_names = null;
 
         try {
