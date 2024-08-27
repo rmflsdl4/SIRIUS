@@ -15,20 +15,18 @@ public interface ContentListRepository extends JpaRepository<ContentsEntity, Int
        "FROM BoardEntity b " +
        "JOIN ContentsEntity c ON b.board_id = c.board_id " +
        "JOIN ( " +
-       "    SELECT b.board_name AS board_name, MAX(c.recommend) AS max_recommend " +
+       "    SELECT b.board_name AS board_name, MAX(c.recommend + c.views) AS max_sum " +
        "    FROM BoardEntity b " +
        "    JOIN ContentsEntity c ON b.board_id = c.board_id " +
        "    GROUP BY b.board_name " +
-       ") AS max_contents ON b.board_name = max_contents.board_name AND c.recommend = max_contents.max_recommend " +
+       ") AS max_contents ON b.board_name = max_contents.board_name AND (c.recommend + c.views) = max_contents.max_sum " +
        "ORDER BY c.contents_date DESC")
     List<ContentListFileDTO> findMaxRecommendContent();
-
-
 
     @Query("SELECT new com.culiso.culiso.dto.ContentListFileDTO(c.contents_num, c.contents_title, c.content, c.recommend, c.views, c.contents_date, b.board_name, null, null) " +
            "FROM BoardEntity b " +
            "JOIN ContentsEntity c ON b.board_id = c.board_id " +
-           "WHERE b.board_id = :boardId " +
+           "WHERE b.board_id = :board_id " +
            "ORDER BY c.contents_date DESC")
-    List<ContentListFileDTO> findAllContentsByBoardId(@Param("boardId") int boardId);
+    List<ContentListFileDTO> findAllContentsByBoardId(@Param("board_id") int boardId);
 }

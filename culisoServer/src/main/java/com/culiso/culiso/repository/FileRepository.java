@@ -18,7 +18,6 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
     @Query(value = "SELECT * FROM file f WHERE f.contents_num = :contents_num ORDER BY f.file_upload_num ASC LIMIT 1", nativeQuery = true)
     Optional<FileEntity> findFirstByContentsNumOrderByFileUploadNumAsc(@Param("contents_num") int contents_num);
 
-
     // 파일 삽입
     @Modifying
     @Transactional
