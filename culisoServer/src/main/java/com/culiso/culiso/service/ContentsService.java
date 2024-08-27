@@ -3,6 +3,7 @@ package com.culiso.culiso.service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,24 @@ public class ContentsService {
     @Autowired
     private ImgService imgService;
 
-    public int viewsCount(int contents_num, String user_id) {
+    // 조회수 카운트 서비스
+    public int viewsCount(int contents_num) {
         return contentsRepository.viewsCountHandle(contents_num);
     }
 
-    public int contentsDelete(int contents_num) {
+    // 컨텐츠 삭제 서비스
+    public int contentsDelete(int contents_num, String user_id) {
+        // 컨텐츠에 연결된 파일 정보 조회
+        List<FileDTO> fileDTOs = fileRepository.findFiles(contents_num);
+
+        // file_name만 추출하여 List<String>으로 변환
+        List<String> fileNames = fileDTOs.stream()
+                                        .map(FileDTO::getFile_name) // FileDTO에서 file_name 필드를 추출
+                                        .collect(Collectors.toList());
+
+        // 파일 삭제
+        imgService.deleteImages(user_id, fileNames);
+
         return contentsRepository.contentsDeleteHandle(contents_num);
     }
 

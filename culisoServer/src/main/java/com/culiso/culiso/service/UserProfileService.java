@@ -13,7 +13,7 @@ public class UserProfileService {
     @Autowired
     private UserProfileRepository userProfileRepository;
 
-    public List<UserProfileDTO> userProfileValue() {
-        return userProfileRepository.userProfileHandler();
+    public List<UserProfileDTO> userProfileValue(String user_id) {
+        return userProfileRepository.userProfileHandler(user_id);
     }
 }
