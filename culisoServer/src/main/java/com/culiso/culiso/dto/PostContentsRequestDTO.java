@@ -6,9 +6,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor 
-public class RecommendRequestDTO {
-    private int check;
+@AllArgsConstructor
+public class PostContentsRequestDTO {
     private int contents_num;
     private String user_id;
 }
