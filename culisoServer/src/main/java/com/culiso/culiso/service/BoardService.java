@@ -16,4 +16,8 @@ public class BoardService {
     public List<BoardMenuDTO> menuBarValue() {
         return boardRepository.boardMenuHandler();
     }
+
+    public List<BoardMenuDTO> CheckBoard() {
+        return boardRepository.checkBoardHandler();
+    }
 }
