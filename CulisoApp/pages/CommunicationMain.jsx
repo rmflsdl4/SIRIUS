@@ -57,7 +57,7 @@ const CommunicationMain = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();  // useIsFocused 훅 추가
     const userContext = useContext(UserDataContext);
-    const { id } = userContext;
+    const { user_id } = userContext;
     
     const [activeMenu, setActiveMenu] = useState(0);
     const [menuItems, setMenuItems] = useState([]);
@@ -66,7 +66,7 @@ const CommunicationMain = () => {
 
     useEffect(() => {
         console.log("현재 유저 데이터: ", userContext);
-        console.log("현재 유저 아이디: ", id);
+        console.log("현재 유저 아이디: ", user_id);
     }, [userContext]);
     
 
@@ -106,7 +106,7 @@ const CommunicationMain = () => {
     }
 
     const UserInfoValue = () => {
-        axios.post(ENDPOINT + 'user/userProfileValue', {user_id: id}, {  
+        axios.post(ENDPOINT + 'user/userProfileValue', {user_id: user_id}, {  
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",

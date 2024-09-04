@@ -184,7 +184,7 @@ const ContentsComponent = () => {
     const route = useRoute();
     const contents_num = route.params?.contents_num;  // Route에서 params 가져오기
     const userContext = useContext(UserDataContext);
-    const { id } = userContext;
+    const { user_id } = userContext;
 
     const [newContents, setNewContents] = useState([]);
     const [comment, setComment] = useState([]);
@@ -251,7 +251,7 @@ const ContentsComponent = () => {
     
     const BoardContentsValue = async (contents_num) => {
         try {
-            const response = await axios.post(ENDPOINT + 'user/postContents', { contents_num, user_id: id }, {
+            const response = await axios.post(ENDPOINT + 'user/postContents', { contents_num, user_id: user_id }, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -297,7 +297,7 @@ const ContentsComponent = () => {
                     const data = {
                         comment_content: newComment, 
                         contents_num: contents_num,
-                        user_id: id
+                        user_id: user_id
                     };
 
                     const response = await axios.post(ENDPOINT + 'user/commentInsert', data, {
@@ -361,7 +361,7 @@ const ContentsComponent = () => {
         try {
             const data = {
                 contents_num: contents_num,
-                user_id: id
+                user_id: user_id
             };
 
             const response = await axios.post(ENDPOINT + 'user/contentsDelete', data, {
@@ -400,7 +400,7 @@ const ContentsComponent = () => {
             const data = {
                 check: check,
                 contents_num: contents_num,
-                user_id: id
+                user_id: user_id
             };
 
             const response = await axios.post(ENDPOINT + 'user/recommendClicked', data, {
