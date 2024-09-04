@@ -10,8 +10,6 @@ import Modal from "react-native-modal";
 import ENDPOINT from "../modules/Endpoint";
 import UserDataContext from "../contexts/UserDataContext";
 
-import ImageResizer from '@bam.tech/react-native-image-resizer';
-
 const TopBar = ({ navigation, prevPage, checkItems }) => {
     return (
         <View style={styles.topBar}>
@@ -308,33 +306,10 @@ const ContentUpload = () => {
     const handleTopBtnClick = async () => {
         const formData = new FormData();
         formData.append('user_id', user_id);
-    
-        // Function to resize images
-        const resizeImage = async (file) => {
-            try {
-                const response = await ImageResizer.createResizedImage(
-                    file.uri,
-                    800,  // max width
-                    800,  // max height
-                    'JPEG', // compress format
-                    80,    // quality
-                    0      // rotation
-                );
-                return {
-                    uri: response.uri,
-                    type: file.type,
-                    name: file.name || response.name,
-                };
-            } catch (error) {
-                console.error('Error resizing image:', error);
-                return null;
-            }
-        };
-    
+
         if (prevPage === "ContentsComponent") {
             console.log("완료 버튼 클릭 - 업데이트 함수");
-    
-            // Add title and contents based on conditions
+
             if (changeTitle && !changeContents) {
                 formData.append('title', sendContents.title);
                 formData.append('contents', defaultContents);
@@ -348,25 +323,26 @@ const ContentUpload = () => {
                 formData.append('title', sendContents.title);
                 formData.append('contents', sendContents.contents);
             }
-    
+
             formData.append('contents_num', sendContentsNum);
-    
-            // Resize images in relatedFiles and append to FormData
-            for (const file of relatedFiles) {
-                const resizedImage = await resizeImage(file);
-                if (resizedImage) {
-                    formData.append('images', resizedImage);
-                }
-            }
-    
-            // Process deleteFiles
+
+            relatedFiles.forEach((file, index) => {
+                formData.append('images', {
+                    uri: file.uri,
+                    type: file.type,
+                    name: file.name || `image_${index}.jpg`,
+                });
+            });
+            
+
+            // deleteFiles 배열에서 중복 제거 및 파일 이름 부분만 추출
             const uniqueDeleteFiles = Array.from(new Set(deleteFiles.map(file => file.fileUrl.split('/').pop())));
             console.log("deleteFiles: ", uniqueDeleteFiles);
-    
+
             uniqueDeleteFiles.forEach((file, index) => {
                 formData.append(`del_img_names`, file);
             });
-    
+
             try {
                 const path = "ContentsUpdate";
                 await ContentsControl(path, formData);
@@ -374,22 +350,23 @@ const ContentUpload = () => {
             } catch (error) {
                 console.error("Error submitting comment:", error);
             }
-    
+
         } else if (prevPage === "CommunicationMain") {
             console.log("완료 버튼 클릭 - 삽입 함수");
-    
+
             formData.append('title', sendContents.title);
             formData.append('contents', sendContents.contents);
             formData.append('board_id', sendContents.board_id);
-    
-            // Resize images in relatedFiles and append to FormData
-            for (const file of relatedFiles) {
-                const resizedImage = await resizeImage(file);
-                if (resizedImage) {
-                    formData.append('images', resizedImage);
-                }
-            }
-    
+
+            relatedFiles.forEach((file, index) => {
+                formData.append('images', {
+                    uri: file.uri,
+                    type: file.type,
+                    name: file.name || `image_${index}.jpg`,
+                });
+            });
+            
+
             try {
                 const path = "ContentsInsert";
                 await ContentsControl(path, formData);
