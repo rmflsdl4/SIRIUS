@@ -90,7 +90,6 @@ const App = () => {
                     <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
                     <Stack.Screen name="CuliTalk" component={CuliTalk} options={culiTalkHeaderOptions}/>
                     <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
-                    <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
                     <Stack.Screen name="ContentsComponent" component={ContentsComponent} options={{ headerShown: false }}/>
                     <Stack.Screen name="ContentUpload" component={ContentUpload} options={{ headerShown: false }}/>
                 </Stack.Navigator>
