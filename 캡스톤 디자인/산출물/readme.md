@@ -7,6 +7,11 @@
 [4. EER](#-eer)  
 
 
+## 🧾 System Configuration diagram
+![CULISO 시스템 다이어그램 drawio](https://github.com/user-attachments/assets/6aa93761-6794-42a1-a691-0293486df58b)
+
+
+
 ## 🧾 UseCase Diagram
 
 ### Ver 1.1
