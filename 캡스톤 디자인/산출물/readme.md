@@ -1,13 +1,14 @@
 # 🙋‍♂️ 이미지를 클릭해서 확대하시면 더 선명하게 보실 수 있습니다.
 
 ## 목차
-[1. UseCase Diagram](#-usecase-diagram)  
-[2. Work Flow](#-work-flow)  
-[3. ERD](#-erd)  
-[4. EER](#-eer)  
+[1. System Configuration Diagram](#-system-configuration-diagram)  
+[2. UseCase Diagram](#-usecase-diagram)  
+[3. Work Flow](#-work-flow)  
+[4. ERD](#-erd)  
+[5. EER](#-eer)  
 
 
-## 🧾 System Configuration diagram
+## 🧾 System Configuration Diagram
 ![CULISO 시스템 다이어그램 drawio](https://github.com/user-attachments/assets/6aa93761-6794-42a1-a691-0293486df58b)
 
 
