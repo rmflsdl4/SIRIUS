@@ -21,7 +21,23 @@ export const PermissionRequest = () => {
     }
     requestPermission();
 }
-
+export const RecordCheck = async () => {
+    // os 확인
+    if(Platform.OS !== "ios" && Platform.OS !== "android") return;
+    
+    const permission = Platform.OS === 'ios' ? PERMISSIONS.IOS.RECORD_AUDIO : PERMISSIONS.ANDROID.RECORD_AUDIO;
+    try{
+        const status = await check(permission);
+        if(status !== RESULTS.GRANTED){
+            await request(permission);
+        }
+        console.log(status);
+        return status;
+    }
+    catch(err){
+        console.log(err);
+    }
+}
 export const BluetoothCheck = async () => {
     // os 확인
     if(Platform.OS !== "ios" && Platform.OS !== "android") return;

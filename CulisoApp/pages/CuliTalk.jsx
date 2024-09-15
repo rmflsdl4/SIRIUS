@@ -5,6 +5,8 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 
 import { getChatResponse } from "../modules/OpenAI";
 import axios from 'axios';
 import UserDataContext from "../contexts/UserDataContext";
+import Voice from '@react-native-voice/voice';
+import { RecordCheck } from "../modules/PermissionUtil";
 
 const TalkButton = ({ type, onPress }) => {
     return (
@@ -38,11 +40,30 @@ const CuliTalk = ({ navigation }) => {
     const scrollViewRef = useRef(); // ScrollView에 대한 ref 생성
     const userContext = useContext(UserDataContext);
     const { user_id } = userContext;
+    const [voiceText, setVoiceText] = useState("");
+    const [isVoice, setIsVoice] = useState(false);
 
     useEffect(() => {
         GetMessages(); 
     }, [])
 
+    useEffect(()=>{
+        Voice.onSpeechStart = _onSpeechStart;
+        Voice.onSpeechEnd = _onSpeechEnd;
+        Voice.onSpeechResults = _onSpeechResults;
+        Voice.onSpeechError = _onSpeechError;
+
+        return () => {
+            Voice.destroy().then(Voice.removeAllListeners);
+        };
+    }, [])
+    useEffect(() => {
+        console.log(message);
+        console.log(voiceText);
+        if (message.trim()) {
+          SendMessage();
+        }
+      }, [voiceText]);
     const GetMessages = async () => {
         const response = await axios.post('http://10.0.2.2:8080/user/getChatLog', { user_id: user_id }, {
             headers: {
@@ -113,7 +134,33 @@ const CuliTalk = ({ navigation }) => {
         const { height } = event.nativeEvent.layout;
         setScrollHeight(height);
     };
-
+    const VoiceMessage = async () => {
+        RecordCheck();
+        if(!isVoice){
+            Voice.start('ko-KR');
+        }
+        else{
+            Voice.stop();
+        }
+        setIsVoice(!isVoice);
+    }
+    const _onSpeechStart = () => {
+        console.log('onSpeechStart');
+        setMessage('');
+    };
+      const _onSpeechEnd = () => {
+        console.log('onSpeechEnd');
+    };
+      const _onSpeechResults = (event) => {
+        console.log('onSpeechResults');
+        const newMessage = event.value[0];
+        setMessage(newMessage);
+        setVoiceText(newMessage);
+    };
+      const _onSpeechError = (event) => {
+        console.log('_onSpeechError');
+        console.log(event.error);
+    };
     return (
         <Background>
             <View style={styles.messageListContainer} onLayout={handleLayout}>
@@ -138,8 +185,8 @@ const CuliTalk = ({ navigation }) => {
                     multiline={true}
                 />
                 <View style={styles.img}>
-                    <TalkButton type={'Voice'} />
-                    <TalkButton type={'Send'} onPress={SendMessage} />
+                    <TalkButton type={'Voice'} onPress={VoiceMessage}/>
+                    <TalkButton type={'SendBlue'} onPress={SendMessage} />
                 </View>
             </View>
         </Background>
@@ -192,7 +239,7 @@ const styles = StyleSheet.create({
     },
     inputText: {
         marginLeft: 10,
-        width: 300,
+        maxWidth:250,
         fontSize: 17,
         fontFamily: 'KCC-Hanbit',
     },

@@ -40,7 +40,7 @@ const images = {
     DeviceTVOn: require("../assets/images/tv-on.png"),
     DeviceTVOff: require("../assets/images/tv-off.png"),
     Logout: require("../assets/images/logout.png"),
-    Send: require("../assets/images/send-blue.png"),
+    SendBlue: require("../assets/images/send-blue.png"),
     Voice: require("../assets/images/voice-blue.png"),
     BackArrow: require("../assets/images/backArrow.png"),
     Alarm: require("../assets/images/alarm.png"),
