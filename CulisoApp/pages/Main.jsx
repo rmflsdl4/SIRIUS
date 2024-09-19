@@ -7,7 +7,9 @@ import { PermissionRequest } from "../modules/PermissionUtil";
 import { BluetoothConnect } from "../modules/Bluetooth";
 import Header from "../modules/Header";
 import UserDataContext from "../contexts/UserDataContext";
-import { Buffer } from 'buffer';
+import BluetoothContext from "../contexts/BluetoothContext";
+import BLEController from "../modules/BLEController";
+
 
 // 공통 서비스 및 특성 UUID
 // const SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
@@ -25,7 +27,7 @@ const SearchDevice = ({onPress}) => {
     )
 }
 
-const DeviceManage = ({ characteristic }) => {
+const DeviceManage = ({characteristic}) => {
     const devicesData = [
         { name: '침실 조명', iconOn: 'DeviceLightOn', iconOff: 'DeviceLightOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'f', flag: false},
         { name: '거실 조명', iconOn: 'DeviceLightOn', iconOff: 'DeviceLightOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'b', flag: false },
@@ -45,17 +47,13 @@ const DeviceManage = ({ characteristic }) => {
         device.powerIcon = device.status === '켜짐' ? device.powerOnIcon : device.powerOffIcon;
         device.flag = device.status === '켜짐' ? true : false;
         setDevices(newDevices);
-
-        if (device.bleCMD && characteristic) {
-            try {
-                console.log("characteristic : " + JSON.stringify(characteristic, null, 2));
-
-                const bleCMD = Buffer.from(device.bleCMD, 'utf-8').toString('base64');
-                await characteristic.writeWithResponse(bleCMD);
-                console.log(`Command '${device.bleCMD}' sent to ${device.name}`);
-            } catch (error) {
-                console.error(`Failed to send command '${device.bleCMD}' to ${device.name}:`, error);
-            }
+        
+        // BLEController를 사용하여 명령 전송 
+        try {
+            await BLEController(device.bleCMD, characteristic); // BLEController를 사용하여 명령 전송
+            console.log(`Command '${device.bleCMD}' sent successfully to ${device.name}`);
+        } catch (error) {
+            console.error(`Failed to send command '${device.bleCMD}' to ${device.name}:`, error);
         }
     };
     return (
@@ -82,7 +80,7 @@ const Main = ({ navigation }) => {
     const [device, setDevice] = useState(null);
     const userContext = useContext(UserDataContext);
     const { address } = userContext;
-    const [characteristic, setCharacteristic] = useState(null);
+    const { characteristic, setCharacteristic } = useContext(BluetoothContext); // BluetoothContext에서 setCharacteristic 가져오기
 
     // Bluetooth 연결 및 특성 설정
     const BluetoothHandler = async () => {
