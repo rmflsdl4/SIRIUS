@@ -7,6 +7,11 @@ import { PermissionRequest } from "../modules/PermissionUtil";
 import { BluetoothConnect } from "../modules/Bluetooth";
 import Header from "../modules/Header";
 import UserDataContext from "../contexts/UserDataContext";
+import { Buffer } from 'buffer';
+
+// 공통 서비스 및 특성 UUID
+// const SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+const CHARACTERISTIC_UUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
 
 const SearchDevice = ({onPress}) => {
     return (
@@ -20,7 +25,7 @@ const SearchDevice = ({onPress}) => {
     )
 }
 
-const DeviceManage = () => {
+const DeviceManage = ({ characteristic }) => {
     const devicesData = [
         { name: '침실 조명', iconOn: 'DeviceLightOn', iconOff: 'DeviceLightOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'f', flag: false},
         { name: '거실 조명', iconOn: 'DeviceLightOn', iconOff: 'DeviceLightOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'b', flag: false },
@@ -31,7 +36,7 @@ const DeviceManage = () => {
     ];
     const [devices, setDevices] = useState(devicesData.map(device => ({ ...device, status: '꺼짐', icon: device.iconOff, powerIcon: device.powerOffIcon })));
 
-    const toggleDeviceStatus = (index) => {
+    const toggleDeviceStatus = async (index) => {
         const newDevices = [...devices];
         const device = newDevices[index];
 
@@ -40,6 +45,18 @@ const DeviceManage = () => {
         device.powerIcon = device.status === '켜짐' ? device.powerOnIcon : device.powerOffIcon;
         device.flag = device.status === '켜짐' ? true : false;
         setDevices(newDevices);
+
+        if (device.bleCMD && characteristic) {
+            try {
+                console.log("characteristic : " + JSON.stringify(characteristic, null, 2));
+
+                const bleCMD = Buffer.from(device.bleCMD, 'utf-8').toString('base64');
+                await characteristic.writeWithResponse(bleCMD);
+                console.log(`Command '${device.bleCMD}' sent to ${device.name}`);
+            } catch (error) {
+                console.error(`Failed to send command '${device.bleCMD}' to ${device.name}:`, error);
+            }
+        }
     };
     return (
         <View style={styles.GridWrapper}>
@@ -65,12 +82,52 @@ const Main = ({ navigation }) => {
     const [device, setDevice] = useState(null);
     const userContext = useContext(UserDataContext);
     const { address } = userContext;
+    const [characteristic, setCharacteristic] = useState(null);
 
+    // Bluetooth 연결 및 특성 설정
     const BluetoothHandler = async () => {
-        const result = await BluetoothConnect();
-        setDevice(result);
-        console.log(device);
-    }
+        try {
+            const device = await BluetoothConnect(); // 블루투스 기기 검색 및 연결
+            if (device) {
+                setDevice(device); // 선택된 기기 설정
+                console.log("블루투스 기기 연결 시도 중...");
+
+                await device.connect(); // 기기와 연결
+                console.log('장치에 연결되었습니다:', device.id);
+
+                await device.discoverAllServicesAndCharacteristics(); // 서비스 및 특성 탐색
+                console.log('서비스 및 특성 탐색 완료');
+
+                const services = await device.services(); // 모든 서비스 가져오기
+                let foundCharacteristic = null;
+
+                for (const service of services) {
+                    const characteristics = await device.characteristicsForService(service.uuid);
+
+                    // 특성 중에서 6e400002-b5a3-f393-e0a9-e50e24dcca9e을 찾음
+                    const targetCharacteristic = characteristics.find(c => c.uuid === CHARACTERISTIC_UUID);
+
+                    if (targetCharacteristic) {
+                        foundCharacteristic = targetCharacteristic;
+                        console.log('해당 특성을 찾았습니다:', foundCharacteristic.uuid);
+                        break; // 특성을 찾았으므로 더 이상 탐색할 필요 없음
+                    }
+                }
+
+                if (foundCharacteristic) {
+                    setCharacteristic(foundCharacteristic); // 특성을 저장
+                    console.log("특성 설정 완료:", foundCharacteristic.uuid);
+                } else {
+                    console.log("특성을 찾을 수 없습니다.");
+                }
+            } else {
+                console.log('기기가 선택되지 않았습니다.');
+            }
+        } catch (error) {
+            console.error('Bluetooth 연결 또는 특성 탐색 실패:', error.message);
+        }
+    };
+    
     useEffect(()=>{
         PermissionRequest();   
     }, [])
@@ -78,10 +135,10 @@ const Main = ({ navigation }) => {
     return (
         <Background center={true}>
             <Header address={address}/>
-            {device !== null ?
+            {device == null ?
                 <SearchDevice onPress={()=>BluetoothHandler()}/>
                 :
-                <DeviceManage/>
+                <DeviceManage characteristic={characteristic}/>
             }
             
             <BottomButton navigation={navigation}/>
