@@ -14,6 +14,7 @@ import ContentsComponent from "./pages/ContentsComponent";
 import ContentUpload from "./pages/ContentUpload";
 
 import UserDataContext from './contexts/UserDataContext';
+import BluetoothContext from './contexts/BluetoothContext';
 
 const Stack = createStackNavigator();
 
@@ -78,22 +79,27 @@ const App = () => {
         ...userData,
         setUserValues
     }
+
+    const [characteristic, setCharacteristic] = useState(null);
+
     return (
         <UserDataContext.Provider value={userValues}>
-            <NavigationContainer>
-                <Stack.Navigator initialRouteName="Login">
-                    <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }} />
-                    <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
-                    <Stack.Screen name="Login" component={Login} options={defaultHeaderOptions}/>
-                    <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
-                    <Stack.Screen name="SignUp" component={SignUp} options={defaultHeaderOptions}/>
-                    <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
-                    <Stack.Screen name="CuliTalk" component={CuliTalk} options={culiTalkHeaderOptions}/>
-                    <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
-                    <Stack.Screen name="ContentsComponent" component={ContentsComponent} options={{ headerShown: false }}/>
-                    <Stack.Screen name="ContentUpload" component={ContentUpload} options={{ headerShown: false }}/>
-                </Stack.Navigator>
-            </NavigationContainer>
+            <BluetoothContext.Provider value={{ characteristic, setCharacteristic }}>
+                <NavigationContainer>
+                    <Stack.Navigator initialRouteName="Main">
+                        <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }} />
+                        <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
+                        <Stack.Screen name="Login" component={Login} options={defaultHeaderOptions}/>
+                        <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
+                        <Stack.Screen name="SignUp" component={SignUp} options={defaultHeaderOptions}/>
+                        <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
+                        <Stack.Screen name="CuliTalk" component={CuliTalk} options={culiTalkHeaderOptions}/>
+                        <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
+                        <Stack.Screen name="ContentsComponent" component={ContentsComponent} options={{ headerShown: false }}/>
+                        <Stack.Screen name="ContentUpload" component={ContentUpload} options={{ headerShown: false }}/>
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </BluetoothContext.Provider>
         </UserDataContext.Provider>
     );
 };
