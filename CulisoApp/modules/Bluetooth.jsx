@@ -11,9 +11,11 @@ export const BluetoothConnect = async () => {
     console.log("블루: ", state);
     if (result === 'granted') {
         return new Promise((resolve, reject) => {
-            const targetDeviceId = 'DC:CD:3A:5F:F4:91';
+            const targetDeviceId = 'C6:23:48:AD:7F:C7';
 
             manager.startDeviceScan(null, null, (error, device) => {
+                console.log("발견된 기기: ", device.id);
+
                 if (error) {
                     console.log("스캔 에러: ", error);
                     reject(error);
@@ -21,6 +23,7 @@ export const BluetoothConnect = async () => {
                 }
 
                 if (device && device.id === targetDeviceId) {
+                    console.log("찾은 기기: ", device.id);
                     manager.stopDeviceScan();
                     resolve(device);
                 }
@@ -29,6 +32,7 @@ export const BluetoothConnect = async () => {
             // 10초 동안 못 찾으면 중지하고 널값 반환
             setTimeout(() => {
                 manager.stopDeviceScan();
+                console.log("타임 아웃");
                 resolve(null);
             }, 10000);
         });
