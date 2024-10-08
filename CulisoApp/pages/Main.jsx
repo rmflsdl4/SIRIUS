@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { BottomButton } from "../modules/Navigator";
 import { PermissionRequest } from "../modules/PermissionUtil";
 import { BluetoothConnect } from "../modules/Bluetooth";
@@ -10,32 +10,31 @@ import UserDataContext from "../contexts/UserDataContext";
 import BluetoothContext from "../contexts/BluetoothContext";
 import BLEController from "../modules/BLEController";
 
-
 // 공통 서비스 및 특성 UUID
-// const SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
 const CHARACTERISTIC_UUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
 
-const SearchDevice = ({onPress}) => {
+const SearchDevice = ({ onPress }) => {
     return (
         <View style={styles.searchContainer}>
-            <GetImage type={'SearchDevice'} width={192} height={192}/>
-            <Text style={styles.text}>등록된 기기가 없으신가요 ?</Text>
+            <GetImage type={'SearchDevice'} width={192} height={192} />
+            <Text style={styles.text}>등록된 기기가 없으신가요?</Text>
             <TouchableOpacity style={styles.button} onPress={onPress}>
                 <Text style={styles.buttonText}>등록하기</Text>
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
-const DeviceManage = ({characteristic}) => {
+const DeviceManage = ({ characteristic }) => {
     const devicesData = [
-        { name: '침실 조명', iconOn: 'DeviceLightOn', iconOff: 'DeviceLightOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'f', flag: false},
+        { name: '침실 조명', iconOn: 'DeviceLightOn', iconOff: 'DeviceLightOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'f', flag: false },
         { name: '거실 조명', iconOn: 'DeviceLightOn', iconOff: 'DeviceLightOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'b', flag: false },
         { name: '에어컨', iconOn: 'DeviceAirConditionerOn', iconOff: 'DeviceAirConditionerOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'g', flag: false },
         { name: '커튼', iconOn: 'DeviceCurtainOn', iconOff: 'DeviceCurtainOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'i', flag: false },
         { name: '보일러', iconOn: 'DeviceWaterHeaterOn', iconOff: 'DeviceWaterHeaterOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: null, flag: false },
         { name: 'TV', iconOn: 'DeviceTVOn', iconOff: 'DeviceTVOff', powerOnIcon: 'DevicePowerOn', powerOffIcon: 'DevicePowerOff', bleCMD: 'h', flag: false },
     ];
+
     const [devices, setDevices] = useState(devicesData.map(device => ({ ...device, status: '꺼짐', icon: device.iconOff, powerIcon: device.powerOffIcon })));
 
     const toggleDeviceStatus = async (index) => {
@@ -47,102 +46,152 @@ const DeviceManage = ({characteristic}) => {
         device.powerIcon = device.status === '켜짐' ? device.powerOnIcon : device.powerOffIcon;
         device.flag = device.status === '켜짐' ? true : false;
         setDevices(newDevices);
-        
-        // BLEController를 사용하여 명령 전송 
+
         try {
-            await BLEController(device.bleCMD, characteristic); // BLEController를 사용하여 명령 전송
+            await BLEController(device.bleCMD, characteristic);
             console.log(`Command '${device.bleCMD}' sent successfully to ${device.name}`);
         } catch (error) {
             console.error(`Failed to send command '${device.bleCMD}' to ${device.name}:`, error);
         }
     };
+
     return (
         <View style={styles.GridWrapper}>
             <View style={styles.Grid}>
                 {devices.map((device, index) => (
                     <View style={styles.DeviceCard} key={device.name}>
                         <View style={styles.DeviceHeader}>
-                            <GetImage type={device.icon} width={50} height={50}/>
+                            <GetImage type={device.icon} width={50} height={50} />
                             <TouchableOpacity style={styles.PowerButton} onPress={() => toggleDeviceStatus(index)}>
                                 <GetImage type={device.powerIcon} width={40} height={40} />
                             </TouchableOpacity>
                         </View>
                         <Text style={styles.DeviceName}>{device.name}</Text>
-                        <Text stlye={styles.DeviceStatus}>{device.status}</Text>
+                        <Text style={styles.DeviceStatus}>{device.status}</Text>
                     </View>
                 ))}
             </View>
         </View>
-    )
-}
+    );
+};
 
 const Main = ({ navigation }) => {
     const [device, setDevice] = useState(null);
+    const [scannedDevices, setScannedDevices] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
     const userContext = useContext(UserDataContext);
     const { address } = userContext;
-    const { characteristic, setCharacteristic } = useContext(BluetoothContext); // BluetoothContext에서 setCharacteristic 가져오기
+    const { characteristic, setCharacteristic } = useContext(BluetoothContext);
 
-    // Bluetooth 연결 및 특성 설정
     const BluetoothHandler = async () => {
         try {
-            const device = await BluetoothConnect(); // 블루투스 기기 검색 및 연결
-            if (device) {
-                setDevice(device); // 선택된 기기 설정
-                console.log("블루투스 기기 연결 시도 중...");
-
-                await device.connect(); // 기기와 연결
-                console.log('장치에 연결되었습니다:', device.id);
-
-                await device.discoverAllServicesAndCharacteristics(); // 서비스 및 특성 탐색
-                console.log('서비스 및 특성 탐색 완료');
-
-                const services = await device.services(); // 모든 서비스 가져오기
-                let foundCharacteristic = null;
-
-                for (const service of services) {
-                    const characteristics = await device.characteristicsForService(service.uuid);
-
-                    // 특성 중에서 6e400002-b5a3-f393-e0a9-e50e24dcca9e을 찾음
-                    const targetCharacteristic = characteristics.find(c => c.uuid === CHARACTERISTIC_UUID);
-
-                    if (targetCharacteristic) {
-                        foundCharacteristic = targetCharacteristic;
-                        console.log('해당 특성을 찾았습니다:', foundCharacteristic.uuid);
-                        break; // 특성을 찾았으므로 더 이상 탐색할 필요 없음
+            setScannedDevices([]); // 이전에 탐색된 기기를 초기화
+            await BluetoothConnect((device) => {
+                setScannedDevices(prevDevices => {
+                    if (!prevDevices.some(d => d.id === device.id)) {
+                        return [...prevDevices, device];
                     }
-                }
-
-                if (foundCharacteristic) {
-                    setCharacteristic(foundCharacteristic); // 특성을 저장
-                    console.log("특성 설정 완료:", foundCharacteristic.uuid);
-                } else {
-                    console.log("특성을 찾을 수 없습니다.");
-                }
-            } else {
-                console.log('기기가 선택되지 않았습니다.');
-            }
+                    return prevDevices;
+                });
+            });
+            setModalVisible(true);
         } catch (error) {
-            console.error('Bluetooth 연결 또는 특성 탐색 실패:', error.message);
+            console.error('Bluetooth 스캔 실패:', error.message);
         }
     };
-    
-    useEffect(()=>{
-        PermissionRequest();   
-    }, [])
+
+    const connectToDevice = async (device) => {
+        try {
+            setModalVisible(false);
+            setDevice(device);
+            console.log(`${device.name} 연결 시도 중...`);
+
+            await device.connect();
+            console.log('장치에 연결되었습니다:', device.id);
+
+            await device.discoverAllServicesAndCharacteristics();
+            console.log('서비스 및 특성 탐색 완료');
+
+            const services = await device.services();
+            let foundCharacteristic = null;
+
+            for (const service of services) {
+                const characteristics = await device.characteristicsForService(service.uuid);
+                const targetCharacteristic = characteristics.find(c => c.uuid === CHARACTERISTIC_UUID);
+
+                if (targetCharacteristic) {
+                    foundCharacteristic = targetCharacteristic;
+                    break;
+                }
+            }
+
+            if (foundCharacteristic) {
+                setCharacteristic(foundCharacteristic);
+                console.log("특성 설정 완료:", foundCharacteristic.uuid);
+            } else {
+                console.log("특성을 찾을 수 없습니다.");
+            }
+        } catch (error) {
+            console.error('Bluetooth 연결 실패:', error.message);
+        }
+    };
+
+    useEffect(() => {
+        PermissionRequest();
+    }, []);
 
     return (
         <Background center={true}>
-            <Header address={address}/>
+            <Header address={address} />
             {device == null ?
-                <SearchDevice onPress={()=>BluetoothHandler()}/>
+                <SearchDevice onPress={() => BluetoothHandler()} />
                 :
-                <DeviceManage characteristic={characteristic}/>
+                <DeviceManage characteristic={characteristic} />
             }
-            
-            <BottomButton navigation={navigation}/>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Bluetooth 기기 선택</Text>
+
+                        {/* 재탐색 버튼 */}
+                        <TouchableOpacity onPress={BluetoothHandler} style={styles.rescanButton}>
+                            <Text style={styles.rescanButtonText}>재탐색</Text>
+                        </TouchableOpacity>
+
+                        <ScrollView style={styles.scrollView}>
+                            {scannedDevices.filter(device => device.name).length > 0 ? (
+                                scannedDevices
+                                    .filter(device => device.name) // 이름이 있는 장치만 필터링
+                                    .map(device => (
+                                        <TouchableOpacity key={device.id} onPress={() => connectToDevice(device)} style={styles.deviceItem}>
+                                            <Text style={styles.deviceText}>{device.name} ({device.id})</Text>
+                                        </TouchableOpacity>
+                                    ))
+                            ) : (
+                                <Text style={styles.deviceText}>기기를 찾을 수 없습니다.</Text>
+                            )}
+                        </ScrollView>
+
+
+                        {/* 닫기 버튼 */}
+                        <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                            <Text style={styles.closeButtonText}>닫기</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            <BottomButton navigation={navigation} />
         </Background>
     );
 };
+
 const styles = StyleSheet.create({
     searchContainer: {
         backgroundColor: '#ffffff',
@@ -201,6 +250,84 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%'
     },
+    DeviceName: {
+        fontSize: 18,
+        marginTop: 10,
+        color: '#333'
+    },
+    DeviceStatus: {
+        fontSize: 16,
+        color: 'gray'
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)', // 모달 배경을 어둡게
+    },
+    modalContent: {
+        width: '85%',
+        height: 600,
+        backgroundColor: '#ffffff',
+        padding: 20,
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    rescanButton: {
+        marginVertical: 10,
+        padding: 10,
+        backgroundColor: '#2196F3', // 푸른색 배경
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    rescanButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+    },
+    deviceItem: {
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0', // 아이템 구분선
+        backgroundColor: '#f9f9f9',
+        borderRadius: 5,
+        marginVertical: 5,
+    },
+    deviceText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    closeButtonContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    closeButton: {
+        marginTop: 20,
+        padding: 10,
+        backgroundColor: '#F44336', // 빨간색 배경
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    closeButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+    },
+    scrollView: {
+        flexGrow: 1, // ScrollView가 충분한 공간을 차지하도록
+    },
     GridWrapper: {
         justifyContent: 'center',
     },
@@ -212,15 +339,6 @@ const styles = StyleSheet.create({
         width: 350,
         margin: 'auto',
     },
-    DeviceName: {
-        fontSize: 18,
-        marginTop: 10,
-        color: '#333'
-    },
-    DeviceStatus: {
-        fontSize: 16,
-        color: 'gray'
-    }
 });
 
 export default Main;
