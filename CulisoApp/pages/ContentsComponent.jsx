@@ -502,11 +502,10 @@ const ContentsComponent = () => {
 
 const styles = StyleSheet.create({
     topBar: {
-        marginTop: 40,
+        marginTop: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: 50,
         padding: 10,
     },
     leftContainer: {

@@ -147,12 +147,11 @@ const CommunicationMain = () => {
 
 const styles = StyleSheet.create({
     topBar: {
-        marginTop: 40,
+        marginTop: 10,
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'space-between',
-        height: 50, // 고정된 높이 값으로 변경
-        paddingHorizontal: 20,
+        alignItems: 'center',
+        padding: 10,
     },
     profileBox: {
         flexDirection: 'row',
@@ -202,7 +201,7 @@ const styles = StyleSheet.create({
     centerBox: {
         alignItems: 'center',
         flexDirection: 'column',
-        height: '82%',
+        height: '87%',
         paddingHorizontal: 20,
     },
 });

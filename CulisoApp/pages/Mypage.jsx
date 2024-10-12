@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'left',
         flexDirection: 'row',
-        marginTop: 75,
-        marginBottom: 75
+        marginTop: 15,
+        marginBottom: 20
     },
     profileUpdate: {
         alignItems: 'center',
