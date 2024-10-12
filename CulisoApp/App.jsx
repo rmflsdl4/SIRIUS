@@ -86,7 +86,7 @@ const App = () => {
         <UserDataContext.Provider value={userValues}>
             <BluetoothContext.Provider value={{ characteristic, setCharacteristic }}>
                 <NavigationContainer>
-                    <Stack.Navigator initialRouteName="Login">
+                    <Stack.Navigator initialRouteName="Intro">
                         <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }} />
                         <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
                         <Stack.Screen name="Login" component={Login} options={defaultHeaderOptions}/>

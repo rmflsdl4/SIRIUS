@@ -128,7 +128,7 @@ const CuliTalk = ({ navigation }) => {
                 ];
                 
 
-                axios.post('http://192.168.45.113:8080/user/chatRecord', requsetData, {
+                axios.post(ENDPOINT + 'user/chatRecord', requsetData, {
                     headers: {
                         "Content-Type": "application/json",
                         "Accept": "application/json",
