@@ -10,6 +10,7 @@ import { RecordCheck } from "../modules/PermissionUtil";
 import BluetoothContext from "../contexts/BluetoothContext";
 import BLEController from "../modules/BLEController";
 import DevicesData from "../modules/DevicesData";
+import ENDPOINT from "../modules/Endpoint";
 
 const TalkButton = ({ type, onPress }) => {
     return (
@@ -69,7 +70,7 @@ const CuliTalk = ({ navigation }) => {
         }
       }, [voiceText]);
     const GetMessages = async () => {
-        const response = await axios.post('http://192.168.45.113:8080/user/getChatLog', { user_id: user_id }, {
+        const response = await axios.post(ENDPOINT + 'user/getChatLog', { user_id: user_id }, {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",

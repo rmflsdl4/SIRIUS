@@ -1,4 +1,5 @@
 import axios from 'axios';
+import ENDPOINT from "../modules/Endpoint";
 
 const GetUserData = async (user_id) => {
     //http://10.0.2.2:8080/user/login
@@ -6,7 +7,7 @@ const GetUserData = async (user_id) => {
     const data = { user_id };
     console.log('요청', data);
     try{
-        const response = await axios.post('http://10.0.2.2:8080/user/info', data, {
+        const response = await axios.post(ENDPOINT + 'user/info', data, {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",

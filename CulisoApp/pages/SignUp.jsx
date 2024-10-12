@@ -6,6 +6,7 @@ import { SpeechBubbleMessage } from '../modules/Culi'
 import * as Check from '../modules/Normalization'
 import axios from 'axios';
 import Postcode from "@actbase/react-daum-postcode";
+import ENDPOINT from "../modules/Endpoint";
 
 const guideMessage = {
     0: "지금부터 회원가입을\n도와드릴게요 !",
@@ -100,7 +101,7 @@ const SignUp = ({ navigation }) => {
                 address: `${prevForm.address}, ${prevForm.detail_address}`
             };
     
-            axios.post('http://192.168.25.4:8080/user/signUp', updatedForm, {
+            axios.post(ENDPOINT + 'user/signUp', updatedForm, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",

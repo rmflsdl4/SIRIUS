@@ -5,6 +5,7 @@ import Background from '../modules/Background';
 import axios from 'axios';
 import GetUserData from "../modules/GetUserData";
 import UserDataContext from "../contexts/UserDataContext";
+import ENDPOINT from "../modules/Endpoint";
 
 const Header = () => {
     return (
@@ -37,8 +38,7 @@ const Login = ({ navigation }) => {
 
         const data = { user_id, user_pw };
         //http://10.0.2.2:8080/user/login
-        //http://192.168.25.4:8080/user/login
-        axios.post('http://10.0.2.2:8080/user/login', data, {
+        axios.post(ENDPOINT + 'user/login', data, {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
@@ -48,7 +48,7 @@ const Login = ({ navigation }) => {
             console.log(response.data);
             if(response.data){
                 const data = await GetUserData(user_id);
-                console.log('받은', data);
+                console.log('로그인 성공');
                 setUserValues(data);
                 navigation.navigate('Main');
             }
