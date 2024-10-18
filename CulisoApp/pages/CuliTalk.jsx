@@ -11,6 +11,22 @@ import BluetoothContext from "../contexts/BluetoothContext";
 import BLEController from "../modules/BLEController";
 import DevicesData from "../modules/DevicesData";
 import ENDPOINT from "../modules/Endpoint";
+import Tts from 'react-native-tts'
+
+const DetectLanguage = (text) => {
+    const koreanPattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+    return koreanPattern.test(text) ? 'ko-KR' : 'en-US';
+};
+
+// 텍스트를 음성으로 출력하는 함수
+const SpeakText = (text) => {
+    console.log("현재 보이스 메시지: " + text);
+    const language = DetectLanguage(text); // 언어 감지
+    Tts.setDefaultLanguage(language); // 감지된 언어로 설정
+    Tts.setDefaultPitch(1.0); // 음성 톤 설정
+    Tts.speak(text); // 텍스트를 음성으로 출력
+};
+
 
 const TalkButton = ({ type, onPress }) => {
     return (
@@ -46,10 +62,15 @@ const CuliTalk = ({ navigation }) => {
     const { user_id } = userContext;
     const [voiceText, setVoiceText] = useState("");
     const [isVoice, setIsVoice] = useState(false);
+    const [ttsText, setTtsText] = useState("");
     const { characteristic, setCharacteristic } = useContext(BluetoothContext);
+    const [ isTts, setIsTts ] = useState(true);
 
     useEffect(() => {
-        GetMessages(); 
+        GetMessages();
+        return () => {
+            Tts.stop();
+        }
     }, [])
 
     useEffect(()=>{
@@ -68,7 +89,10 @@ const CuliTalk = ({ navigation }) => {
         if (message.trim()) {
           SendMessage();
         }
-      }, [voiceText]);
+    }, [voiceText]);
+    useEffect(() => {
+        // const tempText = messages[messages.length - 1].content ;
+    }, [messages]);
     const GetMessages = async () => {
         const response = await axios.post(ENDPOINT + 'user/getChatLog', { user_id: user_id }, {
             headers: {
@@ -87,6 +111,8 @@ const CuliTalk = ({ navigation }) => {
                 ]);
             });
             console.log(response.data[0].sender_type);
+            console.log(response.data[response.data.length - 1].user_chat_context);
+            setTtsText(response.data[response.data.length - 1].user_chat_context);
         }
     }
 
@@ -116,11 +142,12 @@ const CuliTalk = ({ navigation }) => {
                 if(bleCMD === null) {
                     culiMessage = await getChatResponse(newUserMessage);
                 }
-
+                setTtsText(culiMessage);
+                if(isTts) SpeakText(culiMessage);
                 const newCuliMessage = { role: 'assistant', content: culiMessage };
                 
                 setMessages(messages => [...messages, newCuliMessage]);
-
+                console.log(culiMessage);
                 
                 requsetData = [
                     {...newUserMessage, user_id: user_id},
@@ -254,9 +281,23 @@ const CuliTalk = ({ navigation }) => {
         console.log('_onSpeechError');
         console.log(event.error);
     };
+    const SpeakTextHandler = (ttsText) => {
+        if(isTts) SpeakText(ttsText)
+    }
+    const VolumeDownHandler = async () => {
+        await Tts.stop();
+        setIsTts(!isTts);
+    };
     return (
         <Background>
             <View style={styles.messageListContainer} onLayout={handleLayout}>
+                <View style={styles.voiceSetImg}>
+                    {isTts ? 
+                        <TalkButton type={'VolumeUp'} onPress={VolumeDownHandler}/>
+                        :
+                        <TalkButton type={'VolumeDown'} onPress={()=>setIsTts(!isTts)}/>
+                    }
+                </View>
                 <ScrollView
                     contentContainerStyle={styles.messageList}
                     ref={scrollViewRef} // ScrollView에 ref 연결
@@ -278,6 +319,7 @@ const CuliTalk = ({ navigation }) => {
                     multiline={true}
                 />
                 <View style={styles.img}>
+                    <TalkButton type={'VolumeUp'} onPress={()=>SpeakTextHandler(ttsText)}/>
                     <TalkButton type={'Voice'} onPress={VoiceMessage}/>
                     <TalkButton type={'SendBlue'} onPress={SendMessage} />
                 </View>
@@ -289,7 +331,7 @@ const CuliTalk = ({ navigation }) => {
 const styles = StyleSheet.create({
     messageListContainer: {
         flex: 1,
-        marginTop: 30,
+        marginTop: 10,
         width: '95%',
         marginBottom: 75,
         borderColor: '#CCC',
@@ -339,6 +381,13 @@ const styles = StyleSheet.create({
     img: {
         flexDirection: 'row',
         marginRight: 10
+    },
+    voiceSetImg: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginRight: 2,
     },
     culiProfile: {
         justifyContent: 'left',
