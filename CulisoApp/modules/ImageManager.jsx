@@ -59,6 +59,8 @@ const images = {
     Camera: require("../assets/images/camera.png"),
     VolumeUp: require("../assets/images/volume-up.png"),
     VolumeDown: require("../assets/images/volume-down.png"),
+    RepeatSound: require("../assets/images/repeatSound.png"),
+    LetterA: require("../assets/images/letter-a.png"),
 };
 
 // GetImage의 type이 images의 키값과 일치해야 이미지를 불러옴

@@ -65,6 +65,7 @@ const CuliTalk = ({ navigation }) => {
     const [ttsText, setTtsText] = useState("");
     const { characteristic, setCharacteristic } = useContext(BluetoothContext);
     const [ isTts, setIsTts ] = useState(true);
+    const [ isAutoVoice, setIsAutoVoice ] = useState(true);
 
     useEffect(() => {
         GetMessages();
@@ -143,7 +144,7 @@ const CuliTalk = ({ navigation }) => {
                     culiMessage = await getChatResponse(newUserMessage);
                 }
                 setTtsText(culiMessage);
-                if(isTts) SpeakText(culiMessage);
+                if(isAutoVoice) SpeakText(culiMessage);
                 const newCuliMessage = { role: 'assistant', content: culiMessage };
                 
                 setMessages(messages => [...messages, newCuliMessage]);
@@ -288,15 +289,23 @@ const CuliTalk = ({ navigation }) => {
         await Tts.stop();
         setIsTts(!isTts);
     };
+    const VolumeUpHandler = () => {
+        if(isAutoVoice) SpeakTextHandler(ttsText);
+    };
     return (
         <Background>
             <View style={styles.messageListContainer} onLayout={handleLayout}>
-                <View style={styles.voiceSetImg}>
-                    {isTts ? 
-                        <TalkButton type={'VolumeUp'} onPress={VolumeDownHandler}/>
-                        :
-                        <TalkButton type={'VolumeDown'} onPress={()=>setIsTts(!isTts)}/>
-                    }
+                <View style={styles.topMenu}>
+                    <View style={isAutoVoice ? styles.autoVoiceOnSetImg : styles.autoVoiceOffSetImg}>
+                        <TalkButton type={'LetterA'} onPress={()=>setIsAutoVoice(!isAutoVoice)}/>
+                    </View>
+                    <View style={styles.voiceSetImg}>
+                        {isTts ?
+                            <TalkButton type={'VolumeUp'} onPress={VolumeDownHandler}/>
+                            :
+                            <TalkButton type={'VolumeDown'} onPress={()=>setIsTts(!isTts)}/>
+                        }
+                    </View>
                 </View>
                 <ScrollView
                     contentContainerStyle={styles.messageList}
@@ -319,7 +328,7 @@ const CuliTalk = ({ navigation }) => {
                     multiline={true}
                 />
                 <View style={styles.img}>
-                    <TalkButton type={'VolumeUp'} onPress={()=>SpeakTextHandler(ttsText)}/>
+                    <TalkButton type={'RepeatSound'} onPress={VolumeUpHandler}/>
                     <TalkButton type={'Voice'} onPress={VoiceMessage}/>
                     <TalkButton type={'SendBlue'} onPress={SendMessage} />
                 </View>
@@ -382,12 +391,33 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginRight: 10
     },
+    topMenu: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'flex-end',
+    },
     voiceSetImg: {
         flexDirection: 'row',
         alignItems: 'center',
         display: 'flex',
         justifyContent: 'flex-end',
         marginRight: 2,
+    },
+    autoVoiceOnSetImg: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginRight: 2,
+    },
+    autoVoiceOffSetImg: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginRight: 2,
+        opacity: 0.5
     },
     culiProfile: {
         justifyContent: 'left',
