@@ -12,6 +12,7 @@ import BLEController from "../modules/BLEController";
 import DevicesData from "../modules/DevicesData";
 import ENDPOINT from "../modules/Endpoint";
 import Tts from 'react-native-tts'
+import CuliContext from "../contexts/CuliContext";
 
 const DetectLanguage = (text) => {
     const koreanPattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
@@ -64,8 +65,17 @@ const CuliTalk = ({ navigation }) => {
     const [isVoice, setIsVoice] = useState(false);
     const [ttsText, setTtsText] = useState("");
     const { characteristic, setCharacteristic } = useContext(BluetoothContext);
-    const [ isTts, setIsTts ] = useState(true);
-    const [ isAutoVoice, setIsAutoVoice ] = useState(true);
+    const culiContext = useContext(CuliContext);
+    const { isTts, isAutoVoice, setCuliValues } = culiContext;
+
+    const TtsHandler = async () => {
+        await Tts.stop();
+        setCuliValues({ isTts: !isTts });
+    } 
+    const AutoVoiceHandler = () => {
+        setCuliValues({ isAutoVoice: !isAutoVoice });
+    }
+
 
     useEffect(() => {
         GetMessages();
@@ -263,7 +273,7 @@ const CuliTalk = ({ navigation }) => {
         else{
             Voice.stop();
         }
-        setIsVoice(!isVoice);
+        setCuliValues({ isTts: !isTts });
     }
     const _onSpeechStart = () => {
         console.log('onSpeechStart');
@@ -285,10 +295,6 @@ const CuliTalk = ({ navigation }) => {
     const SpeakTextHandler = (ttsText) => {
         if(isTts) SpeakText(ttsText)
     }
-    const VolumeDownHandler = async () => {
-        await Tts.stop();
-        setIsTts(!isTts);
-    };
     const VolumeUpHandler = () => {
         if(isAutoVoice) SpeakTextHandler(ttsText);
     };
@@ -297,13 +303,13 @@ const CuliTalk = ({ navigation }) => {
             <View style={styles.messageListContainer} onLayout={handleLayout}>
                 <View style={styles.topMenu}>
                     <View style={isAutoVoice ? styles.autoVoiceOnSetImg : styles.autoVoiceOffSetImg}>
-                        <TalkButton type={'LetterA'} onPress={()=>setIsAutoVoice(!isAutoVoice)}/>
+                        <TalkButton type={'LetterA'} onPress={AutoVoiceHandler}/>
                     </View>
                     <View style={styles.voiceSetImg}>
                         {isTts ?
-                            <TalkButton type={'VolumeUp'} onPress={VolumeDownHandler}/>
+                            <TalkButton type={'VolumeUp'} onPress={TtsHandler}/>
                             :
-                            <TalkButton type={'VolumeDown'} onPress={()=>setIsTts(!isTts)}/>
+                            <TalkButton type={'VolumeDown'} onPress={TtsHandler}/>
                         }
                     </View>
                 </View>
