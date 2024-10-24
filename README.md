@@ -8,6 +8,23 @@
 
 <!--$\bf{\large{\color{#1187cf}SmartHome - CULISO}}$</span>-->
 
+# 📜 Implement
+<div align=left>
+
+  ## 챗봇 이용
+  <img src="https://github.com/user-attachments/assets/6a6744d3-cb26-432f-92f8-4f9737c3dfa2">
+  <br>
+
+  ## 커뮤니티 게시글 작성, 수정, 삭제
+  <img src="https://github.com/user-attachments/assets/096055da-b596-4cfb-a7b9-b99523ebc8cb">
+  <br>
+
+  ## 커뮤니티 게시글 댓글 작성
+  <img src="https://github.com/user-attachments/assets/2661b40a-0592-4f15-ae1c-1ad4130fb782">
+</div>
+
+<hr>
+
 # 🌐 Connection
 🔗 [큐리소 바로가기](https://culiso.duckdns.org/Intro)
 
