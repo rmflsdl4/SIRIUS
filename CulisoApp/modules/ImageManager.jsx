@@ -61,6 +61,7 @@ const images = {
     VolumeDown: require("../assets/images/volume-down.png"),
     RepeatSound: require("../assets/images/repeatSound.png"),
     LetterA: require("../assets/images/letter-a.png"),
+    BluetoothUnconnection: require("../assets/images/bluetoothUnconnection.png"),
 };
 
 // GetImage의 type이 images의 키값과 일치해야 이미지를 불러옴
