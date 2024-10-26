@@ -13,6 +13,7 @@ import DevicesData from "../modules/DevicesData";
 import ENDPOINT from "../modules/Endpoint";
 import Tts from 'react-native-tts'
 import CuliContext from "../contexts/CuliContext";
+import { useRoute } from "@react-navigation/native";
 
 const DetectLanguage = (text) => {
     const koreanPattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
@@ -54,6 +55,7 @@ const Message = ({ text, isUser }) => {
     );
 };
 const CuliTalk = ({ navigation }) => {
+    const route = useRoute();
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [scrollHeight, setScrollHeight] = useState(0);
@@ -76,6 +78,12 @@ const CuliTalk = ({ navigation }) => {
         setCuliValues({ isAutoVoice: !isAutoVoice });
     }
 
+    useEffect(() => {
+        if(route.params?.message){
+            setMessage(route.params.message);
+            SendMessageV2(route.params.message);
+        }
+    }, [route.params?.message])
 
     useEffect(() => {
         GetMessages();
@@ -145,6 +153,47 @@ const CuliTalk = ({ navigation }) => {
                     }
                 } 
                 
+
+                setMessages(messages => [...messages, newUserMessage]);
+                setMessage('');
+
+                let culiMessage = '';
+                if(bleCMD === null) {
+                    culiMessage = await getChatResponse(newUserMessage);
+                }
+                setTtsText(culiMessage);
+                if(isAutoVoice) SpeakText(culiMessage);
+                const newCuliMessage = { role: 'assistant', content: culiMessage };
+                
+                setMessages(messages => [...messages, newCuliMessage]);
+                console.log(culiMessage);
+                
+                requsetData = [
+                    {...newUserMessage, user_id: user_id},
+                    {...newCuliMessage, user_id: user_id},
+                ];
+                
+
+                axios.post(ENDPOINT + 'user/chatRecord', requsetData, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                    },
+                })
+                
+                console.log(requsetData);
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    };
+    const SendMessageV2 = async ({text}) => {
+        console.log('uid: ', user_id);
+        var requsetData = [];
+        if (text.trim()) {
+            try{
+                const newUserMessage = { role: 'user', content: text };
 
                 setMessages(messages => [...messages, newUserMessage]);
                 setMessage('');
