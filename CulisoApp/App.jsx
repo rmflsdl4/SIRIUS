@@ -16,6 +16,7 @@ import ContentUpload from "./pages/ContentUpload";
 import UserDataContext from './contexts/UserDataContext';
 import BluetoothContext from './contexts/BluetoothContext';
 import CuliContext from './contexts/CuliContext';
+import VoiceAutoModeContext from "./contexts/VoiceAutoModeContext";
 
 const Stack = createStackNavigator();
 
@@ -99,26 +100,28 @@ const App = () => {
         setCuliValues
     }
 
-
+    const [isVoiceAutoModeEnabled, setIsVoiceAutoModeEnabled] = useState(false);
 
     return (
         <UserDataContext.Provider value={userValues}>
             <CuliContext.Provider value={culiValues}>
                 <BluetoothContext.Provider value={{ characteristic, setCharacteristic }}>
-                    <NavigationContainer>
-                        <Stack.Navigator initialRouteName="Intro">
-                            <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }} />
-                            <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
-                            <Stack.Screen name="Login" component={Login} options={defaultHeaderOptions}/>
-                            <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
-                            <Stack.Screen name="SignUp" component={SignUp} options={defaultHeaderOptions}/>
-                            <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
-                            <Stack.Screen name="CuliTalk" component={CuliTalk} options={culiTalkHeaderOptions}/>
-                            <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
-                            <Stack.Screen name="ContentsComponent" component={ContentsComponent} options={{ headerShown: false }}/>
-                            <Stack.Screen name="ContentUpload" component={ContentUpload} options={{ headerShown: false }}/>
-                        </Stack.Navigator>
-                    </NavigationContainer>
+                    <VoiceAutoModeContext.Provider value={{ isVoiceAutoModeEnabled, setIsVoiceAutoModeEnabled }}>
+                        <NavigationContainer>
+                            <Stack.Navigator initialRouteName="Intro">
+                                <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }} />
+                                <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
+                                <Stack.Screen name="Login" component={Login} options={defaultHeaderOptions}/>
+                                <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
+                                <Stack.Screen name="SignUp" component={SignUp} options={defaultHeaderOptions}/>
+                                <Stack.Screen name="Mypage" component={Mypage} options={mypageHeaderOptions}/>
+                                <Stack.Screen name="CuliTalk" component={CuliTalk} options={culiTalkHeaderOptions}/>
+                                <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
+                                <Stack.Screen name="ContentsComponent" component={ContentsComponent} options={{ headerShown: false }}/>
+                                <Stack.Screen name="ContentUpload" component={ContentUpload} options={{ headerShown: false }}/>
+                            </Stack.Navigator>
+                        </NavigationContainer>
+                    </VoiceAutoModeContext.Provider>
                 </BluetoothContext.Provider>
             </CuliContext.Provider>
         </UserDataContext.Provider>
