@@ -17,7 +17,7 @@ export const BluetoothConnect = async (onDeviceDiscovered) => {
             }
 
             if (device && onDeviceDiscovered) {
-                console.log("발견된 기기: ", device.id, device.name);
+                
                 onDeviceDiscovered(device);  // 기기를 발견하면 콜백 함수 호출
             }
         });

@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LOGIN_TIMEOUT = 60 * 1000; // 50초
+const LOGIN_TIMEOUT = 30 * 60 * 1000; // 30분 (1800초)
 
 // 세션에 사용자 정보 저장
 export const storeSession = async (userData) => {
@@ -68,7 +68,6 @@ export const storeBluetoothSession = async (device, characteristic) => {
             characteristic: characteristic,
         };
         await AsyncStorage.setItem('bluetoothInfo', JSON.stringify(bluetoothInfo));
-        console.log('Bluetooth 세션 저장 완료:', bluetoothInfo);
     } catch (err) {
         console.error('Bluetooth 세션 저장 오류:', err);
     }
@@ -93,3 +92,35 @@ export const bluetoothUnconnection = async () => {
         console.error('로그아웃 중 오류 발생:', err);
     }
 };
+
+// 음성 자동 모드 저장
+export const storeVoiceAutoMode = async (isEnabled) => {
+    try {
+        await AsyncStorage.setItem('voiceAutoMode', JSON.stringify(isEnabled));
+        console.log('음성 자동 모드 저장 완료:', isEnabled);
+    } catch (err) {
+        console.error('음성 자동 모드 저장 오류:', err);
+    }
+};
+
+// 음성 자동 모드 가져오기
+export const getVoiceAutoMode = async () => {
+    try {
+        const voiceMode = await AsyncStorage.getItem('voiceAutoMode');
+        console.log("Retrieved voiceMode from storage:", voiceMode); // 디버그용 로그
+        return voiceMode ? JSON.parse(voiceMode) : false; // 기본값 false
+    } catch (err) {
+        console.error('음성 자동 모드 불러오기 오류:', err);
+        return false;
+    }
+};
+
+// 음성 자동 모드 해제
+export const voiceAutoModeOff = async () => {
+    try {
+        await AsyncStorage.setItem('voiceAutoMode', JSON.stringify(false));
+        console.log('음성 자동 모드 해제 완료: false');
+    } catch (err) {
+        console.error('음성 자동 모드 해제 오류:', err);
+    }
+}

@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import { GetImage } from '../modules/ImageManager';
-import { bluetoothUnconnection, getBluetoothSession } from './auth';
+import { bluetoothUnconnection, getBluetoothSession, logout } from './auth';
 import { useEffect, useState } from 'react';
 import { BleManager } from 'react-native-ble-plx';
 
 const bleManager = new BleManager();
 
-const Header = ({ address, device, setDevice, isBluetoothConnected, setIsBluetoothConnected }) => {
+const Header = ({ navigation, address, device, setDevice, isBluetoothConnected, setIsBluetoothConnected }) => {
     const maxLength = 10;
     const truncatedAddress = address.length > maxLength
         ? `${address.substring(0, maxLength)}...`
@@ -51,7 +51,7 @@ const Header = ({ address, device, setDevice, isBluetoothConnected, setIsBluetoo
                         <GetImage type={'BluetoothUnconnection'} width={21} height={21} marginRight={15} />
                     </TouchableOpacity>
                 )}
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() =>  {logout(), navigation.navigate('Login')}}>
                     <GetImage type={'Logout'} width={21} height={21}/>
                 </TouchableOpacity>
             </View>
