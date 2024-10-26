@@ -10,7 +10,10 @@ import UserDataContext from "../contexts/UserDataContext";
 import BluetoothContext from "../contexts/BluetoothContext";
 import BLEController from "../modules/BLEController";
 import DevicesData from "../modules/DevicesData";
+import { getBluetoothSession, storeBluetoothSession } from "../modules/auth";
+import { BleManager } from 'react-native-ble-plx';
 
+const bleManager = new BleManager();
 // 공통 서비스 및 특성 UUID
 const CHARACTERISTIC_UUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
 
@@ -74,6 +77,29 @@ const Main = ({ navigation }) => {
     const userContext = useContext(UserDataContext);
     const { address } = userContext;
     const { characteristic, setCharacteristic } = useContext(BluetoothContext);
+    const [isBluetoothConnected, setIsBluetoothConnected] = useState(false); // 블루투스 상태 확인
+
+    // 앱 시작 시 Bluetooth 세션 복원
+    useEffect(() => {
+        const initializeBluetooth = async () => {
+            try {
+                const bluetoothInfo = await getBluetoothSession();
+                if (bluetoothInfo) {
+                    setIsBluetoothConnected(true); // 블루투스 기기 연결 상태 확인
+                    console.log(`Bluetooth 복원: ${bluetoothInfo.deviceName} (${bluetoothInfo.deviceId})`);
+
+                    const restoredDevice = await bleManager.connectToDevice(bluetoothInfo.deviceId);
+                    await connectToDevice(restoredDevice);
+                } else {
+                    setIsBluetoothConnected(false);
+                }
+            } catch (error) {
+                console.error('Bluetooth 초기화 중 오류:', error.message);
+            }
+        };
+
+        initializeBluetooth();
+    }, []);
 
     const BluetoothHandler = async () => {
         try {
@@ -119,6 +145,8 @@ const Main = ({ navigation }) => {
 
             if (foundCharacteristic) {
                 setCharacteristic(foundCharacteristic);
+                // Bluetooth 정보 세션에 저장
+                await storeBluetoothSession(device, foundCharacteristic);
                 console.log("특성 설정 완료:", foundCharacteristic.uuid);
             } else {
                 console.log("특성을 찾을 수 없습니다.");
@@ -134,7 +162,7 @@ const Main = ({ navigation }) => {
 
     return (
         <Background center={true}>
-            <Header address={address} />
+            <Header address={address} device={device} setDevice={setDevice} isBluetoothConnected={isBluetoothConnected} setIsBluetoothConnected={setIsBluetoothConnected} />
             {device == null ?
                 <SearchDevice onPress={() => BluetoothHandler()} />
                 :
@@ -161,7 +189,7 @@ const Main = ({ navigation }) => {
                                 scannedDevices
                                     .filter(device => device.name) // 이름이 있는 장치만 필터링
                                     .map(device => (
-                                        <TouchableOpacity key={device.id} onPress={() => connectToDevice(device)} style={styles.deviceItem}>
+                                        <TouchableOpacity key={device.id} onPress={() => {connectToDevice(device), setIsBluetoothConnected(true)}} style={styles.deviceItem}>
                                             <Text style={styles.deviceText}>{device.name} ({device.id})</Text>
                                         </TouchableOpacity>
                                     ))

@@ -6,6 +6,7 @@ import axios from 'axios';
 import GetUserData from "../modules/GetUserData";
 import UserDataContext from "../contexts/UserDataContext";
 import ENDPOINT from "../modules/Endpoint";
+import { storeSession } from '../modules/auth'; // storeSession 함수 가져오기
 
 const Header = () => {
     return (
@@ -50,6 +51,7 @@ const Login = ({ navigation }) => {
                 const data = await GetUserData(user_id);
                 console.log('로그인 성공');
                 setUserValues(data);
+                await storeSession(data); // 사용자 정보 세션에 저장
                 navigation.navigate('Main');
             }
             else{

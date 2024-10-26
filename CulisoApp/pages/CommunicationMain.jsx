@@ -7,6 +7,7 @@ import CommunityBackground from '../modules/CommunityBackground';
 import axios from 'axios';
 import ENDPOINT from "../modules/Endpoint";
 import UserDataContext from "../contexts/UserDataContext";
+import { BottomButton } from "../modules/Navigator";
 
 const TopBar = ({ navigation }) => {
     return (
@@ -141,6 +142,8 @@ const CommunicationMain = () => {
             <ScrollView contentContainerStyle={styles.centerBox}>
                 <AllContents board_id={selectedBoardID} />
             </ScrollView>
+
+            <BottomButton navigation={navigation} />
         </CommunityBackground>
     );
 };
@@ -201,7 +204,7 @@ const styles = StyleSheet.create({
     centerBox: {
         alignItems: 'center',
         flexDirection: 'column',
-        height: '87%',
+        height: '77%',
         paddingHorizontal: 20,
     },
 });
