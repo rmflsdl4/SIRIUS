@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { BottomButton } from "../modules/Navigator";
 import UserDataContext from "../contexts/UserDataContext";
+import { getVoiceAutoMode, voiceAutoModeOff } from "../modules/auth";
+import VoiceAutoModeContext from "../contexts/VoiceAutoModeContext";
 
 const Profile = ({name, sex}) => {
     return (
@@ -39,10 +41,42 @@ const Nav = ({ type, name, onPress }) => {
         </TouchableOpacity>
     )
 }
+const VoiceAutoModeModal = ({ visible, onConfirm, onCancel }) => {
+    return (
+        <Modal
+            transparent={true}
+            visible={visible}
+            onRequestClose={onCancel}
+        >
+            <View style={styles.modalOverlay}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalTitle}>음성 자동 모드 해제</Text>
+                    <Text style={styles.modalText}>정말로 해제하시겠습니까?</Text>
+                    <View style={styles.buttonGroup}>
+                        <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+                            <Text style={styles.buttonText}>네</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+                            <Text style={styles.buttonText}>아니오</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    );
+};
 const Mypage = ({ navigation }) => {
-    
     const userContext = useContext(UserDataContext);
     const { user_name, sex } = userContext;
+    const [voiceModeModalVisible, setVoiceModeModalVisible] = useState(false); // 모달 상태 관리
+    const { isVoiceAutoModeEnabled, setIsVoiceAutoModeEnabled } = useContext(VoiceAutoModeContext);
+
+    // 음성 자동 모드 해제 처리
+    const handleVoiceAutoModeOff = async () => {
+        await voiceAutoModeOff(); // 음성 자동 모드 해제
+        setIsVoiceAutoModeEnabled(false); // 상태 갱신
+        setVoiceModeModalVisible(false); // 모달 닫기
+    };
 
     return (
         <Background>
@@ -56,7 +90,10 @@ const Mypage = ({ navigation }) => {
                 <Nav type={'MypageWriteComment'} name={'사용 기록 조회'} onPress={()=>navigation.navigate('')}/>
                 <Nav type={'MypageWriteComment'} name={'기기 등록 요청'} onPress={()=>navigation.navigate('')}/>
                 <Nav type={'MypageWriteComment'} name={'루틴 관리'} onPress={()=>navigation.navigate('')}/>
+                {/* 음성 자동 모드가 활성화된 경우에만 표시 */}
+                {isVoiceAutoModeEnabled && (<Nav type={'MypageWriteComment'} name={'음성 자동 모드 해제'} onPress={() => setVoiceModeModalVisible(true)}/>)}
             </Section>
+            <VoiceAutoModeModal visible={voiceModeModalVisible} onConfirm={handleVoiceAutoModeOff} onCancel={() => setVoiceModeModalVisible(false)}/>
             <BottomButton navigation={navigation}/>
         </Background>
     );
@@ -125,7 +162,64 @@ const styles = StyleSheet.create({
     navText: {
         fontSize: 16,
         fontFamily: 'KCC-Hanbit',
-    }
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        width: 300,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 5,
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: '#333',
+    },
+    modalText: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginBottom: 20,
+        color: '#555',
+    },
+    buttonGroup: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    confirmButton: {
+        backgroundColor: '#2196F3', // 파란색 버튼
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        marginRight: 10,
+        flex: 1,
+        alignItems: 'center',
+    },
+    cancelButton: {
+        backgroundColor: '#f44336', // 빨간색 버튼
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        flex: 1,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
+    },
 });
 
 export default Mypage;

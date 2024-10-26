@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
@@ -10,8 +10,10 @@ import UserDataContext from "../contexts/UserDataContext";
 import BluetoothContext from "../contexts/BluetoothContext";
 import BLEController from "../modules/BLEController";
 import DevicesData from "../modules/DevicesData";
-import { getBluetoothSession, storeBluetoothSession } from "../modules/auth";
+import { getBluetoothSession, getVoiceAutoMode, storeBluetoothSession, storeVoiceAutoMode } from "../modules/auth";
 import { BleManager } from 'react-native-ble-plx';
+import VoiceAutoModeContext from "../contexts/VoiceAutoModeContext";
+import { useFocusEffect } from "@react-navigation/native";
 
 const bleManager = new BleManager();
 // 공통 서비스 및 특성 UUID
@@ -70,6 +72,89 @@ const DeviceManage = ({ characteristic }) => {
     );
 };
 
+const BluetoothDeviceModal = ({ visible, scannedDevices, BluetoothHandler, connectToDevice, setIsBluetoothConnected, onClose, setVoiceModalVisible, setIsVoiceAutoModeEnabled}) => {
+    // Bluetooth 기기를 선택할 때 음성 자동 모드 확인
+    const handleDeviceSelect = async (device) => {
+        try {
+            const voiceMode = await getVoiceAutoMode(); // 음성 자동 모드 확인
+            console.log("음성 자동 모드 상태:", voiceMode);
+
+            // 음성 모드가 꺼져 있을 때만 팝업 표시
+            if (!voiceMode) {
+                setVoiceModalVisible(true); // 음성 자동 모드 팝업 표시
+            }
+
+            // Bluetooth 기기 연결
+            connectToDevice(device);
+            setIsBluetoothConnected(true);
+        } catch (error) {
+            console.error("음성 자동 모드 확인 오류:", error.message);
+        }
+    };
+    
+    return (
+        <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Bluetooth 기기 선택</Text>
+
+                    {/* 재탐색 버튼 */}
+                    <TouchableOpacity onPress={BluetoothHandler} style={styles.rescanButton}>
+                        <Text style={styles.rescanButtonText}>재탐색</Text>
+                    </TouchableOpacity>
+
+                    <ScrollView style={styles.scrollView}>
+                        {scannedDevices.filter(device => device.name).length > 0 ? (
+                            scannedDevices.map(device => (
+                                <TouchableOpacity
+                                    key={device.id}
+                                    onPress={() => handleDeviceSelect(device)}
+                                    style={styles.deviceItem}
+                                >
+                                    <Text style={styles.deviceText}>{device.name} ({device.id})</Text>
+                                </TouchableOpacity>
+                            ))
+                        ) : (
+                            <Text style={styles.deviceText}>기기를 찾을 수 없습니다.</Text>
+                        )}
+                    </ScrollView>
+
+                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                        <Text style={styles.closeButtonText}>닫기</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </Modal>
+    );
+};
+
+const VoiceAutoModeModal = ({ visible, handleVoiceAutoMode, onClose }) => {
+    return (
+        <Modal transparent={true} visible={visible} onRequestClose={onClose}>
+            <View style={styles.voiceModalOverlay}>
+                <View style={styles.voiceModalContainer}>
+                    <Text style={styles.voiceModalTitle}>음성 모드</Text>
+                    <Text style={styles.voiceModalText}>음성 모드를 활성화하시겠습니까?</Text>
+                    <View style={styles.voiceButtonGroup}>
+                        <TouchableOpacity
+                            style={styles.voiceConfirmButton}
+                            onPress={() => handleVoiceAutoMode(true)}
+                        >
+                            <Text style={styles.voiceButtonText}>네</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.voiceCancelButton}
+                            onPress={() => handleVoiceAutoMode(false)}
+                        >
+                            <Text style={styles.voiceButtonText}>아니오</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    );
+};
+
 const Main = ({ navigation }) => {
     const [device, setDevice] = useState(null);
     const [scannedDevices, setScannedDevices] = useState([]);
@@ -78,6 +163,12 @@ const Main = ({ navigation }) => {
     const { address } = userContext;
     const { characteristic, setCharacteristic } = useContext(BluetoothContext);
     const [isBluetoothConnected, setIsBluetoothConnected] = useState(false); // 블루투스 상태 확인
+    const [voiceModalVisible, setVoiceModalVisible] = useState(false); // 음성 자동 모드 모달
+    const { isVoiceAutoModeEnabled, setIsVoiceAutoModeEnabled } = useContext(VoiceAutoModeContext);
+
+    useEffect(() => {
+        PermissionRequest();
+    }, []);
 
     // 앱 시작 시 Bluetooth 세션 복원
     useEffect(() => {
@@ -148,6 +239,8 @@ const Main = ({ navigation }) => {
                 // Bluetooth 정보 세션에 저장
                 await storeBluetoothSession(device, foundCharacteristic);
                 console.log("특성 설정 완료:", foundCharacteristic.uuid);
+
+                
             } else {
                 console.log("특성을 찾을 수 없습니다.");
             }
@@ -156,57 +249,41 @@ const Main = ({ navigation }) => {
         }
     };
 
-    useEffect(() => {
-        PermissionRequest();
-    }, []);
+    // 음성 자동 모드 핸들러
+    const handleVoiceAutoMode = async (isEnabled) => {
+        await storeVoiceAutoMode(isEnabled); // 선택한 모드 저장
+        setIsVoiceAutoModeEnabled(isEnabled) // 음성 버튼 활성화
+        setVoiceModalVisible(false); // 모달 닫기
+    };
 
     return (
         <Background center={true}>
-            <Header address={address} device={device} setDevice={setDevice} isBluetoothConnected={isBluetoothConnected} setIsBluetoothConnected={setIsBluetoothConnected} />
+            <Header navigation={navigation} address={address} device={device} setDevice={setDevice} isBluetoothConnected={isBluetoothConnected} setIsBluetoothConnected={setIsBluetoothConnected} />
             {device == null ?
                 <SearchDevice onPress={() => BluetoothHandler()} />
                 :
                 <DeviceManage characteristic={characteristic} />
             }
 
-            <Modal
-                animationType="slide"
-                transparent={true}
+            {/* 블루투스 기기 선택 모달 */}
+            <BluetoothDeviceModal
                 visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Bluetooth 기기 선택</Text>
+                scannedDevices={scannedDevices}
+                BluetoothHandler={() => {}}
+                connectToDevice={connectToDevice}
+                setIsBluetoothConnected={setIsBluetoothConnected}
+                onClose={() => setModalVisible(false)}
+                setVoiceModalVisible={setVoiceModalVisible}
+            />
 
-                        {/* 재탐색 버튼 */}
-                        <TouchableOpacity onPress={BluetoothHandler} style={styles.rescanButton}>
-                            <Text style={styles.rescanButtonText}>재탐색</Text>
-                        </TouchableOpacity>
-
-                        <ScrollView style={styles.scrollView}>
-                            {scannedDevices.filter(device => device.name).length > 0 ? (
-                                scannedDevices
-                                    .filter(device => device.name) // 이름이 있는 장치만 필터링
-                                    .map(device => (
-                                        <TouchableOpacity key={device.id} onPress={() => {connectToDevice(device), setIsBluetoothConnected(true)}} style={styles.deviceItem}>
-                                            <Text style={styles.deviceText}>{device.name} ({device.id})</Text>
-                                        </TouchableOpacity>
-                                    ))
-                            ) : (
-                                <Text style={styles.deviceText}>기기를 찾을 수 없습니다.</Text>
-                            )}
-                        </ScrollView>
-
-
-                        {/* 닫기 버튼 */}
-                        <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-                            <Text style={styles.closeButtonText}>닫기</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
-
+            {/* 음성 자동 모드 선택 모달 */}
+            {!isVoiceAutoModeEnabled && (
+                <VoiceAutoModeModal
+                    visible={voiceModalVisible}
+                    handleVoiceAutoMode={handleVoiceAutoMode}
+                    onClose={() => setVoiceModalVisible(false)}
+                />
+            )}
             <BottomButton navigation={navigation} />
         </Background>
     );
@@ -358,6 +435,75 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 350,
         margin: 'auto',
+    },
+    // 음성 자동 모드 모달 스타일
+    voiceModalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.4)', // 부드러운 반투명 배경
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    voiceModalContainer: {
+        width: 280,
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        paddingVertical: 25,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 8, // Android 그림자
+    },
+    voiceModalTitle: {
+        fontSize: 22,
+        fontWeight: '700',
+        color: '#333',
+        marginBottom: 10,
+    },
+    voiceModalText: {
+        fontSize: 16,
+        color: '#666',
+        textAlign: 'center',
+        marginBottom: 20,
+        lineHeight: 24,
+    },
+    voiceButtonGroup: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginTop: 10,
+    },
+    voiceConfirmButton: {
+        backgroundColor: '#2196F3',
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        borderRadius: 10,
+        flex: 1,
+        marginRight: 10,
+        alignItems: 'center',
+        shadowColor: '#4CAF50',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 6,
+    },
+    voiceCancelButton: {
+        backgroundColor: '#f44336', // 빨간색 버튼
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        borderRadius: 10,
+        flex: 1,
+        alignItems: 'center',
+        shadowColor: '#f44336',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 6,
+    },
+    voiceButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
     },
 });
 
