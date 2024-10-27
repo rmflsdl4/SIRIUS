@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
@@ -13,7 +13,8 @@ import DevicesData from "../modules/DevicesData";
 import ENDPOINT from "../modules/Endpoint";
 import Tts from 'react-native-tts'
 import CuliContext from "../contexts/CuliContext";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
+import TextToFormat from "../modules/TextToFormat";
 
 const DetectLanguage = (text) => {
     const koreanPattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
@@ -80,7 +81,7 @@ const CuliTalk = ({ navigation }) => {
 
     useEffect(() => {
         if(route.params?.message){
-            setMessage(route.params.message);
+            console.log("CuliTalk route message : ", route.params.message);
             SendMessageV2(route.params.message);
         }
     }, [route.params?.message])
@@ -92,16 +93,22 @@ const CuliTalk = ({ navigation }) => {
         }
     }, [])
 
-    useEffect(()=>{
-        Voice.onSpeechStart = _onSpeechStart;
-        Voice.onSpeechEnd = _onSpeechEnd;
-        Voice.onSpeechResults = _onSpeechResults;
-        Voice.onSpeechError = _onSpeechError;
+    useFocusEffect(
+        useCallback(() => {
+            console.log('CuliTalk 화면 활성화됨');
 
-        return () => {
-            Voice.destroy().then(Voice.removeAllListeners);
-        };
-    }, [])
+            Voice.onSpeechStart = _onSpeechStart;
+            Voice.onSpeechEnd = _onSpeechEnd;
+            Voice.onSpeechResults = _onSpeechResults;
+            Voice.onSpeechError = _onSpeechError;
+
+            return () => {
+                console.log('CuliTalk 화면 비활성화됨, 음성 인식 정리');
+                Voice.stop();
+                Voice.destroy().then(Voice.removeAllListeners);
+            };
+        }, [])
+    );
     useEffect(() => {
         console.log(message);
         console.log(voiceText);
@@ -188,7 +195,7 @@ const CuliTalk = ({ navigation }) => {
             }
         }
     };
-    const SendMessageV2 = async ({text}) => {
+    const SendMessageV2 = async (text) => {
         console.log('uid: ', user_id);
         var requsetData = [];
         if (text.trim()) {
@@ -198,10 +205,7 @@ const CuliTalk = ({ navigation }) => {
                 setMessages(messages => [...messages, newUserMessage]);
                 setMessage('');
 
-                let culiMessage = '';
-                if(bleCMD === null) {
-                    culiMessage = await getChatResponse(newUserMessage);
-                }
+                const culiMessage = await getChatResponse(newUserMessage);
                 setTtsText(culiMessage);
                 if(isAutoVoice) SpeakText(culiMessage);
                 const newCuliMessage = { role: 'assistant', content: culiMessage };
@@ -229,78 +233,6 @@ const CuliTalk = ({ navigation }) => {
             }
         }
     };
-
-    const TextToFormat = (msg) => {
-        // 공백 제거하고 소문자로 변환
-        const str = msg.replace(/\s+/g, '').toLowerCase();
-
-        switch(str) {
-            case "침실조명켜줘":
-                const bedroomDeviceOn = DevicesData.find(device => device.name === '침실 조명');
-                if (bedroomDeviceOn && bedroomDeviceOn.flag === true) return;
-                if (bedroomDeviceOn) bedroomDeviceOn.flag = true;
-                return 'f';
-    
-            case "침실조명꺼줘":
-                const bedroomDeviceOff = DevicesData.find(device => device.name === '침실 조명');
-                if (bedroomDeviceOff && bedroomDeviceOff.flag === false) return;
-                if (bedroomDeviceOff) bedroomDeviceOff.flag = false;
-                return 'f';
-    
-            case "거실조명켜줘":
-                const livingRoomDeviceOn = DevicesData.find(device => device.name === '거실 조명');
-                if (livingRoomDeviceOn && livingRoomDeviceOn.flag === true) return;
-                if (livingRoomDeviceOn) livingRoomDeviceOn.flag = true;
-                return 'b';
-    
-            case "거실조명꺼줘":
-                const livingRoomDeviceOff = DevicesData.find(device => device.name === '거실 조명');
-                if (livingRoomDeviceOff && livingRoomDeviceOff.flag === false) return;
-                if (livingRoomDeviceOff) livingRoomDeviceOff.flag = false;
-                return 'b';
-    
-            case "에어컨켜줘":
-                const airConditionerDeviceOn = DevicesData.find(device => device.name === '에어컨');
-                if (airConditionerDeviceOn && airConditionerDeviceOn.flag === true) return;
-                if (airConditionerDeviceOn) airConditionerDeviceOn.flag = true;
-                return 'g';
-    
-            case "에어컨꺼줘":
-                const airConditionerDeviceOff = DevicesData.find(device => device.name === '에어컨');
-                if (airConditionerDeviceOff && airConditionerDeviceOff.flag === false) return;
-                if (airConditionerDeviceOff) airConditionerDeviceOff.flag = false;
-                return 'g';
-    
-            case "커튼켜줘":
-                const curtainDeviceOn = DevicesData.find(device => device.name === '커튼');
-                if (curtainDeviceOn && curtainDeviceOn.flag === true) return;
-                if (curtainDeviceOn) curtainDeviceOn.flag = true;
-                return 'i';
-    
-            case "커튼꺼줘":
-                const curtainDeviceOff = DevicesData.find(device => device.name === '커튼');
-                if (curtainDeviceOff && curtainDeviceOff.flag === false) return;
-                if (curtainDeviceOff) curtainDeviceOff.flag = false;
-                return 'i';
-    
-            case "tv켜줘":
-            case "티비켜줘":
-                const tvDeviceOn = DevicesData.find(device => device.name === 'TV');
-                if (tvDeviceOn && tvDeviceOn.flag === true) return;
-                if (tvDeviceOn) tvDeviceOn.flag = true;
-                return 'h';
-    
-            case "tv꺼줘":
-            case "티비꺼줘":
-                const tvDeviceOff = DevicesData.find(device => device.name === 'TV');
-                if (tvDeviceOff && tvDeviceOff.flag === false) return;
-                if (tvDeviceOff) tvDeviceOff.flag = false;
-                return 'h';
-    
-            default:
-                return null;
-        }
-    }
 
     const handleContentSizeChange = (contentWidth, contentHeight) => {
         setContentHeight(contentHeight);

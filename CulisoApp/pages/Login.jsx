@@ -121,9 +121,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     inputText: {
+        flex: 1, // 남은 공간을 모두 차지하도록 설정
         color: '#939393',
         fontFamily: 'KCC-Hanbit',
         textAlign: 'left',
+        fontSize: 16, // 텍스트 크기 조정
     },
     button: {
         backgroundColor: '#b1dbfa',
