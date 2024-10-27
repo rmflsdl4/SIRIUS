@@ -12,6 +12,7 @@ import CuliTalk from "./pages/CuliTalk";
 import CommunicationMain from "./pages/CommunicationMain";
 import ContentsComponent from "./pages/ContentsComponent";
 import ContentUpload from "./pages/ContentUpload";
+import VoiceController from "./pages/VoiceController";
 
 import UserDataContext from './contexts/UserDataContext';
 import BluetoothContext from './contexts/BluetoothContext';
@@ -119,6 +120,7 @@ const App = () => {
                                 <Stack.Screen name="CommunicationMain" component={CommunicationMain} options={{ headerShown: false }}/>
                                 <Stack.Screen name="ContentsComponent" component={ContentsComponent} options={{ headerShown: false }}/>
                                 <Stack.Screen name="ContentUpload" component={ContentUpload} options={{ headerShown: false }}/>
+                                <Stack.Screen name="VoiceController" component={VoiceController} options={{ headerShown: false }}/>
                             </Stack.Navigator>
                         </NavigationContainer>
                     </VoiceAutoModeContext.Provider>
