@@ -4,7 +4,7 @@ import Background from '../modules/Background';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { BottomButton } from "../modules/Navigator";
 import UserDataContext from "../contexts/UserDataContext";
-import { getVoiceAutoMode, voiceAutoModeOff } from "../modules/auth";
+import { getVoiceAutoMode, storeVoiceAutoMode, voiceAutoModeOff } from "../modules/auth";
 import VoiceAutoModeContext from "../contexts/VoiceAutoModeContext";
 
 const Profile = ({name, sex}) => {
@@ -41,60 +41,88 @@ const Nav = ({ type, name, onPress }) => {
         </TouchableOpacity>
     )
 }
-const VoiceAutoModeModal = ({ visible, onConfirm, onCancel }) => {
-    return (
-        <Modal
-            transparent={true}
-            visible={visible}
-            onRequestClose={onCancel}
-        >
-            <View style={styles.modalOverlay}>
-                <View style={styles.modalContainer}>
-                    <Text style={styles.modalTitle}>음성 자동 모드 해제</Text>
-                    <Text style={styles.modalText}>정말로 해제하시겠습니까?</Text>
-                    <View style={styles.buttonGroup}>
-                        <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-                            <Text style={styles.buttonText}>네</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-                            <Text style={styles.buttonText}>아니오</Text>
-                        </TouchableOpacity>
-                    </View>
+const VoiceModeModal = ({ visible, title, text, onConfirm, onCancel }) => (
+    <Modal transparent={true} visible={visible} onRequestClose={onCancel}>
+        <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+                <Text style={styles.modalTitle}>{title}</Text>
+                <Text style={styles.modalText}>{text}</Text>
+                <View style={styles.buttonGroup}>
+                    <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+                        <Text style={styles.buttonText}>네</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+                        <Text style={styles.buttonText}>아니오</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
-        </Modal>
-    );
-};
+        </View>
+    </Modal>
+);
+
 const Mypage = ({ navigation }) => {
     const userContext = useContext(UserDataContext);
     const { user_name, sex } = userContext;
-    const [voiceModeModalVisible, setVoiceModeModalVisible] = useState(false); // 모달 상태 관리
     const { isVoiceAutoModeEnabled, setIsVoiceAutoModeEnabled } = useContext(VoiceAutoModeContext);
+    const [voiceModeModalVisible, setVoiceModeModalVisible] = useState(false);
+    const [isActivating, setIsActivating] = useState(false); // 모드 활성화 여부 추적
 
-    // 음성 자동 모드 해제 처리
-    const handleVoiceAutoModeOff = async () => {
-        await voiceAutoModeOff(); // 음성 자동 모드 해제
-        setIsVoiceAutoModeEnabled(false); // 상태 갱신
-        setVoiceModeModalVisible(false); // 모달 닫기
+    const handleVoiceAutoModeChange = async (isEnabled) => {
+        if (isEnabled) {
+            await storeVoiceAutoMode(true); // 활성화
+        } else {
+            await voiceAutoModeOff(); // 비활성화
+        }
+        setIsVoiceAutoModeEnabled(isEnabled);
+        setVoiceModeModalVisible(false);
+    };
+
+    const openModal = (activating) => {
+        setIsActivating(activating);
+        setVoiceModeModalVisible(true);
     };
 
     return (
         <Background>
-            <Profile name={user_name} sex={sex}/>
+            <Profile name={user_name} sex={sex} />
             <Section header={'커뮤니티'}>
-                <Nav type={'MypageWriteBorder'} name={'작성 게시글 목록'} onPress={()=>navigation.navigate('')}/>
-                <Nav type={'MypageWriteComment'} name={'작성 댓글 목록'} onPress={()=>navigation.navigate('')}/>
+                <Nav type={'MypageWriteBorder'} name={'작성 게시글 목록'} onPress={() => navigation.navigate('')} />
+                <Nav type={'MypageWriteComment'} name={'작성 댓글 목록'} onPress={() => navigation.navigate('')} />
             </Section>
             <Section header={'기기 사용/관리'}>
-                <Nav type={'MypageWriteBorder'} name={'기기 목록'} onPress={()=>navigation.navigate('')}/>
-                <Nav type={'MypageWriteComment'} name={'사용 기록 조회'} onPress={()=>navigation.navigate('')}/>
-                <Nav type={'MypageWriteComment'} name={'기기 등록 요청'} onPress={()=>navigation.navigate('')}/>
-                <Nav type={'MypageWriteComment'} name={'루틴 관리'} onPress={()=>navigation.navigate('')}/>
-                {/* 음성 자동 모드가 활성화된 경우에만 표시 */}
-                {isVoiceAutoModeEnabled && (<Nav type={'MypageWriteComment'} name={'음성 자동 모드 해제'} onPress={() => setVoiceModeModalVisible(true)}/>)}
+                <Nav type={'MypageWriteBorder'} name={'기기 목록'} onPress={() => navigation.navigate('')} />
+                <Nav type={'MypageWriteComment'} name={'사용 기록 조회'} onPress={() => navigation.navigate('')} />
+                <Nav type={'MypageWriteComment'} name={'기기 등록 요청'} onPress={() => navigation.navigate('')} />
+                <Nav type={'MypageWriteComment'} name={'루틴 관리'} onPress={() => navigation.navigate('')} />
+
+                {isVoiceAutoModeEnabled ? (
+                    <Nav 
+                        type={'MypageWriteComment'} 
+                        name={'음성 자동 모드 해제'} 
+                        onPress={() => openModal(false)} 
+                    />
+                ) : (
+                    <Nav 
+                        type={'MypageWriteComment'} 
+                        name={'음성 자동 모드 활성화'} 
+                        onPress={() => openModal(true)} 
+                    />
+                )}
             </Section>
-            <VoiceAutoModeModal visible={voiceModeModalVisible} onConfirm={handleVoiceAutoModeOff} onCancel={() => setVoiceModeModalVisible(false)}/>
-            <BottomButton navigation={navigation}/>
+
+            <VoiceModeModal
+                visible={voiceModeModalVisible}
+                title={isActivating ? "음성 자동 모드 활성화" : "음성 자동 모드 해제"}
+                text={
+                    isActivating
+                        ? "음성 자동 모드를 활성화하시겠습니까?"
+                        : "정말로 음성 자동 모드를 해제하시겠습니까?"
+                }
+                onConfirm={() => handleVoiceAutoModeChange(isActivating)}
+                onCancel={() => setVoiceModeModalVisible(false)}
+            />
+
+            <BottomButton navigation={navigation} />
         </Background>
     );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated, Easing } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient'; // 그라디언트 추가
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated, Easing, BackHandler } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient'; 
 import Voice from '@react-native-voice/voice';
 import { GetImage } from '../modules/ImageManager';
 import Background from '../modules/Background';
@@ -13,7 +13,7 @@ const { width } = Dimensions.get('window'); // 화면 너비 가져오기
 
 const TopBar = ({ navigation }) => (
     <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.replace('Main')} style={styles.backButton}>
             <GetImage type={'BackArrow'} width={22} height={22} />
         </TouchableOpacity>
         <Text style={styles.mainTitle}>CULISO</Text>
@@ -35,10 +35,22 @@ const VoiceController = ({ navigation }) => {
             Voice.onSpeechResults = onSpeechResults;
             Voice.onSpeechError = onSpeechError;
 
+            // 음성 인식 시작
+            startVoiceRecognition(); // 화면이 활성화되면 음성 인식 자동 시작
+
+            const handleBackPress = () => {
+                console.log('뒤로가기 버튼 눌림, Main 화면으로 이동');
+                navigation.replace('Main');
+                return true; // 기본 동작 방지
+            };
+    
+            BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
             return () => {
                 console.log('VoiceController 화면 비활성화됨, 음성 인식 정리');
                 Voice.stop();
                 Voice.destroy().then(Voice.removeAllListeners);
+                BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
             };
         }, [])
     );

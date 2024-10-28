@@ -4,7 +4,7 @@ import Background from '../modules/Background';
 import { SpeechBubbleMessage } from '../modules/Culi'
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Button } from '../modules/Navigator'
-import { getSessionUserData, isSessionValid, logout } from '../modules/auth'; // isSessionValid 함수 가져오기
+import { getSessionUserData, getVoiceAutoMode, isSessionValid, logout } from '../modules/auth'; // isSessionValid 함수 가져오기
 import UserDataContext from "../contexts/UserDataContext";
 
 const Welcome = ({ navigation }) => {
@@ -13,33 +13,41 @@ const Welcome = ({ navigation }) => {
     const { setUserValues } = userContext;
 
     useEffect(() => {
-        const checkLoginStatus = async () => {
+        const initializeApp = async () => {
             try {
-                const validSession = await isSessionValid(); // 세션 유효성 검사
-                if (validSession) {
-                    const userData = await getSessionUserData(); // 세션에서 사용자 정보 가져오기
-                    if (userData) {
-                        console.log('자동 로그인 성공:', userData);
-                        setUserValues(userData); // 사용자 정보 저장
-                        navigation.replace('Main'); // Main 화면으로 이동
-                    } else {
-                        console.error('세션에 사용자 정보가 없습니다.');
-                        setLoading(false); // Welcome 화면 표시
-                    }
-                } else {
+                const [voiceMode, validSession] = await Promise.all([
+                    getVoiceAutoMode(),
+                    isSessionValid()
+                ]);
+
+                if (!validSession) {
                     console.log('세션이 만료되었습니다.');
-                    await logout(); // 만료 시 로그아웃 수행
-                    setLoading(false); // Welcome 화면 표시
+                    await logout();
+                    return setLoading(false); // Welcome 화면 표시
                 }
+
+                const userData = await getSessionUserData();
+                if (!userData) {
+                    console.error('세션에 사용자 정보가 없습니다.');
+                    return setLoading(false); // Welcome 화면 표시
+                }
+
+                console.log('자동 로그인 성공:', userData);
+                setUserValues(userData);
+
+                // 음성 자동 모드에 따라 화면 이동
+                const targetScreen = voiceMode ? 'VoiceController' : 'Main';
+                console.log(`${targetScreen} 화면으로 이동`);
+                navigation.replace(targetScreen);
             } catch (error) {
-                console.error('로그인 상태 확인 중 오류 발생:', error);
-                Alert.alert('오류', '로그인 상태를 확인하는 중 문제가 발생했습니다.', [
+                console.error('초기화 중 오류 발생:', error);
+                Alert.alert('오류', '앱 초기화 중 문제가 발생했습니다.', [
                     { text: '확인', onPress: () => setLoading(false) },
                 ]);
             }
         };
 
-        checkLoginStatus();
+        initializeApp();
     }, []);
 
     if (loading) {

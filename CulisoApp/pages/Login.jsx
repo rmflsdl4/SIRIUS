@@ -6,7 +6,7 @@ import axios from 'axios';
 import GetUserData from "../modules/GetUserData";
 import UserDataContext from "../contexts/UserDataContext";
 import ENDPOINT from "../modules/Endpoint";
-import { storeSession } from '../modules/auth'; // storeSession 함수 가져오기
+import { getVoiceAutoMode, storeSession } from '../modules/auth'; // storeSession 함수 가져오기
 
 const Header = () => {
     return (
@@ -52,7 +52,12 @@ const Login = ({ navigation }) => {
                 console.log('로그인 성공');
                 setUserValues(data);
                 await storeSession(data); // 사용자 정보 세션에 저장
-                navigation.navigate('Main');
+
+                // 음성 자동 모드에 따라 화면 이동 결정
+                const voiceMode = await getVoiceAutoMode();
+                const targetScreen = voiceMode ? 'VoiceController' : 'Main';
+                console.log(`${targetScreen} 화면으로 이동`);
+                navigation.replace(targetScreen);
             }
             else{
                 Alert.alert('로그인 실패', '아이디/비밀번호를 확인해 주세요.', [

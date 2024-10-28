@@ -95,7 +95,7 @@ const CuliTalk = ({ navigation }) => {
 
     useFocusEffect(
         useCallback(() => {
-            console.log('CuliTalk 화면 활성화됨');
+            console.log('CuliTalk 화면 활성화됨'); 
 
             Voice.onSpeechStart = _onSpeechStart;
             Voice.onSpeechEnd = _onSpeechEnd;
@@ -373,6 +373,10 @@ const styles = StyleSheet.create({
         maxWidth:250,
         fontSize: 17,
         fontFamily: 'KCC-Hanbit',
+        flex: 1, // 가로 공간을 최대한 사용
+        paddingVertical: 10, // 위아래 패딩 추가
+        paddingHorizontal: 5, // 좌우 패딩 추가
+        color: '#000', // 입력된 텍스트 색상
     },
     img: {
         flexDirection: 'row',

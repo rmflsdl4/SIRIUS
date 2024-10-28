@@ -134,7 +134,7 @@ const VoiceAutoModeModal = ({ visible, handleVoiceAutoMode, onClose }) => {
             <View style={styles.voiceModalOverlay}>
                 <View style={styles.voiceModalContainer}>
                     <Text style={styles.voiceModalTitle}>음성 모드</Text>
-                    <Text style={styles.voiceModalText}>음성 모드를 활성화하시겠습니까?</Text>
+                    <Text style={styles.voiceModalText}>음성 자동 모드를 활성화하시겠습니까?</Text>
                     <View style={styles.voiceButtonGroup}>
                         <TouchableOpacity
                             style={styles.voiceConfirmButton}
