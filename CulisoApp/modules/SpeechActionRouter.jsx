@@ -1,5 +1,4 @@
 import BLEController from "../modules/BLEController";
-import { useNavigation } from "@react-navigation/native";
 import TextToFormat from "./TextToFormat";
 
 const SpeechAction = ({ voiceMessage, characteristic, navigation }) => {
@@ -7,7 +6,7 @@ const SpeechAction = ({ voiceMessage, characteristic, navigation }) => {
     console.log("bleCMD : ", bleCMD);
 
     if (bleCMD) {
-        BluetoothAction(bleCMD, characteristic); // 여기에서 매개변수를 명확히 전달합니다.
+        BluetoothAction(bleCMD, characteristic); 
     } else {
         console.log("CuliAction : ", voiceMessage);
         CuliAction(voiceMessage, navigation);
