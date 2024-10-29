@@ -246,7 +246,7 @@ const Main = ({ navigation }) => {
             <BluetoothDeviceModal
                 visible={modalVisible}
                 scannedDevices={scannedDevices}
-                BluetoothHandler={() => {}}
+                BluetoothHandler={BluetoothHandler}
                 connectToDevice={connectToDevice}
                 setIsBluetoothConnected={setIsBluetoothConnected}
                 onClose={() => setModalVisible(false)}

@@ -79,19 +79,21 @@ const Welcome = ({ navigation }) => {
     useEffect(() => {
         const initializeApp = async () => {
             try {
-                const [voiceMode, validSession] = await Promise.all([
-                    getVoiceAutoMode(),
-                    isSessionValid(),
-                    initializeBluetooth(),
-                ]);
-
+                // 1. 먼저 세션 유효성 검사
+                const validSession = await isSessionValid();
                 if (!validSession) {
                     console.log('세션이 만료되었습니다.');
-                    await logout();
+                    await logout(device, setDevice, setIsBluetoothConnected);
                     return setLoading(false);
                 }
 
-                const userData = await getSessionUserData();
+                // 2. 유효한 세션일 경우 나머지 초기화 수행
+                const [userData, voiceMode] = await Promise.all([
+                    getSessionUserData(),
+                    getVoiceAutoMode(),
+                    initializeBluetooth(),
+                ]);
+
                 if (!userData) {
                     console.error('세션에 사용자 정보가 없습니다.');
                     return setLoading(false);
