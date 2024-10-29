@@ -102,11 +102,13 @@ const App = () => {
     }
 
     const [isVoiceAutoModeEnabled, setIsVoiceAutoModeEnabled] = useState(false);
+    const [isBluetoothConnected, setIsBluetoothConnected] = useState(false); // 블루투스 상태 확인
+    const [device, setDevice] = useState(null);
 
     return (
         <UserDataContext.Provider value={userValues}>
             <CuliContext.Provider value={culiValues}>
-                <BluetoothContext.Provider value={{ characteristic, setCharacteristic }}>
+                <BluetoothContext.Provider value={{ characteristic, setCharacteristic, isBluetoothConnected, setIsBluetoothConnected, device, setDevice }}>
                     <VoiceAutoModeContext.Provider value={{ isVoiceAutoModeEnabled, setIsVoiceAutoModeEnabled }}>
                         <NavigationContainer>
                             <Stack.Navigator initialRouteName="Intro">
