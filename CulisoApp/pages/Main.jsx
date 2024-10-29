@@ -156,40 +156,16 @@ const VoiceAutoModeModal = ({ visible, handleVoiceAutoMode, onClose }) => {
 };
 
 const Main = ({ navigation }) => {
-    const [device, setDevice] = useState(null);
     const [scannedDevices, setScannedDevices] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const userContext = useContext(UserDataContext);
     const { address } = userContext;
-    const { characteristic, setCharacteristic } = useContext(BluetoothContext);
-    const [isBluetoothConnected, setIsBluetoothConnected] = useState(false); // 블루투스 상태 확인
+    const { characteristic, setCharacteristic, isBluetoothConnected, setIsBluetoothConnected, device, setDevice } = useContext(BluetoothContext);
     const [voiceModalVisible, setVoiceModalVisible] = useState(false); // 음성 자동 모드 모달
     const { isVoiceAutoModeEnabled, setIsVoiceAutoModeEnabled } = useContext(VoiceAutoModeContext);
 
     useEffect(() => {
         PermissionRequest();
-    }, []);
-
-    // 앱 시작 시 Bluetooth 세션 복원
-    useEffect(() => {
-        const initializeBluetooth = async () => {
-            try {
-                const bluetoothInfo = await getBluetoothSession();
-                if (bluetoothInfo) {
-                    setIsBluetoothConnected(true); // 블루투스 기기 연결 상태 확인
-                    console.log(`Bluetooth 복원: ${bluetoothInfo.deviceName} (${bluetoothInfo.deviceId})`);
-
-                    const restoredDevice = await bleManager.connectToDevice(bluetoothInfo.deviceId);
-                    await connectToDevice(restoredDevice);
-                } else {
-                    setIsBluetoothConnected(false);
-                }
-            } catch (error) {
-                console.error('Bluetooth 초기화 중 오류:', error.message);
-            }
-        };
-
-        initializeBluetooth();
     }, []);
 
     const BluetoothHandler = async () => {
@@ -215,7 +191,7 @@ const Main = ({ navigation }) => {
             setDevice(device);
             console.log(`${device.name} 연결 시도 중...`);
 
-            await device.connect();
+            await device.connect({ autoConnect: true }); // 자동 재연결 설정
             console.log('장치에 연결되었습니다:', device.id);
 
             await device.discoverAllServicesAndCharacteristics();
@@ -238,6 +214,7 @@ const Main = ({ navigation }) => {
                 setCharacteristic(foundCharacteristic);
                 // Bluetooth 정보 세션에 저장
                 await storeBluetoothSession(device, foundCharacteristic);
+                setIsBluetoothConnected(true); // 연결 상태 업데이트
                 console.log("특성 설정 완료:", foundCharacteristic.uuid);
 
                 
