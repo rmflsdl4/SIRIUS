@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { bleManager } from 'react-native-ble-plx'; // bleManager 가져오기
 
 const LOGIN_TIMEOUT = 30 * 60 * 1000; // 30분 (1800초)
 
@@ -42,15 +43,36 @@ export const isSessionValid = async () => {
     }
 };
 
-// 로그아웃: 모든 세션 정보 삭제
-export const logout = async () => {
+// 로그아웃: 모든 세션 정보 및 설정 삭제 + Bluetooth 연결 해제
+export const logout = async (device, setDevice, setIsBluetoothConnected) => {
     try {
-        await AsyncStorage.removeItem('userData');
-        await AsyncStorage.removeItem('expiryTime');
+        // Bluetooth 연결 해제
+        if (device) {
+            console.log(`Bluetooth 장치 ${device.name} 연결 해제 중...`);
+            await device.cancelConnection(); // Bluetooth 연결 해제
+            console.log('Bluetooth 장치 연결이 해제되었습니다.');
+        }
+
+        // Bluetooth 상태 초기화
+        setDevice(null);
+        setIsBluetoothConnected(false);
+
+        // 삭제할 모든 항목의 키 배열
+        const keysToRemove = [
+            'userData',
+            'expiryTime',
+            'bluetoothInfo',
+            'voiceAutoMode'
+        ];
+
+        // 모든 세션 정보 및 설정 삭제
+        await AsyncStorage.multiRemove(keysToRemove);
+        console.log('모든 세션 정보 및 설정이 삭제되었습니다.');
     } catch (err) {
         console.error('로그아웃 중 오류 발생:', err);
     }
 };
+
 
 
 // Bluetooth 기기 정보 저장

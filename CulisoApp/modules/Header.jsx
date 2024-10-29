@@ -51,7 +51,7 @@ const Header = ({ navigation, address, device, setDevice, isBluetoothConnected, 
                         <GetImage type={'BluetoothUnconnection'} width={21} height={21} marginRight={15} />
                     </TouchableOpacity>
                 )}
-                <TouchableOpacity onPress={() =>  {logout(), navigation.navigate('Login')}}>
+                <TouchableOpacity onPress={() =>  {logout(device, setDevice, setIsBluetoothConnected), navigation.navigate('Login')}}>
                     <GetImage type={'Logout'} width={21} height={21}/>
                 </TouchableOpacity>
             </View>
