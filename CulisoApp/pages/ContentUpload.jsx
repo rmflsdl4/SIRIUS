@@ -9,6 +9,7 @@ import CustomStyles from '../modules/ModalComponent';
 import Modal from "react-native-modal";
 import ENDPOINT from "../modules/Endpoint";
 import UserDataContext from "../contexts/UserDataContext";
+import ImageResizer from 'react-native-image-resizer';
 
 const TopBar = ({ navigation, prevPage, checkItems }) => {
     return (
@@ -172,7 +173,7 @@ const ContentUpload = () => {
     
     const [contentData, setContentData] = useState([]);
     const [boardData, setBoardData] = useState([]);
-    const [relatedFiles, setRelatedFiles] = useState([]);
+    const [relatedFiles, setRelatedFiles] = useState([]);       // 이미지 파일 저장
     const [deleteFiles, setDeleteFiles] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [checkItemsIsOpen, setCheckItemsIsOpen] = useState(false);
@@ -326,14 +327,37 @@ const ContentUpload = () => {
 
             formData.append('contents_num', sendContentsNum);
 
-            relatedFiles.forEach((file, index) => {
-                formData.append('images', {
-                    uri: file.uri,
-                    type: file.type,
-                    name: file.name || `image_${index}.jpg`,
-                });
-            });
-            
+            // 이미지 리사이즈 처리 및 FormData 추가
+            for (const [index, file] of relatedFiles.entries()) {
+                try {
+                    // 파일의 타입에 따라 포맷 설정
+                    const format = file.type === 'image/png' ? 'PNG' : 'JPEG';
+
+                    const resizedImage = await ImageResizer.createResizedImage(
+                        file.uri,    // 원본 이미지 URI
+                        800,         // 리사이즈할 너비
+                        800,         // 리사이즈할 높이
+                        format,      // 이미지 포맷 ('JPEG' 또는 'PNG')
+                        80           // 품질 (0-100)
+                    );
+
+                    formData.append('images', {
+                        uri: resizedImage.uri,
+                        type: file.type,  // 원래 파일의 MIME 타입
+                        name: file.name || `image_${index}.${format.toLowerCase()}`, // 파일 확장자를 포맷에 맞게 설정
+                    });
+                } catch (resizeError) {
+                    console.error('Image resize error:', resizeError);
+                }
+            }
+
+            // relatedFiles.forEach((file, index) => {
+            //     formData.append('images', {
+            //         uri: file.uri,
+            //         type: file.type,
+            //         name: file.name || `image_${index}.jpg`,
+            //     });
+            // });
 
             // deleteFiles 배열에서 중복 제거 및 파일 이름 부분만 추출
             const uniqueDeleteFiles = Array.from(new Set(deleteFiles.map(file => file.fileUrl.split('/').pop())));
@@ -358,14 +382,36 @@ const ContentUpload = () => {
             formData.append('contents', sendContents.contents);
             formData.append('board_id', sendContents.board_id);
 
-            relatedFiles.forEach((file, index) => {
-                formData.append('images', {
-                    uri: file.uri,
-                    type: file.type,
-                    name: file.name || `image_${index}.jpg`,
-                });
-            });
-            
+            // 이미지 리사이즈 처리 및 FormData 추가
+            for (const [index, file] of relatedFiles.entries()) {
+                try {
+                    const format = file.type === 'image/png' ? 'PNG' : 'JPEG';
+
+                    const resizedImage = await ImageResizer.createResizedImage(
+                        file.uri,
+                        360,
+                        360,
+                        format,
+                        80
+                    );
+
+                    formData.append('images', {
+                        uri: resizedImage.uri,
+                        type: file.type,
+                        name: file.name || `image_${index}.${format.toLowerCase()}`,
+                    });
+                } catch (resizeError) {
+                    console.error('Image resize error:', resizeError);
+                }
+            }
+
+            // relatedFiles.forEach((file, index) => {
+            //     formData.append('images', {
+            //         uri: file.uri,
+            //         type: file.type,
+            //         name: file.name || `image_${index}.jpg`,
+            //     });
+            // });
 
             try {
                 const path = "ContentsInsert";
