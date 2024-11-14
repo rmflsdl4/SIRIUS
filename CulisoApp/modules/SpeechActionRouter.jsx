@@ -1,5 +1,6 @@
 import BLEController from "../modules/BLEController";
 import TextToFormat from "./TextToFormat";
+import { Alert } from 'react-native';
 
 const SpeechAction = ({ voiceMessage, characteristic, navigation }) => {
     const bleCMD = TextToFormat(voiceMessage);
@@ -16,6 +17,7 @@ const SpeechAction = ({ voiceMessage, characteristic, navigation }) => {
 const BluetoothAction = async (command, characteristic) => {
     if (!command || !characteristic) {
         console.error('BluetoothAction Error: Missing command or characteristic.');
+        Alert.alert('Error', 'Bluetooth device is not connected.');
         return;
     }
 
@@ -25,6 +27,7 @@ const BluetoothAction = async (command, characteristic) => {
         console.log(`Command '${command}' sent successfully.`);
     } catch (error) {
         console.error(`Failed to send command '${command}':`, error);
+        Alert.alert('Error', 'Failed to connect to Bluetooth device.');
     }
 };
 
