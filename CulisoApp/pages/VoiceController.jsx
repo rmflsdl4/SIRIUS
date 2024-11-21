@@ -8,6 +8,7 @@ import { BottomButton } from '../modules/Navigator';
 import SpeechAction from '../modules/SpeechActionRouter';
 import BluetoothContext from '../contexts/BluetoothContext';
 import { useFocusEffect } from '@react-navigation/native';
+import { InitBackgroundDetect } from '../modules/BackgroundVoiceDetect';
 
 const { width } = Dimensions.get('window'); // 화면 너비 가져오기
 
@@ -121,6 +122,7 @@ const VoiceController = ({ navigation }) => {
     const onSpeechEnd = () => {
         console.log('음성 인식 종료');
         setIsRecording(false);
+        InitBackgroundDetect({navigation});
     };
 
     const onSpeechResults = (event) => {

@@ -14,6 +14,7 @@ import { getBluetoothSession, getVoiceAutoMode, storeBluetoothSession, storeVoic
 import { BleManager } from 'react-native-ble-plx';
 import VoiceAutoModeContext from "../contexts/VoiceAutoModeContext";
 import { useFocusEffect } from "@react-navigation/native";
+import { InitBackgroundDetect } from "../modules/BackgroundVoiceDetect";
 
 const bleManager = new BleManager();
 // 공통 서비스 및 특성 UUID
@@ -166,6 +167,7 @@ const Main = ({ navigation }) => {
 
     useEffect(() => {
         PermissionRequest();
+        InitBackgroundDetect({navigation});
     }, []);
 
     const BluetoothHandler = async () => {
