@@ -15,6 +15,12 @@
 
 ## 🧾 UseCase Diagram
 
+### 최종 버전(유저)
+![culiso_user_usecase](https://github.com/user-attachments/assets/826cae05-4a2d-4855-b8fa-5990d36b1b2b)
+
+### 최종 버전(관리자)
+![culiso_admin_usecase](https://github.com/user-attachments/assets/8000c0d1-2a37-4f91-85c0-112a8156733e)
+
 ### Ver 1.1
 ![UseCase V1 1-페이지-1 drawio](https://github.com/rmflsdl4/SIRIUS/assets/165611879/9fe84ad1-eb93-4167-a266-2513d4d1688b)
 
@@ -28,6 +34,11 @@
 
 
 ## 🧾 ERD  
+
+### 최종 버전
+![culiso_erd](https://github.com/user-attachments/assets/cbc2b4d6-ee0e-424b-9281-d961beec4bdc)
+
+
 ### Ver 0.7
 ![ERD drawio (2)](https://github.com/rmflsdl4/SIRIUS/assets/57540594/1ffcff61-5ba9-4555-b7f7-3c54a20c6af4)
 
@@ -40,6 +51,10 @@
 
 
 ## 🧾 EER
+
+### 최종 버전
+![culiso_eer](https://github.com/user-attachments/assets/921b2c99-ff06-453e-91c0-bf3bb8dd908f)
+
 ### VER 0.5
 ![EER drawio (1)](https://github.com/rmflsdl4/SIRIUS/assets/57540594/e4c95b03-73a0-4f7c-a476-526993dac999)
 
