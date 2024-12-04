@@ -23,8 +23,6 @@
   <img src="https://github.com/user-attachments/assets/2661b40a-0592-4f15-ae1c-1ad4130fb782">
 </div>
 
-<hr>
-
 # 🌐 Connection
 🔗 [큐리소 바로가기](https://culiso.duckdns.org/Intro)
 
